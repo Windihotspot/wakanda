@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 import daisyui from 'daisyui'
+import tailwindcssForms from '@tailwindcss/forms';
 
 module.exports = {
   content: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
@@ -971,5 +972,5 @@ module.exports = {
     'active',
     'disabled'
   ],
-  plugins: [daisyui]
+  plugins: [daisyui,tailwindcssForms]
 }

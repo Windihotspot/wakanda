@@ -20,10 +20,10 @@ export default defineComponent({
       ></v-text-field>
     </div>
     <div>
-      <v-btn color="#50DC90" size="large" rounded="lg" class="mb-4 pr-4 custom-btn">
+      <!-- <v-btn color="#50DC90" size="large" rounded="lg" class="mb-4 pr-4 custom-btn">
         <v-icon left class="text-white">fa-solid fa-plus</v-icon>
         <span class="menu-item ml-4">Add a user</span>
-      </v-btn>
+      </v-btn> -->
     </div>
   </div>
 </template>

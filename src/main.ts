@@ -8,6 +8,10 @@ import router from './router'
 import 'aos/dist/aos.css'
 import AOS from 'aos'
 
+// Import Element Plus and its styles
+import ElementPlus from 'element-plus';
+import 'element-plus/dist/index.css';
+
 import 'vuetify/styles'
 import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
@@ -34,6 +38,7 @@ app.use(createPinia())
 app.use(router)
 app.use(vuetify)
 app.use(VueApexCharts)
+app.use(ElementPlus);
 
 app.mount('#app')
 

@@ -20,6 +20,16 @@ const router = createRouter({
           component: () => import('@/views/dashboard/DashboardView.vue')
         },
         {
+          path: 'login',
+          name: 'login',
+          component: () => import('@/views/dashboard/LoginView.vue')
+        },
+        {
+          path: 'database',
+          name: 'database',
+          component: () => import('@/views/dashboard/DatabaseView.vue')
+        },
+        {
           path: 'settings',
           name: 'settings',
           redirect: '/settings/account',
@@ -39,7 +49,9 @@ const router = createRouter({
               path: 'security',
               name: 'security',
               component: () => import('@/views/settings/SecurityView.vue')
-            }
+            },
+            
+
           ]
         }
       ]
