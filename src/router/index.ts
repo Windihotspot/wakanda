@@ -20,9 +20,9 @@ const router = createRouter({
           component: () => import('@/views/dashboard/DashboardView.vue')
         },
         {
-          path: 'login',
-          name: 'login',
-          component: () => import('@/views/dashboard/LoginView.vue')
+          path: 'addstudent',
+          name: 'addstudent',
+          component: () => import('@/views/dashboard/AddStudent.vue')
         },
         {
           path: 'database',

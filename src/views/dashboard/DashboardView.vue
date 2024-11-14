@@ -11,14 +11,7 @@ export default defineComponent({
 
 <template>
   <div class="dashboard">
-    <div class="search">
-      <v-text-field
-        label="Search for a student, teacher, parent, document, e.t.c..."
-        variant="outlined"
-        rounded
-        class="styled-text-field w-82"
-      ></v-text-field>
-    </div>
+   
     <div>
       <!-- <v-btn color="#50DC90" size="large" rounded="lg" class="mb-4 pr-4 custom-btn">
         <v-icon left class="text-white">fa-solid fa-plus</v-icon>

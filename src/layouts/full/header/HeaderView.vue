@@ -24,7 +24,9 @@ export default defineComponent({
 <template>
   <div class="header">
     <!-- Search on the extreme left -->
-
+    <div class="search">
+      
+    </div>
     <!-- Row containing notification icon, contacts icon, and user profile -->
     <div class="icons-container">
       <v-row justify="end" align="center">
