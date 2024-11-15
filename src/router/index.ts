@@ -8,14 +8,14 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      name: 'dashboard', // Set this as the default route
       component: () => import('@/layouts/full/FullLayout.vue'),
       meta: {
         auth: true
       },
+       redirect: '/dashboard',
       children: [
         {
-          path: '', // This will load the default dashboard view when '/dashboard' is accessed
+          path: 'dashboard',
           name: 'dashboardMain',
           component: () => import('@/views/dashboard/DashboardView.vue')
         },

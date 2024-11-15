@@ -2,7 +2,7 @@ export default [
   {
     title: 'Dashboard',
     icon: 'fa-solid fa-house',
-
+    to: '/dashboard'
   },
   {
     title: 'Database',

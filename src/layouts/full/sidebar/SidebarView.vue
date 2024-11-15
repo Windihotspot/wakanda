@@ -26,22 +26,25 @@ export default defineComponent({
     <!-- Navigation -->
     <div class="scrollnavbar">
       <v-list class="pa-4" color="transparent">
-        <!-- Menu Loop -->
-        <template v-for="(item, i) in sidebarMenu" :key="i">
-          <!-- Single Item -->
-          <v-list-item
-            :to="item.to"
-            class="mb-4 pr-4 custom-btn no-uppercase"
-            size="large"
-            rounded="lg"
-            router
-            block
-          >
-            <v-icon left>{{ item.icon }}</v-icon>
-            <span class="menu-item ml-4" v-text="item.title"></span>
-          </v-list-item>
-        </template>
-      </v-list>
+  <!-- Menu Loop -->
+  <template v-for="(item, i) in sidebarMenu" :key="i">
+    <!-- Single Item -->
+    <v-list-item
+      :to="item.to"
+      class="mb-4 pr-4 custom-btn no-uppercase"
+      size="large"
+      rounded="lg"
+      router
+      block
+      active-class="custom-active"  
+      
+    >
+      <v-icon left>{{ item.icon }}</v-icon>
+      <span class="menu-item ml-4" v-text="item.title"></span>
+    </v-list-item>
+  </template>
+</v-list>
+
     </div>
   </div>
 </template>
@@ -79,5 +82,17 @@ export default defineComponent({
 }
 .v-btn.router-link-active .v-icon {
   color: #1e1e1e !important;
+}
+/* Active State */
+.custom-active {
+  color: #2dd385 !important; /* Customize active color */
+}
+
+.custom-active .menu-item {
+  color: #4caf50 !important;
+}
+
+.custom-active .v-icon {
+  color: #4caf50 !important;
 }
 </style>
