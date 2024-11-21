@@ -58,7 +58,7 @@ export default defineComponent({
     <!-- ---------------------------------------------- -->
     <!---Page Wrapper -->
     <!-- ---------------------------------------------- -->
-    <v-main>
+    <v-main class="page-wrapper">
       <v-container fluid class="page-wrapper">
         <RouterView />
       </v-container>
@@ -69,8 +69,8 @@ export default defineComponent({
 </template>
 
 <style scoped>
-.side-bar {
- 
+.page-wrapper {
+ background-color: #F4F6FA;
 }
 
 .settings-icon {
