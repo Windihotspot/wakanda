@@ -2,14 +2,14 @@
 import daisyui from 'daisyui'
 import tailwindcssForms from '@tailwindcss/forms';
 
-module.exports = {
+export default {
   content: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
   presets: [],
   darkMode: 'media', // or 'class'
   theme: {
     extend: {
       colors: {
-        tomatoColor: '#ff6347' // Tomato color
+        tomatoColor: '#ff6347' 
       }
     },
     screens: {

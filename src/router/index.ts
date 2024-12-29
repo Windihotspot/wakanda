@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import VerificationPage from '../views/VerificationPage.vue'
 import SettingsView from '../views/settings/SettingsView.vue'
-import { supabase } from '../components/base/supabase/supabase'
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -64,18 +64,5 @@ const router = createRouter({
   ]
 })
 
-// Route guard for each route
-router.beforeEach((to, from, next) => {
-  const user = supabase.auth.getUser()
-  if (to.matched.some((res) => res.meta.auth)) {
-    if (user) {
-      next()
-      return
-    }
-    next({ name: 'Login' })
-    return
-  }
-  next()
-})
 
 export default router
