@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import VerificationPage from '../views/VerificationPage.vue'
 import SettingsView from '../views/settings/SettingsView.vue'
+import SignUp from '@/views/SignUp.vue'
 
 
 const router = createRouter({
@@ -60,7 +61,12 @@ const router = createRouter({
       path: '/verification',
       name: 'verification',
       component: VerificationPage
-    }
+    },
+    {
+      path: '/signup',
+      name: 'signup',
+      component: SignUp
+    },
   ]
 })
 
