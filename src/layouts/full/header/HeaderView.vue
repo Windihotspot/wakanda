@@ -26,24 +26,7 @@ export default defineComponent({
 
     <!-- Icons (Right) -->
     <div class="space-x-4">
-      <!-- Add Details Icon -->
-      <v-menu anchor="bottom end" origin="auto" min-width="300">
-        <template v-slot:activator="{ props }">
-          <v-btn v-bind="props" icon>
-            <i class="fa-solid fa-plus fa-lg"></i>
-          </v-btn>
-        </template>
-        <v-list class="pa-6" elevation="10" rounded="lg">
-          <v-list-item
-            v-for="(item, i) in addDetails"
-            :key="i"
-            :title="item.title"
-            :subtitle="item.desc"
-            rounded="lg"
-            class="pa-3 mb-2"
-          />
-        </v-list>
-      </v-menu>
+     
 
       <!-- Notifications Icon -->
       <v-menu anchor="bottom end" origin="auto" min-width="300">

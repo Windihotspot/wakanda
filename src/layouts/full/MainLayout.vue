@@ -1,33 +1,22 @@
-<script lang="ts">
-import { RouterView } from 'vue-router'
-import { defineComponent, ref, onMounted } from 'vue'
-import SidebarView from './sidebar/SidebarView.vue'
-import HeaderView from './header/HeaderView.vue'
-export default defineComponent({
-  components: {
-    SidebarView,
-    HeaderView
-  },
-  setup() {
-    const drawer = ref(undefined || true)
-    const innerW = window.innerWidth
-    onMounted(() => {
-      if (innerW < 950) {
-        drawer.value = !drawer.value
-      }
-    })
+<script setup>
+import { ref, onMounted } from 'vue';
+import SidebarView from './sidebar/SidebarView.vue';
+import HeaderView from './header/HeaderView.vue';
 
-    return {
-      drawer
-    }
+const drawer = ref();
+const innerW = window.innerWidth;
+
+onMounted(() => {
+  if (innerW < 950) {
+    drawer.value = !drawer.value;
   }
-})
+});
 </script>
 
 <template>
   <v-app>
     <!-- ---------------------------------------------- -->
-    <!---Sidebar -->
+    <!--- Sidebar -->
     <!-- ---------------------------------------------- -->
     <v-navigation-drawer
       left
@@ -41,26 +30,24 @@ export default defineComponent({
     >
       <SidebarView />
     </v-navigation-drawer>
+
     <!-- ---------------------------------------------- -->
-    <!---Header -->
+    <!--- Header -->
     <!-- ---------------------------------------------- -->
-    <v-app-bar elevation="0" class="v-topbar">
+    <v-app-bar app elevation="4">
       <v-btn class="hidden-md-and-up" icon @click="drawer = !drawer">
         <v-icon>fa-solid fa-bars</v-icon>
       </v-btn>
-      <v-spacer />
-      <!-- ---------------------------------------------- -->
-      <!-- User Profile -->
-      <!-- ---------------------------------------------- -->
+      <v-spacer></v-spacer>
       <HeaderView />
     </v-app-bar>
 
     <!-- ---------------------------------------------- -->
-    <!---Page Wrapper -->
+    <!--- Page Wrapper -->
     <!-- ---------------------------------------------- -->
-    <v-main class="page-wrapper">
-      <v-container fluid class="page-wrapper">
-        <RouterView />
+    <v-main class="">
+      <v-container fluid class="">
+        <slot />
       </v-container>
     </v-main>
   </v-app>
@@ -70,7 +57,7 @@ export default defineComponent({
 
 <style scoped>
 .page-wrapper {
- background-color: #F4F6FA;
+  background-color: #F4F6FA;
 }
 
 .settings-icon {

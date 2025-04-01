@@ -1,6 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 import daisyui from 'daisyui'
-import tailwindcssForms from '@tailwindcss/forms';
+import defaultTheme from "tailwindcss/defaultTheme";
 
 export default {
   content: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
@@ -8,6 +8,9 @@ export default {
   darkMode: 'media', // or 'class'
   theme: {
     extend: {
+      fontFamily: {
+        sans: ["Figtree", ...defaultTheme.fontFamily.sans],
+    },
       colors: {
         tomatoColor: '#ff6347' 
       }
@@ -972,5 +975,5 @@ export default {
     'active',
     'disabled'
   ],
-  plugins: [daisyui,tailwindcssForms]
+  plugins: [daisyui]
 }
