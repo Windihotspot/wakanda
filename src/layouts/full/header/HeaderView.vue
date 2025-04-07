@@ -1,24 +1,6 @@
-<script lang="ts">
+<script setup >
 import { defineComponent, ref } from 'vue'
-import { profile } from './data.ts'
-import { contacts } from './contact.ts'
-import { notifications } from './notification.ts'
-import { add } from './add.ts'
-export default defineComponent({
-  setup() {
-    const userprofile = ref(profile)
-    const usernotification = ref(notifications)
-    const usercontacts = ref(contacts)
-    const addDetails = ref(add)
 
-    return {
-      userprofile,
-      usernotification,
-      usercontacts,
-      addDetails
-    }
-  }
-})
 </script>
 
 <template>
