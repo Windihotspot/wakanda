@@ -1,5 +1,5 @@
 <template>
-  <v-container class="max-w-2xl mx-auto p-6 bg-white shadow-lg rounded-lg">
+  <div class="max-w-2xl mx-auto p-6 bg-white shadow-lg rounded-lg">
     <h2 class="text-xl font-bold text-blue-600 mb-6">Upload A PDF Statement</h2>
 
     <!-- Drag and Drop Area -->
@@ -25,26 +25,46 @@
     <div v-if="selectedFile" class="border rounded-lg p-4">
       <div class="flex justify-between items-center mb-3">
         <div class="flex items-center gap-2">
-          <v-icon>mdi-file-pdf-box</v-icon>
+          <i class="fas fa-file-pdf text-red-600"></i>
           <p class="text-gray-700 text-sm">{{ selectedFile.name }} ({{ fileSize }} MB)</p>
         </div>
 
-        <v-icon @click="removeFile" class="text-red">mdi-trash-can-outline</v-icon>
+        <i class="fas fa-trash-alt text-red-600 cursor-pointer" @click="removeFile"></i>
       </div>
 
+      <div v-if="loading" class="absolute inset-0 bg-white bg-opacity-80 flex items-center justify-center z-10">
+        <v-progress-circular  indeterminate color="green" class="mx-auto my-4" />
+      </div>
+    
+
       <p class="text-gray-600 text-sm font-semibold mb-2">Select a Statement Type</p>
-      <v-radio-group v-model="statementType" row class="grid grid-cols-3 gap-4">
-        <v-radio color="blue" label="Consumer" value="consumer"></v-radio>
-        <v-radio label="Business" value="business"></v-radio>
-        <v-radio label="Mobile Money" value="mobile-money"></v-radio>
-        <v-radio label="Mobile Money Business" value="mobile-money-business"></v-radio>
-      </v-radio-group>
+      <div class="mb-4">
+        <div class="mb-4">
+          <div
+            v-for="(type, index) in statementTypes"
+            :key="index"
+            class="flex items-center mt-4 space-x-3 p-4 border rounded-lg shadow hover:bg-gray-100 cursor-pointer transition"
+          >
+            <input
+              type="radio"
+              :id="type.value"
+              :value="type.value"
+              v-model="statementType"
+              name="statement-type"
+              class="w-5 h-5 text-blue-600 border-gray-300 focus:ring-blue-500"
+            />
+            <label :for="type.value" class="text-gray-700 font-medium">
+              {{ type.label }}
+            </label>
+          </div>
+        </div>
+      </div>
 
       <v-text-field
         v-model="filePassword"
         label="File Password (optional)"
         variant="outlined"
-        class="mt-2"
+        class="mt-4"
       ></v-text-field>
     </div>
 
@@ -56,7 +76,9 @@
     >
       Upload
     </v-btn>
-  </v-container>
+
+    
+  </div>
 </template>
 
 <script setup>
@@ -66,13 +88,25 @@ import Swal from 'sweetalert2'
 const loading = ref(false)
 import { useAuthStore } from '@/stores/auth'
 const authStore = useAuthStore()
+const token = computed(() => authStore.token)
+const tenantId = computed(() => authStore.tenant_id)
+const emit = defineEmits(['close'])
 
-const token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTguMjEyLjg2LjIzOS9hcGkvcmVnaXN0ZXItYnVzaW5lc3MiLCJpYXQiOjE3NDM1MDI5NzgsImV4cCI6MTc0MzUwNjU3OCwibmJmIjoxNzQzNTAyOTc4LCJqdGkiOiI1VUE3OFJrTWtaaHMwN1d4Iiwic3ViIjoiMzI3YjU1NDQtNjE3My00ZWMzLTlkN2EtNDE5ZDE4NDEwZGIzIiwicHJ2IjoiNDMyNjMzNzVmN2ZmZDZhMmNlNWYzOGJlOTM4ZmQxMmUzZjA3OWZhZSJ9.0AGgJ2DheMMFlcdhLtbmtnLNR04fGfDYeMz1ZphmliU"
+
 const selectedFile = ref(null)
 const filePassword = ref('')
-const statementType = ref('')
 const fileInput = ref(null)
 const isDragging = ref(false)
+const selectedTypes = ref(null)
+
+const statementType = ref('')
+
+const statementTypes = [
+  { label: 'Consumer', value: 'consumer' },
+  { label: 'Business', value: 'business' },
+  { label: 'Mobile Money', value: 'mobile-money' },
+  { label: 'Mobile Money Business', value: 'mobile-money-business' }
+]
 
 const handleDrop = (event) => {
   isDragging.value = false
@@ -99,9 +133,6 @@ const removeFile = () => {
   selectedFile.value = null
 }
 
-const API_URL =
-  'http://18.212.86.239/api/7188d42a-b70a-4732-8447-1d665df93b9f/bank-statement-analyze'
-
 const uploadFile = async () => {
   if (!selectedFile.value || !statementType.value) {
     Swal.fire('Missing Information', 'Select a statement type and file.', 'warning')
@@ -115,8 +146,7 @@ const uploadFile = async () => {
     formData.append('password', filePassword.value)
   }
 
-  const API_URL =
-    'http://18.212.86.239/api/7188d42a-b70a-4732-8447-1d665df93b9f/bank-statement-analyze'
+  const API_URL = `http://18.212.86.239/api/${tenantId.value}/bank-statement-analyze`
 
   console.log('➡️ Uploading file...')
   for (const [key, value] of formData.entries()) {
@@ -128,18 +158,21 @@ const uploadFile = async () => {
 
     const response = await axios.post(API_URL, formData, {
       headers: {
-        Authorization: 'Bearer ' + token
+        Authorization: `Bearer ${token.value}`,
+        'Content-Type': 'multipart/form-data',
+        Accept: 'application/json'
       }
     })
 
     console.log('✅ Success:', response)
     Swal.fire('Success', 'File uploaded successfully!', 'success')
 
-    // Reset input values
-    selectedFile.value = null
+   // Reset input values
+   selectedFile.value = null
     filePassword.value = ''
     statementType.value = ''
-    bearerToken.value = '' // Clear token field after upload
+
+    emit('close') 
   } catch (error) {
     console.error('❌ Upload error:', error)
     Swal.fire('Upload Failed', error.response?.data?.message || 'An error occurred.', 'error')

@@ -3,7 +3,8 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 import axios from 'axios'
 import { useAuthStore } from '@/stores/auth'
 const authStore = useAuthStore()
-
+import { useRouter } from 'vue-router'
+const router = useRouter()
 
 const showPassword = ref(false)
 
@@ -37,12 +38,20 @@ const submitForm = async () => {
     })
 
     console.log('Login successful:', response.data)
-     // Store authentication data in Pinia
-     authStore.setAuthData(response.data.data)
-    
-   
-      router.push('/dashboard')
-   
+    // Extract data from the response properly
+    const { token, user, verification_status } = response.data.data // data is the root response object
+
+    // Pass the data correctly to the store
+    authStore.setAuthData({ token, verification_status, user })
+
+    console.log('Store after login:', {
+      tenant_id: authStore.tenant_id,
+      token: authStore.token,
+      verification_status: authStore.verification_status,
+      user: authStore.user
+    })
+
+    router.push('/dashboard')
 
     // Handle success (e.g., store token, redirect user)
   } catch (error) {
@@ -105,13 +114,25 @@ onUnmounted(() => {
           <p class="text-gray-600 mt-2">Provide your login credentials to access your account</p>
 
           <div class="mt-4 space-y-4">
-            <v-text-field type="email" label="Email address" v-model="loginForm.email" variant="outlined" color="blue" />
+            <v-text-field
+              type="email"
+              label="Email address"
+              v-model="loginForm.email"
+              variant="outlined"
+              color="blue"
+            />
             <p v-if="loginForm.errors.email" class="text-red-500 text-sm">
               {{ loginForm.errors.email }}
             </p>
             <div class="relative">
-                <v-text-field type="password" v-model="loginForm.password"  label="Password" variant="outlined" color="blue" />
-              
+              <v-text-field
+                type="password"
+                v-model="loginForm.password"
+                label="Password"
+                variant="outlined"
+                color="blue"
+              />
+
               <span
                 class="absolute inset-y-0 right-3 flex items-center cursor-pointer text-black-200"
                 @click="togglePasswordVisibility"
@@ -157,8 +178,6 @@ onUnmounted(() => {
           <div class="relative flex justify-center text-sm mt-4">
             <span class="px-2 text-gray-500">Or continue with</span>
           </div>
-
-          
 
           <p class="mt-6 text-center text-sm text-gray-500">
             Don't have an account?

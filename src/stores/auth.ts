@@ -1,29 +1,36 @@
 import { defineStore } from 'pinia'
+import axios from 'axios'
 
 interface AuthState {
   tenant_id: string | null
   token: string | null
   verification_status: string | null
+  user: any | null
 }
 
 export const useAuthStore = defineStore('auth', {
   state: (): AuthState => ({
     tenant_id: null,
     token: null,
-    verification_status: null
+    verification_status: null,
+    user: null
   }),
 
   actions: {
-    setAuthData(data: AuthState) {
-      this.tenant_id = data.tenant_id
-      this.token = data.token
-      this.verification_status = data.verification_status
-    },
+    setAuthData(data: any) {
+      console.log('Setting Auth Data:', data)
 
-    clearAuthData() {
-      this.tenant_id = null
-      this.token = null
-      this.verification_status = null
+      this.tenant_id = data.user?.tenant_id || null
+      this.token = data.token || null
+      this.verification_status = data.user?.verification_status || null
+
+      // Store the full user data
+      this.user = data.user || {}
+
+      if (data.token) {
+        axios.defaults.headers.common['Authorization'] = `Bearer ${data.token}`
+        axios.defaults.headers.common['Accept'] = 'application/json'
+      }
     }
   },
 

@@ -1,15 +1,18 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import Axios from 'axios'
+import moment from 'moment';
 import MainLayout from '@/layouts/full/MainLayout.vue'
 import Upload from '@/components/Upload.vue'
 import { useAuthStore } from '@/stores/auth'
-
 const authStore = useAuthStore()
-const tenantId = authStore.tenant_id
-const API_URL = `http://18.212.86.239/api/${tenantId}/fetch-tenant-analyses`
+const token = computed(() => authStore.token)
+const tenantId = computed(() => authStore.tenant_id)
+console.log('Store tenant:', authStore.tenant_id)
+console.log('Store token:', authStore.token)
+const API_URL = `http://18.212.86.239/api/${tenantId.value}/fetch-tenant-analyses`
 
-const documents = ref([])
+const statements = ref([])
 const isLoading = ref(true)
 const showModal = ref(false)
 
@@ -24,20 +27,61 @@ const closeModal = () => {
 
 // Fetch statements
 const fetchStatements = async () => {
+  isLoading.value = true
+
   try {
-    const response = await Axios.get(API_URL)
-    if (response.data && response.data.length > 0) {
-      documents.value = response.data
-    } else {
-      documents.value = [] // If no data, set empty state
-    }
+    const response = await Axios.get(API_URL, {
+      headers: {
+        Authorization: `Bearer ${token.value}`
+      }
+    })
+    console.log('fetch statements data:', response)
+    const rawAnalyses = response.data?.data?.analyses || []
+
+    statements.value = rawAnalyses.map((item) => ({
+      id: item.id,
+      name: `${item.firstname} ${item.lastname}`,
+      file_name: item.file_name,
+      created_date: moment(item.created_at).format('MMMM Do, YYYY'),
+      status: item.status
+    }))
   } catch (error) {
-    console.error('Error fetching data:', error)
-    documents.value = [] // If there's an error, set empty state
+    console.error('Error fetching statements:', error)
+    statements.value = []
   } finally {
     isLoading.value = false
   }
 }
+
+const fetchAnalysisResult = async (analysisId) => {
+  
+  const apiUrl = `http://18.212.86.239/api/${tenantId.value}/get-analysis-result?analysis_id=${analysisId};`;
+
+  const raw = {
+    analysis_id: analysisId,
+  };
+  // Log the request details before sending
+  console.log("Sending request with analysis_id:", analysisId);
+  console.log("Request body:", raw);
+  try {
+    const response = await Axios({
+      method: 'get',
+      url: apiUrl,
+      headers: {
+        Authorization: `Bearer ${token.value}`,
+        'Content-Type': 'application/json', 
+      },
+      data: raw, 
+    });
+
+
+    console.log("Analysis result:", response.data);
+    // Handle result here (e.g., show a modal, redirect, etc.)
+  } catch (error) {
+    console.error('Error fetching analysis result:', error);
+  }
+};
+
 
 // Fetch on mounted
 onMounted(() => {
@@ -72,31 +116,37 @@ const getStatusColor = (status) => {
     </div>
 
     <div class="p-6">
-      <div v-if="isLoading" class="text-center py-6">Loading...</div>
-
-      <div v-else class="overflow-x-auto" v-if="documents.length > 0">
+      <div class="overflow-x-auto" v-if="statements.length > 0">
         <table class="min-w-full bg-white border border-gray-300 rounded-lg shadow-md">
           <thead class="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
             <tr>
               <th class="py-3 px-6 text-left">Name</th>
+              <th class="py-3 px-6 text-left">File Name</th>
               <th class="py-3 px-6 text-left">Created Date</th>
               <th class="py-3 px-6 text-left">Status</th>
-              <th class="py-3 px-6 text-center">Action</th>
+              <th class="py-3 px-6 text-center"></th>
             </tr>
           </thead>
+
           <tbody class="text-gray-700 text-sm font-light">
             <tr
-              v-for="doc in documents"
+              v-for="doc in statements"
               :key="doc.id"
-              class="border-b border-gray-200 hover:bg-gray-100"
+              class="border-b border-gray-200"
             >
               <td class="py-3 px-6">{{ doc.name }}</td>
+              <td class="py-3 px-6">{{ doc.file_name }}</td>
               <td class="py-3 px-6">{{ doc.created_date }}</td>
               <td class="py-3 px-6">
                 <v-chip :color="getStatusColor(doc.status)" small>{{ doc.status }}</v-chip>
               </td>
               <td class="py-3 px-6 text-center">
-                <span class="bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-600">View</span>
+                <span
+                 @click="fetchAnalysisResult(doc.id)"
+                  class="bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-600 cursor-pointer"
+                >
+                  View
+                </span>
               </td>
             </tr>
           </tbody>
@@ -109,6 +159,7 @@ const getStatusColor = (status) => {
           <thead class="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
             <tr>
               <th class="py-3 px-6 text-left">Name</th>
+              <th class="py-3 px-6 text-left">File Name</th>
               <th class="py-3 px-6 text-left">Created Date</th>
               <th class="py-3 px-6 text-left">Status</th>
               <th class="py-3 px-6 text-center">Action</th>
@@ -125,7 +176,7 @@ const getStatusColor = (status) => {
     <v-dialog v-model="showModal" persistent max-width="600px" class="pa-4">
       <template v-slot:default="{ close }">
         <div style="max-height: 80vh; overflow-y: auto">
-          <Upload />
+          <Upload @close="closeModal" />
         </div>
       </template>
     </v-dialog>
