@@ -12,6 +12,11 @@ const router = createRouter({
   routes: [
     {
       path: '/',
+      name: 'login',
+      component: Login
+    },
+    {
+      path: '/signup',
       name: 'signup',
       component: SignUp
     },
@@ -20,17 +25,13 @@ const router = createRouter({
       name: 'verified',
       component: VerifiedEmail
     },
-    {
-      path: '/login',
-      name: 'login',
-      component: Login
-    },
+
     {
       path: '/dashboard',
       name: 'dashboard',
       component: DashboardView
     },
-    
+
     {
       path: '/wallet',
       name: 'wallet',
@@ -40,8 +41,7 @@ const router = createRouter({
       path: '/settings',
       name: 'settings',
       component: Settings
-    }
-    ,
+    },
     {
       path: '/analysis',
       name: 'analysis',

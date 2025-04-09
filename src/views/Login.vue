@@ -32,7 +32,7 @@ const submitForm = async () => {
   loginForm.value.errors = {} // Clear previous errors
 
   try {
-    const response = await axios.post('http://18.212.86.239/api/login', {
+    const response = await axios.post('https://app.getjupita.com/api/login', {
       email: loginForm.value.email,
       password: loginForm.value.password
     })
@@ -98,15 +98,15 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="flex h-screen bg-white">
+  <div class="flex flex-col md:flex-row h-auto md:h-screen bg-white">
     <!-- Logo -->
     <div>
-      <div class="m-4">
+      <div class="m-4 md:absolute">
         <img src="/src/assets/images/white.png" class="m-2" />
       </div>
     </div>
     <!-- Left Section -->
-    <div class="w-1/2 flex items-center justify-center bg-white p-4">
+    <div class="w-full md:w-1/2 flex items-center justify-center bg-white p-6">
       <div>
         <!-- Login form -->
         <div class="max-w-md w-full">
@@ -199,16 +199,13 @@ onUnmounted(() => {
     </div>
 
     <!-- Right Section (Changing Images) -->
-    <div class="w-1/2 relative p-4 m-4">
-      <transition name="fade" mode="out-in">
-        <img
-          v-if="showImage"
-          :src="currentImage"
-          alt="Onboarding Image"
-          class="w-full h-full object-cover absolute inset-0 rounded-lg shadow-2xl"
-          key="image"
-        />
-      </transition>
+    <div class="hidden md:block w-1/2 relative p-4 m-4">
+      <img
+        src="/src/assets/image.jpg"
+        alt="Onboarding Image"
+        class="w-full h-full object-cover absolute inset-0 rounded-lg shadow-2xl"
+        key="image"
+      />
     </div>
   </div>
 </template>
