@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import Axios from 'axios'
-import moment from 'moment';
+import moment from 'moment'
 import MainLayout from '@/layouts/full/MainLayout.vue'
 import Upload from '@/components/Upload.vue'
 import { useAuthStore } from '@/stores/auth'
@@ -10,7 +10,7 @@ const token = computed(() => authStore.token)
 const tenantId = computed(() => authStore.tenant_id)
 console.log('Store tenant:', authStore.tenant_id)
 console.log('Store token:', authStore.token)
-const API_URL = `http://18.212.86.239/api/${tenantId.value}/fetch-tenant-analyses`
+const API_URL = `https://dev02201.getjupita.com/api/${tenantId.value}/fetch-tenant-analyses`
 
 const statements = ref([])
 const isLoading = ref(true)
@@ -54,34 +54,35 @@ const fetchStatements = async () => {
 }
 
 const fetchAnalysisResult = async (analysisId) => {
-  
-  const apiUrl = `http://18.212.86.239/api/${tenantId.value}/get-analysis-result?analysis_id=${analysisId};`;
+  const apiUrl = `https://dev02201.getjupita.com/api/${tenantId.value}/get-analysis-result?analysis_id=${analysisId};`
 
   const raw = {
-    analysis_id: analysisId,
-  };
+    analysis_id: analysisId
+  }
   // Log the request details before sending
-  console.log("Sending request with analysis_id:", analysisId);
-  console.log("Request body:", raw);
+  console.log('Sending request with analysis_id:', analysisId)
+  console.log('Request body:', raw)
   try {
     const response = await Axios({
       method: 'get',
       url: apiUrl,
       headers: {
         Authorization: `Bearer ${token.value}`,
-        'Content-Type': 'application/json', 
+        'Content-Type': 'application/json'
       },
-      data: raw, 
-    });
+      data: raw
+    })
 
-
-    console.log("Analysis result:", response.data);
+    console.log('Analysis result:', response.data)
     // Handle result here (e.g., show a modal, redirect, etc.)
   } catch (error) {
-    console.error('Error fetching analysis result:', error);
+    console.error('Error fetching analysis result:', error)
   }
-};
-
+}
+// Navigate to analysis page
+const goToAnalysis = (analysisId) => {
+  router.push({ name: 'StatementAnalysis', params: { id: analysisId } })
+}
 
 // Fetch on mounted
 onMounted(() => {
@@ -129,11 +130,7 @@ const getStatusColor = (status) => {
           </thead>
 
           <tbody class="text-gray-700 text-sm font-light">
-            <tr
-              v-for="doc in statements"
-              :key="doc.id"
-              class="border-b border-gray-200"
-            >
+            <tr v-for="doc in statements" :key="doc.id" class="border-b border-gray-200">
               <td class="py-3 px-6">{{ doc.name }}</td>
               <td class="py-3 px-6">{{ doc.file_name }}</td>
               <td class="py-3 px-6">{{ doc.created_date }}</td>
@@ -142,7 +139,7 @@ const getStatusColor = (status) => {
               </td>
               <td class="py-3 px-6 text-center">
                 <span
-                 @click="fetchAnalysisResult(doc.id)"
+                  @click="goToAnalysis(doc.id)"
                   class="bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-600 cursor-pointer"
                 >
                   View

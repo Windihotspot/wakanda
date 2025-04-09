@@ -1,6 +1,12 @@
 <template>
   <div class="max-w-2xl mx-auto p-6 bg-white shadow-lg rounded-lg">
-    <h2 class="text-xl font-bold text-blue-600 mb-6">Upload A PDF Statement</h2>
+    <div class="flex justify-between items-center pb-4 m-4">
+      <h2 class="text-xl font-bold text-blue-600">Upload A PDF Statement</h2>
+
+      <div @click="closeForm">
+        <i class="fa-solid fa-close text-red text-3xl"></i>
+      </div>
+    </div>
 
     <!-- Drag and Drop Area -->
     <div
@@ -32,10 +38,14 @@
         <i class="fas fa-trash-alt text-red-600 cursor-pointer" @click="removeFile"></i>
       </div>
 
-      <div v-if="loading" class="absolute inset-0 bg-white bg-opacity-80 flex items-center justify-center z-10">
-        <v-progress-circular  indeterminate color="green" class="mx-auto my-4" />
+      <div
+        v-if="loading"
+        class="absolute inset-0 bg-white bg-opacity-80 flex items-center justify-center z-10"
+      >
+        <v-progress-circular indeterminate color="green" class="mx-auto my-4" />
+
+        
       </div>
-    
 
       <p class="text-gray-600 text-sm font-semibold mb-2">Select a Statement Type</p>
       <div class="mb-4">
@@ -76,8 +86,6 @@
     >
       Upload
     </v-btn>
-
-    
   </div>
 </template>
 
@@ -92,12 +100,15 @@ const token = computed(() => authStore.token)
 const tenantId = computed(() => authStore.tenant_id)
 const emit = defineEmits(['close'])
 
-
 const selectedFile = ref(null)
 const filePassword = ref('')
 const fileInput = ref(null)
 const isDragging = ref(false)
 const selectedTypes = ref(null)
+const closeForm = () => {
+  // Emit the close event to the parent component (if needed)
+  emit('close')
+}
 
 const statementType = ref('')
 
@@ -133,6 +144,8 @@ const removeFile = () => {
   selectedFile.value = null
 }
 
+const progress = ref(0) // Track progress
+
 const uploadFile = async () => {
   if (!selectedFile.value || !statementType.value) {
     Swal.fire('Missing Information', 'Select a statement type and file.', 'warning')
@@ -146,7 +159,7 @@ const uploadFile = async () => {
     formData.append('password', filePassword.value)
   }
 
-  const API_URL = `http://18.212.86.239/api/${tenantId.value}/bank-statement-analyze`
+  const API_URL = `https://dev02201.getjupita.com/api/${tenantId.value}/bank-statement-analyze`
 
   console.log('➡️ Uploading file...')
   for (const [key, value] of formData.entries()) {
@@ -156,25 +169,33 @@ const uploadFile = async () => {
   try {
     loading.value = true
 
+    // Axios upload with progress
     const response = await axios.post(API_URL, formData, {
       headers: {
         Authorization: `Bearer ${token.value}`,
         'Content-Type': 'multipart/form-data',
         Accept: 'application/json'
+      },
+      onUploadProgress: (event) => {
+        if (event.lengthComputable) {
+          // Calculate the percentage of the file uploaded
+          progress.value = Math.round((100 * event.loaded) / event.total)
+        }
       }
     })
 
     console.log('✅ Success:', response)
     Swal.fire('Success', 'File uploaded successfully!', 'success')
 
-   // Reset input values
-   selectedFile.value = null
+    // Reset input values
+    selectedFile.value = null
     filePassword.value = ''
     statementType.value = ''
 
-    emit('close') 
+    closeForm()
   } catch (error) {
     console.error('❌ Upload error:', error)
+    closeForm()
     Swal.fire('Upload Failed', error.response?.data?.message || 'An error occurred.', 'error')
   } finally {
     loading.value = false

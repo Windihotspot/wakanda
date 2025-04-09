@@ -1,50 +1,65 @@
-<script setup >
-import { defineComponent, ref } from 'vue'
+<script setup>
+import { computed, ref } from 'vue'
+import axios from 'axios'
+import { useAuthStore } from '@/stores/auth'
+const authStore = useAuthStore()
+const token = computed(() => authStore.token)
+const tenantId = computed(() => authStore.tenant_id)
+import { useRouter } from 'vue-router'
+const router = useRouter()
 
+// Reactive variable to handle loading state
+const isLoading = ref(false)
+const errorMessage = ref(null)
+
+// Logout function
+const logout = async () => {
+  isLoading.value = true
+  errorMessage.value = null
+
+  try {
+    const response = await axios.post(
+      `https://dev02201.getjupita.com/api/${tenantId.value}/logout`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token.value}`
+        }
+      }
+    )
+
+    // Handle the successful logout
+    console.log('Logged out successfully:', response.data)
+
+    // Redirect to login page or any other page
+    router.push('/') 
+  } catch (error) {
+    // Handle errors
+    errorMessage.value = error.response?.data?.message || error.message
+    console.error('Logout failed:', errorMessage.value)
+  } finally {
+    isLoading.value = false
+  }
+}
 </script>
 
 <template>
   <div class="header items-center px-4 py-2 shadow-md bg-white">
-
     <!-- Icons (Right) -->
     <div class="space-x-4">
-     
-
       <!-- Notifications Icon -->
       <v-menu anchor="bottom end" origin="auto" min-width="300">
         <template v-slot:activator="{ props }">
           <v-btn v-bind="props" icon>
-            <i class="fa-regular fa-bell fa-lg"></i>
+            <i class="fa-regular fa-bell fa-xl"></i>
           </v-btn>
         </template>
-        <v-list class="pa-6" elevation="10" rounded="lg">
-          <v-list-item
-            v-for="(item, i) in usernotification"
-            :key="i"
-            :title="item.title"
-            :subtitle="item.desc"
-            rounded="lg"
-            class="pa-3 mb-2"
-          />
-        </v-list>
-      </v-menu>
-
-      <!-- Contacts Icon -->
-      <v-menu anchor="bottom end" origin="auto" min-width="300">
-        <template v-slot:activator="{ props }">
-          <v-btn v-bind="props" icon>
-            <i class="fa-regular fa-address-book fa-lg"></i>
-          </v-btn>
-        </template>
-        <v-list class="pa-6" elevation="10" rounded="lg">
-          <v-list-item
-            v-for="(contact, i) in usercontacts"
-            :key="i"
-            :title="contact.name"
-            :subtitle="contact.status"
-            rounded="lg"
-            class="pa-3 mb-2"
-          />
+        <v-list>
+          <v-list-item link class="text-gray-700 text-sm hover:text-blue-500 flex">
+            <div class="flex items-center gap-2">
+              <v-list-item-title>You analysed a statement 3 hours ago</v-list-item-title>
+            </div>
+          </v-list-item>
         </v-list>
       </v-menu>
 
@@ -52,22 +67,18 @@ import { defineComponent, ref } from 'vue'
       <v-menu anchor="bottom end" origin="auto" min-width="300">
         <template v-slot:activator="{ props }">
           <v-btn v-bind="props" class="p-0" elevation="0" color="transparent" plain :ripple="false">
-            <v-avatar size="35">
+            <v-avatar size="24">
               <img src="@/assets/images/users/black-user.jpg" alt="User Avatar" />
             </v-avatar>
           </v-btn>
         </template>
-        <v-list class="pa-6" elevation="10" rounded="lg">
-          <v-list-item
-            class="pa-3 mb-2"
-            v-for="(item, i) in userprofile"
-            :key="i"
-            :value="item"
-            :title="item.title"
-            :subtitle="item.desc"
-            rounded="lg"
-          />
-          <v-btn block color="secondary" variant="contained" class="mt-4 py-4">Logout</v-btn>
+        <v-list>
+          <v-list-item @click="logout" link class="text-gray-700 hover:text-red-500">
+            <div class="flex items-center gap-2">
+              <i class="fas fa-sign-out-alt text-gray-500 hover:text-red-500"></i>
+              <v-list-item-title>Logout</v-list-item-title>
+            </div>
+          </v-list-item>
         </v-list>
       </v-menu>
     </div>

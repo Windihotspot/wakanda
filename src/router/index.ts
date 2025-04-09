@@ -46,7 +46,14 @@ const router = createRouter({
       path: '/analysis',
       name: 'analysis',
       component: Analysis
+    },
+    {
+      path: '/statement-analysis/:id',
+      name: 'StatementAnalysis',
+      component: () => import('@/views/StatementAnalysis.vue'),
+      props: true
     }
+    
   ]
 })
 
