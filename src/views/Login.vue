@@ -105,6 +105,14 @@ onUnmounted(() => {
         <img src="/src/assets/images/white.png" class="m-2" />
       </div>
     </div>
+    <!-- Image Section (Visible on all screens) -->
+    <div class="w-full p-4 sm:w-1/2 md:w-1/2 h-64 md:h-full relative">
+      <img
+        src="/src/assets/image.jpg"
+        alt="Onboarding Image"
+        class="w-full h-full object-cover rounded-b-lg md:rounded-none md:rounded-l-lg shadow-2xl"
+      />
+    </div>
     <!-- Left Section -->
     <div class="w-full md:w-1/2 flex items-center justify-center bg-white p-6">
       <div>
@@ -147,15 +155,14 @@ onUnmounted(() => {
 
             <div class="flex items-center justify-between">
               <div class="flex items-center">
-                <input
+                <v-checkbox
+                variant="outlined"
                   v-model="loginForm.remember"
-                  type="checkbox"
-                  id="remember"
-                  class="h-4 w-4 rounded border border-gray-300 text-blue-600 focus:ring-blue-500"
+                  label="Keep me signed in"
+                  color="blue"
+                  density="comfortable"
+                  hide-details
                 />
-                <label for="remember" class="ml-1 block text-sm text-gray-900">
-                  Keep me signed in
-                </label>
               </div>
               <span class="text-sm text-blue-600 ml-auto">Reset Password</span>
 
@@ -175,10 +182,6 @@ onUnmounted(() => {
             </v-btn>
           </div>
 
-          <div class="relative flex justify-center text-sm mt-4">
-            <span class="px-2 text-gray-500">Or continue with</span>
-          </div>
-
           <p class="mt-6 text-center text-sm text-gray-500">
             Don't have an account?
 
@@ -196,16 +199,6 @@ onUnmounted(() => {
           </p>
         </div>
       </div>
-    </div>
-
-    <!-- Right Section (Changing Images) -->
-    <div class="hidden md:block w-1/2 relative p-4 m-4">
-      <img
-        src="/src/assets/image.jpg"
-        alt="Onboarding Image"
-        class="w-full h-full object-cover absolute inset-0 rounded-lg shadow-2xl"
-        key="image"
-      />
     </div>
   </div>
 </template>
