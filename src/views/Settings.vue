@@ -125,7 +125,9 @@
         <v-card class="bg-white rounded-lg shadow-lg max-h-[90vh] flex flex-col relative">
           <div class="flex justify-between items-center mb-4 p-4">
             <h2 class="text-lg font-bold text-blue-600 mb-4">New User</h2>
-            <i @click="closeModal" class="fa-solid fa-close text-red mr-2"></i>
+            <div @click="closeModal">
+              <i class="fa-solid fa-close text-3xl text-red mr-2"></i>
+            </div>
           </div>
 
           <!-- Scrollable Form Body -->
@@ -210,18 +212,21 @@ const roles = ref([])
 
 const getRoles = async () => {
   try {
-    const response = await axios.get(`http://18.212.86.239/api/${tenantId.value}/get-roles`, {
-      headers: {
-        Authorization: `Bearer ${token.value}`
+    const response = await axios.get(
+      `https://dev02201.getjupita.com/api/${tenantId.value}/get-roles`,
+      {
+        headers: {
+          Authorization: `Bearer ${token.value}`
+        }
       }
-    })
+    )
     console.log('roles response:', response)
     if (response.data && response.data.data && Array.isArray(response.data.data.roles)) {
       roles.value = response.data.data.roles.map((role) => ({
         value: role.title, // You can use `role.id` as the value
         label: role.title // Use `role.title` for the label
       }))
-      console.log('Mapped roles:', roles.value);
+      console.log('Mapped roles:', roles.value)
     } else {
       roles.value = []
     }
@@ -266,7 +271,7 @@ const inviteUser = async () => {
     }
     console.log('invite user request payload:', payload)
     const response = await axios.post(
-      `http://18.212.86.239/api/${tenantId.value}/add-member`,
+      `https://dev02201.getjupita.com/api/${tenantId.value}/add-member`,
       payload,
       {
         headers: {
@@ -321,7 +326,7 @@ const saveProfile = async () => {
     }
     console.log(payload)
     const response = await axios.put(
-      `http://18.212.86.239/api/${tenantId.value}/update-user-data`,
+      `https://dev02201.getjupita.com/api/${tenantId.value}/update-user-data`,
       payload,
 
       {

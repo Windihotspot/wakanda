@@ -67,7 +67,7 @@ const logout = async () => {
       <v-menu anchor="bottom end" origin="auto" min-width="300">
         <template v-slot:activator="{ props }">
           <v-btn v-bind="props" class="p-0" elevation="0" color="transparent" plain :ripple="false">
-            <v-avatar size="24">
+            <v-avatar size="32">
               <img src="@/assets/images/users/black-user.jpg" alt="User Avatar" />
             </v-avatar>
           </v-btn>
