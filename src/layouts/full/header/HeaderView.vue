@@ -14,16 +14,19 @@ const errorMessage = ref(null)
 
 // Logout function
 const logout = async () => {
+  const savedAuth = JSON.parse(localStorage.getItem('data') || '{}')
+  const token = savedAuth?.token || authStore.token
+  const tenantId = savedAuth?.user?.tenant_id || authStore.tenant_id
   isLoading.value = true
   errorMessage.value = null
 
   try {
     const response = await axios.post(
-      `https://dev02201.getjupita.com/api/${tenantId.value}/logout`,
+      `https://dev02201.getjupita.com/api/${tenantId}/logout`,
       {},
       {
         headers: {
-          Authorization: `Bearer ${token.value}`
+          Authorization: `Bearer ${token}`
         }
       }
     )

@@ -166,14 +166,34 @@
                 color="blue"
               />
 
-              <v-select
-                :items="roles"
-                item-value="value"
-                item-text="label"
-                label="Role"
-                variant="outlined"
-                color="blue"
-              />
+              <div class="relative">
+                <!-- Dropdown menu -->
+                <div
+                  v-if="isDropdownOpen"
+                  class="absolute left-0 mt-2 w-full bg-white border border-gray-300 rounded-lg shadow-lg z-10"
+                >
+                  <ul class="py-2">
+                    <li
+                      v-for="role in roles"
+                      :key="role.value"
+                      class="px-4 py-2 text-gray-700 hover:bg-blue-500 hover:text-white cursor-pointer"
+                      @click="selectRole(role)"
+                    >
+                      {{ role.label }}
+                    </li>
+                  </ul>
+                </div>
+                <!-- Button to toggle dropdown -->
+                <v-text-field
+                  color="blue"
+                  variant="outlined"
+                  v-model="selectedRoleLabel"
+                  label="Role"
+                  readonly
+                  class="w-full cursor-pointer"
+                  @click="toggleDropdown"
+                />
+              </div>
             </form>
           </div>
 
@@ -208,7 +228,17 @@ console.log('Store tenant:', authStore.tenant_id)
 console.log('Store token:', authStore.token)
 console.log('Store user:', authStore.user)
 
-const roles = ref([])
+const roles = ref([
+  { value: 'tenant', label: 'Tenant' },
+  { value: 'super_admin', label: 'Super Admin' },
+  { value: 'admin', label: 'Admin' },
+  { value: 'editor', label: 'Editor' },
+  { value: 'credit_manager', label: 'Credit Manager' },
+  { value: 'loan_manager', label: 'Loan Manager' },
+  { value: 'analysis_manager', label: 'Analysis Manager' },
+  { value: 'observer', label: 'Observer' }
+])
+const isLoading = ref(true)
 
 const getRoles = async () => {
   try {
@@ -256,10 +286,13 @@ const newUser = ref({
   phone_number: '',
   email: '',
   password: '',
-  role: 'User'
+  role: 'tenant'
 })
 
 const inviteUser = async () => {
+  const savedAuth = JSON.parse(localStorage.getItem('data') || '{}')
+  const token = savedAuth?.token || authStore.token
+  const tenantId = savedAuth?.user?.tenant_id || authStore.tenant_id
   try {
     const payload = {
       firstname: newUser.value.firstname,
@@ -271,7 +304,7 @@ const inviteUser = async () => {
     }
     console.log('invite user request payload:', payload)
     const response = await axios.post(
-      `https://dev02201.getjupita.com/api/${tenantId.value}/add-member`,
+      `https://dev02201.getjupita.com/api/${tenantId}/add-member`,
       payload,
       {
         headers: {
@@ -292,6 +325,7 @@ const inviteUser = async () => {
     closeModal()
   } catch (err) {
     console.error('Invite failed:', err)
+    closeModal()
 
     Swal.fire({
       icon: 'error',
@@ -300,6 +334,22 @@ const inviteUser = async () => {
       confirmButtonColor: '#dc2626'
     })
   }
+}
+
+const isDropdownOpen = ref(false)
+const selectedRole = ref(null)
+const selectedRoleLabel = ref('') // Store the selected role label as text
+
+// Toggle dropdown visibility
+const toggleDropdown = () => {
+  isDropdownOpen.value = !isDropdownOpen.value
+}
+
+// Handle role selection
+const selectRole = (role) => {
+  selectedRole.value = role
+  selectedRoleLabel.value = role.label // Set the label to the text field
+  isDropdownOpen.value = false // Close the dropdown after selection
 }
 
 const profile = ref({
@@ -318,6 +368,9 @@ const api = ref({
 })
 
 const saveProfile = async () => {
+  const savedAuth = JSON.parse(localStorage.getItem('data') || '{}')
+  const token = savedAuth?.token || authStore.token
+  const tenantId = savedAuth?.user?.tenant_id || authStore.tenant_id
   try {
     const payload = {
       id: profile.value.user_id,
@@ -326,12 +379,12 @@ const saveProfile = async () => {
     }
     console.log(payload)
     const response = await axios.put(
-      `https://dev02201.getjupita.com/api/${tenantId.value}/update-user-data`,
+      `https://dev02201.getjupita.com/api/${tenantId}/update-user-data`,
       payload,
 
       {
         headers: {
-          Authorization: `Bearer ${token.value}`
+          Authorization: `Bearer ${token}`
         }
       }
     )
@@ -350,7 +403,7 @@ const copyToClipboard = (text) => {
 }
 
 onMounted(() => {
-  const user = authStore.user // Access the user data from the store
+  const user = authStore.user
   console.log('User data in store after login:', user)
 
   if (user) {
@@ -359,9 +412,6 @@ onMounted(() => {
     profile.value.phone_number = user.phone_number || ''
     profile.value.email = user.business_email || ''
   }
-
-  // Fetch roles when the component is mounted
-  getRoles()
 })
 </script>
 

@@ -288,20 +288,20 @@ import MainLayout from '@/layouts/full/MainLayout.vue'
 const route = useRoute()
 const authStore = useAuthStore()
 
-const token = computed(() => authStore.token)
-const tenantId = computed(() => authStore.tenant_id)
-
 const result = ref(null)
 const loading = ref(true)
 const error = ref(null)
 
 const fetchAnalysisResult = async (analysisId) => {
-  const apiUrl = `https://dev02201.getjupita.com/api/${tenantId.value}/get-analysis-result?analysis_id=${analysisId}`
+  const savedAuth = JSON.parse(localStorage.getItem('data') || '{}')
+  const token = savedAuth?.token || authStore.token
+  const tenantId = savedAuth?.user?.tenant_id || authStore.tenant_id
+  const apiUrl = `https://dev02201.getjupita.com/api/${tenantId}/get-analysis-result?analysis_id=${analysisId}`
 
   try {
     const response = await Axios.get(apiUrl, {
       headers: {
-        Authorization: `Bearer ${token.value}`,
+        Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json'
       }
     })

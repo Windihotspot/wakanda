@@ -44,7 +44,7 @@
       >
         <v-progress-circular indeterminate color="green" class="mx-auto my-4" />
 
-        <h2 class="font-semibold">Analysis in progress</h2>
+        
       </div>
 
       <p class="text-gray-600 text-sm font-semibold mb-2">Select a Statement Type</p>

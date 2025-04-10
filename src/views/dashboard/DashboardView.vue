@@ -5,12 +5,9 @@ import moment from 'moment'
 import MainLayout from '@/layouts/full/MainLayout.vue'
 import Upload from '@/components/Upload.vue'
 import { useAuthStore } from '@/stores/auth'
+import { useRouter } from 'vue-router'
+const router = useRouter()
 const authStore = useAuthStore()
-const token = computed(() => authStore.token)
-const tenantId = computed(() => authStore.tenant_id)
-console.log('Store tenant:', authStore.tenant_id)
-console.log('Store token:', authStore.token)
-const API_URL = `https://dev02201.getjupita.com/api/${tenantId.value}/fetch-tenant-analyses`
 
 const statements = ref([])
 const isLoading = ref(true)
@@ -27,12 +24,20 @@ const closeModal = () => {
 
 // Fetch statements
 const fetchStatements = async () => {
+  const savedAuth = localStorage.getItem('data') ? JSON.parse(localStorage.getItem('data')) : null
+
+  console.log(JSON.parse(localStorage.getItem('data')))
+  const token = savedAuth ? savedAuth?.token : computed(() => authStore.token)?.value
+  const tenantId = savedAuth
+    ? savedAuth?.user?.tenant_id
+    : computed(() => authStore.tenant_id)?.value
+  const API_URL = `https://dev02201.getjupita.com/api/${tenantId}/fetch-tenant-analyses`
   isLoading.value = true
 
   try {
     const response = await Axios.get(API_URL, {
       headers: {
-        Authorization: `Bearer ${token.value}`
+        Authorization: `Bearer ${token}`
       }
     })
     console.log('fetch statements data:', response)
@@ -148,6 +153,9 @@ const getStatusColor = (status) => {
             </tr>
           </tbody>
         </table>
+      </div>
+      <div v-else class="fill-height align-center justify-center">
+        <h1>Loading statements</h1>
       </div>
 
       <!-- Empty state -->

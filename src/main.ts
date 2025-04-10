@@ -46,6 +46,7 @@ AOS.init()
 
 let isVuetifyLoaded = false
 
+
 router.beforeEach(async (to, from, next) => {
   if (to.name === 'Dashboard' && !isVuetifyLoaded) {
     const vuetifyModule = await import('./plugins/vuetify')

@@ -6,7 +6,7 @@
         <div class="d-flex align-center justify-space-between">
           <div>
             <h2 class="text-h5 font-weight-bold">Current Wallet Balance</h2>
-            <h4 class="text-md font-weight-bold mt-2">₦1,500.00</h4>
+            <h4 class="text-md font-weight-bold mt-2">₦0,00.00</h4>
           </div>
           <div class="d-flex flex-column">
             <v-btn class="mb-2 bg-gray" text @click="openFundWallet"> Fund Wallet </v-btn>
@@ -16,34 +16,52 @@
 
       <!-- Credit History Table -->
       <v-card class="mt-6 pa-4 rounded-lg">
-        <h3 class="text-h6 font-weight-bold">Credit History</h3>
-        <v-data-table
-          :headers="headers"
-          :items="creditHistory"
-          class="elevation-1 mt-4"
-          item-value="date"
-        >
-          <template v-slot:item.amount="{ item }">
-            <span class="font-weight-bold text-green-darken-2">₦{{ item.amount }}</span>
-          </template>
+        <h3 class="mb-4 font-weight-bold">Credit History</h3>
 
-          <template v-slot:item.old_balance="{ item }">
-            <span>₦{{ item.old_balance }}</span>
-          </template>
+        <div class="overflow-x-auto" v-if="creditHistory.length > 0">
+          <table class="min-w-full bg-white border border-gray-300 rounded-lg shadow-md">
+            <thead class="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
+              <tr>
+                <th class="py-3 px-6 text-left">Date</th>
+                <th class="py-3 px-6 text-left">Description</th>
+                <th class="py-3 px-6 text-left">Amount</th>
+                <th class="py-3 px-6 text-left">Old Balance</th>
+                <th class="py-3 px-6 text-center">New Balance</th>
+              </tr>
+            </thead>
 
-          <template v-slot:item.new_balance="{ item }">
-            <span class="font-weight-bold">₦{{ item.new_balance }}</span>
-          </template>
+            <tbody class="text-gray-700 text-sm font-light"></tbody>
+          </table>
+        </div>
+        <div v-else class="fill-height align-center justify-center">
+          <h1>Loading credit history</h1>
+        </div>
 
-          <!-- Empty State -->
-          <template v-slot:no-data>
-            <div class="text-center py-6">
-              <v-icon size="48" color="grey lighten-1">mdi-wallet</v-icon>
-              <p class="mt-2 text-subtitle-1 text-red-600 font-weight-medium">No credit history available</p>
-            </div>
-          </template>
-        </v-data-table>
+        <!-- Empty state -->
+        <div v-else class="fill-height align-center justify-center">
+          <table class="min-w-full bg-white border border-gray-300 rounded-lg shadow-md">
+            <thead class="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
+              <tr>
+                <th class="py-3 px-6 text-left">Date</th>
+                <th class="py-3 px-6 text-left">Description</th>
+                <th class="py-3 px-6 text-left">Amount</th>
+                <th class="py-3 px-6 text-left">Old Balance</th>
+                <th class="py-3 px-6 text-center">New Balance</th>
+              </tr>
+            </thead>
+          </table>
+          <div class="mx-auto mt-4 text-center align-center w-[200px] h-[200px]">
+            <div class="empty-text text-red-800 font-normal mt-8">No credit history</div>
+          </div>
+        </div>
       </v-card>
+
+      <div
+        v-if="loading"
+        class="absolute inset-0 bg-white bg-opacity-80 flex items-center justify-center z-10"
+      >
+        <v-progress-circular indeterminate color="green" class="mx-auto my-4" />
+      </div>
 
       <!-- Fund Wallet Modal -->
       <v-dialog v-model="fundWalletDialog" max-width="400px">
@@ -67,13 +85,38 @@
       </v-dialog>
     </v-container>
   </MainLayout>
+
+  <!-- Payment Widget Modal -->
+  <v-dialog v-model="paymentModal" max-width="600px">
+    <v-card>
+      <v-card-title class="text-h6 font-weight-bold">Complete Payment</v-card-title>
+      <v-card-text>
+        <iframe
+          :src="paymentLink"
+          width="100%"
+          height="400px"
+          frameborder="0"
+          allowfullscreen
+        ></iframe>
+      </v-card-text>
+      <v-card-actions>
+        <v-spacer />
+        <v-btn text @click="paymentModal = false">Close</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import MainLayout from '@/layouts/full/MainLayout.vue'
-
-// Sample Credit History Data
+import { useAuthStore } from '@/stores/auth'
+import { useRouter } from 'vue-router'
+const router = useRouter()
+const authStore = useAuthStore()
+import axios from 'axios'
+import Swal from 'sweetalert2'
+const loading = ref(false)
 const creditHistory = ref([])
 
 // Table Headers
@@ -88,17 +131,97 @@ const headers = [
 // Fund Wallet Modal
 const fundWalletDialog = ref(false)
 const amount = ref('')
+const paymentModal = ref(false)
+const paymentLink = ref('')
 
 // Open Modal
 const openFundWallet = () => {
   fundWalletDialog.value = true
 }
 
-// Handle Funding Wallet (Mock)
-const fundWallet = () => {
-  console.log('Funding Wallet with ₦', amount.value)
-  fundWalletDialog.value = false
+const fetchTransactions = async () => {
+  const savedAuth = localStorage.getItem('data') ? JSON.parse(localStorage.getItem('data')) : null
+
+  console.log(JSON.parse(localStorage.getItem('data')))
+  const token = savedAuth ? savedAuth?.token : computed(() => authStore.token)?.value
+  const tenantId = savedAuth
+    ? savedAuth?.user?.tenant_id
+    : computed(() => authStore.tenant_id)?.value
+  const API_URL = `https://dev02201.getjupita.com/api/${tenantId}/get-tenant-wallet`
+
+  try {
+    const response = await axios.get(API_URL, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+    console.log('fetch statements data:', response)
+  } catch (error) {
+    console.error('Error fetching wallet transactions:', error)
+  } finally {
+  }
 }
+
+const fundWallet = async () => {
+  const savedAuth = JSON.parse(localStorage.getItem('data') || '{}')
+  const token = savedAuth?.token || authStore.token
+  const tenantId = savedAuth?.user?.tenant_id || authStore.tenant_id
+  const loading = ref(false)
+
+  if (!amount.value || amount.value <= 0) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Invalid Amount',
+      text: 'Please enter a valid amount to fund your wallet.'
+    })
+    return
+  }
+
+  const API_URL = `https://dev02201.getjupita.com/api/${tenantId}/initialize-payment`
+  console.log('fund wallet amount:', amount.value)
+  console.log('fund wallet token:', token)
+
+  try {
+    loading.value = true
+    const response = await axios.post(
+      API_URL,
+      { amount: amount.value }, // POST body
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      }
+    )
+    console.log(response)
+
+    paymentLink.value = response.data.data.payment_link
+    // Open the payment link in a new browser tab
+    window.open(paymentLink, '_blank')
+
+    Swal.fire({
+      icon: 'success',
+      title: 'Redirecting to Payment',
+      text: 'Your payment link has been opened in a new tab.'
+    })
+
+    fundWalletDialog.value = false
+  } catch (error) {
+    console.error('Funding error:', error)
+    fundWalletDialog.value = false
+    Swal.fire({
+      icon: 'error',
+      title: 'Payment Failed',
+      text: error?.response?.data?.message || 'Failed to initiate payment. Please try again.'
+    })
+  } finally {
+    loading.value = false
+  }
+}
+
+onMounted(()=> {
+  fetchTransactions()
+})
 </script>
 
 <style scoped>

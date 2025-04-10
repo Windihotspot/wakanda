@@ -17,8 +17,11 @@ export const useAuthStore = defineStore('auth', {
   }),
 
   actions: {
+    
     setAuthData(data: any) {
+      console.log(localStorage.getItem('token'))
       console.log('Setting Auth Data:', data)
+      
 
       this.tenant_id = data.user?.tenant_id || null
       this.token = data.token || null
@@ -31,7 +34,14 @@ export const useAuthStore = defineStore('auth', {
         axios.defaults.headers.common['Authorization'] = `Bearer ${data.token}`
         axios.defaults.headers.common['Accept'] = 'application/json'
       }
-    }
+    },
+
+    init() {
+      if (this.token) {
+        axios.defaults.headers.common['Authorization'] = `Bearer ${this.token}`
+        axios.defaults.headers.common['Accept'] = 'application/json'
+      }
+    },
   },
 
   persist: true // Ensure data persists across reloads (optional)

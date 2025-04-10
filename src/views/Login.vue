@@ -41,17 +41,14 @@ const submitForm = async () => {
     // Extract data from the response properly
     const { token, user, verification_status } = response.data.data // data is the root response object
 
+     localStorage.setItem('data', JSON.stringify(response.data.data));
+
     // Pass the data correctly to the store
     authStore.setAuthData({ token, verification_status, user })
 
-    console.log('Store after login:', {
-      tenant_id: authStore.tenant_id,
-      token: authStore.token,
-      verification_status: authStore.verification_status,
-      user: authStore.user
-    })
-
     router.push('/dashboard')
+
+
 
     // Handle success (e.g., store token, redirect user)
   } catch (error) {
@@ -89,7 +86,7 @@ const changeImage = () => {
 }
 
 onMounted(() => {
-  intervalId = setInterval(changeImage, 6000) // 3 minutes
+  intervalId = setInterval(changeImage, 6000)
 })
 
 onUnmounted(() => {
