@@ -16,13 +16,13 @@
               <h2 class="text-xl font-semibold mb-6">Personal Information</h2>
               <div class="grid grid-cols-2 gap-4">
                 <v-text-field
-                  v-model="profile.firstName"
+                  v-model="profile.firstname"
                   label="First Name"
                   variant="outlined"
                   color="blue"
                 />
                 <v-text-field
-                  v-model="profile.lastName"
+                  v-model="profile.lastname"
                   label="Last Name"
                   variant="outlined"
                   color="blue"
@@ -33,16 +33,27 @@
                   variant="outlined"
                   color="blue"
                 />
-                <v-text-field v-model="profile.email" label="Email Address" variant="outlined" />
+                <v-text-field v-model="email" label="Email Address" variant="outlined" />
                 <v-select
-                  v-model="profile.role"
+                  v-model="selectedRole"
                   :items="roles"
-                  label="Role"
+                  item-title="label"
+                  item-value="value"
+                  label="Select Role"
                   variant="outlined"
                   color="blue"
+                  dense
+                  return-object
                 />
               </div>
-              <v-text-field label="Password" variant="outlined" />
+              <v-text-field
+                v-model="profile.password"
+                label="Password"
+                variant="outlined"
+                type="password"
+                color="blue"
+              />
+
               <v-btn class="mt-4 ml-auto" color="primary" @click="saveProfile">Save changes</v-btn>
             </div>
           </v-window-item>
@@ -53,7 +64,7 @@
             <div class="p-6">
               <div class="flex justify-between items-center mb-4">
                 <h2 class="text-xl font-bold mb-4">Users</h2>
-                <v-btn @click="openModal" class="mt-4" color="primary">Invite User</v-btn>
+                <!-- <v-btn @click="openModal" class="mt-4" color="primary">Invite User</v-btn> -->
               </div>
 
               <div
@@ -219,14 +230,25 @@ const activeTab = ref('profile')
 import { ref, onMounted, computed } from 'vue'
 import axios from 'axios'
 import Swal from 'sweetalert2'
-
 import { useAuthStore } from '@/stores/auth'
 const authStore = useAuthStore()
-const token = computed(() => authStore.token)
-const tenantId = computed(() => authStore.tenant_id)
-console.log('Store tenant:', authStore.tenant_id)
-console.log('Store token:', authStore.token)
-console.log('Store user:', authStore.user)
+const savedAuth = JSON.parse(localStorage.getItem('data') || '{}')
+const token = savedAuth?.token || authStore.token
+const tenantId = savedAuth?.user?.tenant_id || authStore.tenant_id
+const user = savedAuth?.user
+
+const profile = ref({
+  user_id: '',
+  firstname: '',
+  lastname: '',
+  phone_number: '',
+  email: '',
+  role: '',
+  password: ''
+})
+const users = ref([])
+const email = ref('')
+const selectedRole = ref(null)
 
 const roles = ref([
   { value: 'tenant', label: 'Tenant' },
@@ -266,8 +288,7 @@ const getRoles = async () => {
   }
 }
 
-const userData = ref(null)
-const error = ref(null)
+
 
 const showModal = ref(false)
 
@@ -336,31 +357,27 @@ const inviteUser = async () => {
   }
 }
 
-const isDropdownOpen = ref(false)
-const selectedRole = ref(null)
-const selectedRoleLabel = ref('') // Store the selected role label as text
+const updatePassword = async () => {
+  if (!profile.value.password) return
 
-// Toggle dropdown visibility
-const toggleDropdown = () => {
-  isDropdownOpen.value = !isDropdownOpen.value
+  try {
+    const response = await axios.put(
+      `https://dev02201.getjupita.com/api/${tenantId}/update-password`,
+      { password: profile.value.password },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      }
+    )
+    console.log('Password update success:', response.data)
+    Swal.fire('Success', 'Password updated successfully.', 'success')
+  } catch (error) {
+    console.error('Error updating password:', error)
+    Swal.fire('Error', 'Failed to update password.', 'error')
+  }
 }
-
-// Handle role selection
-const selectRole = (role) => {
-  selectedRole.value = role
-  selectedRoleLabel.value = role.label // Set the label to the text field
-  isDropdownOpen.value = false // Close the dropdown after selection
-}
-
-const profile = ref({
-  user_id: '',
-  fullName: '',
-  phone_number: '',
-  email: '',
-  role: 'super_admin'
-})
-
-const users = ref([])
 
 const api = ref({
   clientId: 'jupita-sofimfb-api',
@@ -368,16 +385,15 @@ const api = ref({
 })
 
 const saveProfile = async () => {
-  const savedAuth = JSON.parse(localStorage.getItem('data') || '{}')
-  const token = savedAuth?.token || authStore.token
-  const tenantId = savedAuth?.user?.tenant_id || authStore.tenant_id
   try {
     const payload = {
-      id: profile.value.user_id,
-      business_email: profile.value.email,
+      user_id: profile.value.user_id,
+      firstname: profile.value.firstname,
+      lastname: profile.value.lastname,
+      email: profile.value.email,
       phone_number: profile.value.phone_number
     }
-    console.log(payload)
+    console.log('payload save profile:', payload)
     const response = await axios.put(
       `https://dev02201.getjupita.com/api/${tenantId}/update-user-data`,
       payload,
@@ -388,8 +404,8 @@ const saveProfile = async () => {
         }
       }
     )
-
-    alert('Profile updated successfully!')
+    await updatePassword()
+    Swal.fire('Success', 'Profile uploaded successfully!', 'success')
     console.log('Response:', response.data)
   } catch (err) {
     console.error('Update failed:', err)
@@ -403,14 +419,17 @@ const copyToClipboard = (text) => {
 }
 
 onMounted(() => {
-  const user = authStore.user
-  console.log('User data in store after login:', user)
-
+  console.log('User data from storage:', user)
   if (user) {
-    profile.value.user_id = user.id || ''
-    profile.value.fullName = user.business_name || ''
-    profile.value.phone_number = user.phone_number || ''
-    profile.value.email = user.business_email || ''
+    profile.value = {
+      user_id: user.id || '',
+      firstname: user.firstname || '',
+      lastname: user.lastname || '',
+      phone_number: user.phone_number || '',
+      email: user.email || '',
+      role: ''
+    }
+    email.value = user.email || ''
   }
 })
 </script>

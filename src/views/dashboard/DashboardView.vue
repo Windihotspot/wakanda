@@ -144,7 +144,7 @@ const getStatusColor = (status) => {
               <td class="py-3 px-6">{{ doc.file_name }}</td>
               <td class="py-3 px-6">{{ doc.created_date }}</td>
               <td class="py-3 px-6">
-                <v-chip color="green" small>{{ doc.status }}</v-chip>
+                <v-chip plain color="green" small>{{ doc.status }}</v-chip>
               </td>
               <td class="py-3 px-6 text-center">
                 <span
