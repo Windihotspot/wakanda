@@ -122,7 +122,12 @@ const getStatusColor = (status) => {
     </div>
 
     <div class="p-6">
-      <div class="overflow-x-auto" v-if="statements.length > 0">
+      <div v-if="isLoading" class="flex flex-col items-center justify-center min-h-[200px]">
+        <v-progress-circular indeterminate color="blue" size="40" width="4" />
+        <span class="mt-2 text-gray-600 text-sm">Loading statements...</span>
+      </div>
+
+      <div v-else-if="statements.length > 0" class="overflow-x-auto">
         <table class="min-w-full bg-white border border-gray-300 rounded-lg shadow-md">
           <thead class="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
             <tr>
@@ -130,10 +135,9 @@ const getStatusColor = (status) => {
               <th class="py-3 px-6 text-left">File Name</th>
               <th class="py-3 px-6 text-left">Created Date</th>
               <th class="py-3 px-6 text-left">Status</th>
-              <th class="py-3 px-6 text-center"></th>
+              <th class="py-3 px-6 text-center">Action</th>
             </tr>
           </thead>
-
           <tbody class="text-gray-700 text-sm font-light">
             <tr v-for="doc in statements" :key="doc.id" class="border-b border-gray-200">
               <td class="py-3 px-6">{{ doc.name }}</td>
@@ -154,11 +158,7 @@ const getStatusColor = (status) => {
           </tbody>
         </table>
       </div>
-      <div v-else class="fill-height align-center justify-center">
-        <h1>Loading statements</h1>
-      </div>
 
-      <!-- Empty state -->
       <div v-else class="fill-height align-center justify-center">
         <table class="min-w-full bg-white border border-gray-300 rounded-lg shadow-md">
           <thead class="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
@@ -181,7 +181,7 @@ const getStatusColor = (status) => {
     <v-dialog v-model="showModal" persistent max-width="600px" class="pa-4">
       <template v-slot:default="{ close }">
         <div style="max-height: 80vh; overflow-y: auto">
-          <Upload @close="closeModal" />
+          <Upload @close="closeModal" :on-success="fetchStatements" />
         </div>
       </template>
     </v-dialog>

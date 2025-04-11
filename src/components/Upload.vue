@@ -42,9 +42,7 @@
         v-if="loading"
         class="absolute inset-0 bg-white bg-opacity-80 flex items-center justify-center z-10"
       >
-        <v-progress-circular indeterminate color="green" class="mx-auto my-4" />
-
-        
+        <v-progress-circular indeterminate color="blue" class="mx-auto my-4" />
       </div>
 
       <p class="text-gray-600 text-sm font-semibold mb-2">Select a Statement Type</p>
@@ -90,7 +88,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, defineProps } from 'vue'
 import axios from 'axios'
 import Swal from 'sweetalert2'
 const loading = ref(false)
@@ -99,6 +97,10 @@ const authStore = useAuthStore()
 const token = computed(() => authStore.token)
 const tenantId = computed(() => authStore.tenant_id)
 const emit = defineEmits(['close'])
+
+const props = defineProps({
+  onSuccess: Function
+})
 
 const selectedFile = ref(null)
 const filePassword = ref('')
@@ -114,9 +116,7 @@ const statementType = ref('')
 
 const statementTypes = [
   { label: 'Consumer', value: 'consumer' },
-  { label: 'Business', value: 'business' },
-  { label: 'Mobile Money', value: 'mobile-money' },
-  { label: 'Mobile Money Business', value: 'mobile-money-business' }
+  { label: 'Business', value: 'business' }
 ]
 
 const handleDrop = (event) => {
@@ -186,6 +186,9 @@ const uploadFile = async () => {
 
     console.log('✅ Success:', response)
     Swal.fire('Success', 'File uploaded successfully!', 'success')
+    if (props.onSuccess) {
+      props.onSuccess()
+    }
 
     // Reset input values
     selectedFile.value = null

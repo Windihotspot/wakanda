@@ -52,7 +52,7 @@ onMounted(() => {
     </v-main>
   </v-app>
 
-  <v-icon class="settings-icon">fa-solid fa-cog</v-icon>
+  
 </template>
 
 <style scoped>

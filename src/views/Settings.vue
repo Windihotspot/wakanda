@@ -308,7 +308,7 @@ const inviteUser = async () => {
       payload,
       {
         headers: {
-          Authorization: `Bearer ${token.value}`
+          Authorization: `Bearer ${token}`
         }
       }
     )

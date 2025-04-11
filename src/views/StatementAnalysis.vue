@@ -1,22 +1,22 @@
 <template>
   <MainLayout>
-    <div class="p-6">
-      <h2 class="text-xl font-bold mb-4">Statement Analysis Result</h2>
-      <div class="p-4 md:p-8">
+    <div class="p-2">
+      <h2 class="text-xl font-bold m-8">Statement Analysis Result</h2>
+      <div class="p-2 md:p-8">
         <!-- Back Button -->
         <button @click="goBack" class="flex items-center text-blue-600 font-semibold">
           <i class="fas fa-arrow-left mr-2"></i> Back
         </button>
 
         <!-- Document Header -->
-        <div class="bg-white shadow-lg rounded-lg p-6 mt-4">
-          <h1 class="text-2xl font-bold text-blue-700">Sandra.pdf</h1>
+        <div class="bg-white shadow-lg rounded-lg p-4 mt-2">
+          <h1 class="text-xl font-semibold text-blue-700">{{ clientName }}</h1>
 
           <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-gray-700 mt-4">
             <p>
               <i class="fas fa-calendar mr-2"></i>
               <strong>Statement Period:</strong> <br />
-              11 Dec 2024 - 9 Jan 2025
+              {{ statementPeriod }}
             </p>
             <!-- <p>
                         <i class="fas fa-file-alt mr-2"></i>
@@ -29,7 +29,7 @@
             <p>
               <i class="fas fa-user-circle mr-2"></i>
               <strong>Customer Name:</strong> <br />
-              SANDRA EDE OYIBE
+              {{ clientName }}
             </p>
 
             <!-- Download Report Button -->
@@ -74,204 +74,6 @@
             <v-tab value="behavioral">Behavioral</v-tab>
             <v-tab value="transactions">Transactions</v-tab>
           </v-tabs>
-
-          <v-window v-model="activeTab">
-            <!-- summary Section -->
-            <v-window-item value="summary">
-              <div class="bg-white shadow-lg rounded-lg p-1 mt-4">
-                <button class="flex items-center text-blue-600 font-semibold">
-                  <i class="fas fa-wallet mr-2"></i> Spend
-                </button>
-
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-                  <div class="bg-blue-100 p-4 rounded-lg">
-                    <p class="text-md text-gray-500"></p>
-                    <p class="text-xs font-semibold mt-4">Total Credit</p>
-                  </div>
-                  <div class="bg-blue-100 p-4 rounded-lg">
-                    <p class="text-md text-gray-500"></p>
-                    <p class="text-xs font-semibold mt-4">Total Debits</p>
-                  </div>
-                  <div class="bg-blue-100 p-4 rounded-lg">
-                    <p class="text-md text-gray-500"></p>
-                    <p class="text-xs font-semibold mt-4">Average Monthly Credits</p>
-                  </div>
-                  <div class="bg-blue-100 p-4 rounded-lg">
-                    <p class="text-md text-gray-500"></p>
-                    <p class="text-xs font-semibold mt-4">Average Monthly Debits</p>
-                  </div>
-                  <div class="bg-blue-100 p-4 rounded-lg">
-                    <p class="text-md text-gray-500"></p>
-                    <p class="text-xs font-semibold mt-4">Average Monthly Balance</p>
-                  </div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-                  <div class="bg-blue-100 p-4 rounded-lg">
-                    <p class="text-md text-gray-500">Most Frequent Expense</p>
-                    <p class="text-xs font-semibold mt-4"></p>
-                  </div>
-                  <div class="bg-blue-100 p-4 rounded-lg">
-                    <p class="text-md text-gray-500">Highest Spend</p>
-                    <p class="text-xs font-semibold mt-4"></p>
-                  </div>
-                  <div class="bg-blue-100 p-4 rounded-lg">
-                    <p class="text-md text-gray-500">Most Frequent Expense Amount</p>
-                    <p class="text-xs font-semibold mt-4"></p>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Expense Table -->
-              <v-card class="mt-6 pa-4 rounded-lg">
-                <h3 class="text-h6 font-weight-bold">Expenses</h3>
-                <v-data-table :headers="headers" class="elevation-1 mt-4" item-value="date">
-                  <template v-slot:item.amount="{ item }">
-                    <span class="font-weight-bold text-green-darken-2">₦</span>
-                  </template>
-
-                  <template v-slot:item.old_balance="{ item }">
-                    <span>₦</span>
-                  </template>
-
-                  <template v-slot:item.new_balance="{ item }">
-                    <span class="font-weight-bold">₦</span>
-                  </template>
-
-                  <!-- Empty State -->
-                  <template v-slot:no-data>
-                    <div class="text-center py-6">
-                      <v-icon size="48" color="grey lighten-1">mdi-wallet</v-icon>
-                      <p class="mt-2 text-subtitle-1 text-red-600 font-weight-medium">
-                        No credit history available
-                      </p>
-                    </div>
-                  </template>
-                </v-data-table>
-              </v-card>
-            </v-window-item>
-
-            <!-- cash flow Section -->
-            <v-window-item value="cash flow">
-              <div class="">
-                <!-- Summary Section -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
-                  <!-- Inflow Summary -->
-                  <div class="bg-white border shadow-lg rounded-lg p-6">
-                    <h2 class="text-blue-800 font-bold text-xl">Inflow Summary</h2>
-                    <p class="mt-2">
-                      <strong>Total Inflow:</strong>
-                      <span class="text-green-600 font-semibold mt-2">₦71,521,577.41</span>
-                    </p>
-                    <p class="mt-2">
-                      <strong>Average Monthly Inflow:</strong>
-                      ₦71,521,577.41
-                    </p>
-                    <p class="mt-2">
-                      <strong>Average Weekly Inflow:</strong>
-                      ₦71,521,577.41
-                    </p>
-                  </div>
-
-                  <!-- Outflow Summary -->
-                  <div class="bg-white border shadow-lg rounded-lg p-6">
-                    <h2 class="text-blue-800 font-bold text-xl">Outflow Summary</h2>
-                    <p class="mt-2">
-                      <strong>Total Outflow:</strong>
-                      <span class="text-red-600 font-semibold">₦71,521,577.41</span>
-                    </p>
-                    <p class="mt-2">
-                      <strong>Average Monthly Outflow:</strong>
-                      ₦71,521,577.41
-                    </p>
-                    <p class="mt-2">
-                      <strong>Average Weekly Outflow:</strong>
-                      ₦71,521,577.41
-                    </p>
-                  </div>
-                </div>
-
-                <!-- Balance & Cash Flow -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-                  <div class="bg-white border shadow-lg rounded-lg p-6 text-center">
-                    <p class="text-lg font-semibold">₦71,521,577.41</p>
-                    <p class="text-gray-600">Average Monthly Balance</p>
-                  </div>
-                  <div class="bg-white shadow-lg border rounded-lg p-6 text-center">
-                    <p class="text-lg font-semibold">₦71,521,577.41</p>
-                    <p class="text-gray-600">Average Weekly Balance</p>
-                  </div>
-                  <div class="bg-white shadow-lg border rounded-lg p-6 text-center">
-                    <p class="font-semibold text-gray-800">Negative Cash Flow</p>
-                    <p class="text-gray-600">Inflow to Outflow Rate</p>
-                  </div>
-                </div>
-
-                <!-- Monthly & Weekly Credit & Debit -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-                  <!-- Monthly -->
-                  <div class="bg-white shadow-lg border rounded-lg p-6">
-                    <h3 class="text-lg font-bold text-gray-800">Monthly Credit & Debit</h3>
-                    <div class="overflow-x-auto mt-4">
-                      <table class="w-full border-collapse">
-                        <thead>
-                          <tr class="bg-gray-200 text-gray-700">
-                            <th class="p-2 text-left">Month</th>
-                            <th class="p-2 text-left">Total Credit</th>
-                            <th class="p-2 text-left">Total Debit</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr class="border-b">
-                            <td class="p-2">Jan 2023</td>
-                            <td class="p-2">₦10,882,931.76</td>
-                            <td class="p-2">₦10,882,931.76</td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-
-                  <!-- Weekly -->
-                  <div class="bg-white shadow-lg border rounded-lg p-6">
-                    <h3 class="text-lg font-bold text-gray-800">Weekly Credit & Debit</h3>
-                    <div class="overflow-x-auto mt-4">
-                      <table class="w-full border-collapse">
-                        <thead>
-                          <tr class="bg-gray-200 text-gray-700">
-                            <th class="p-2 text-left">Month</th>
-                            <th class="p-2 text-left">Total Credit</th>
-                            <th class="p-2 text-left">Total Debit</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr class="border-b">
-                            <td class="p-2">Jan 2023 Wk 1</td>
-                            <td class="p-2">₦10,882,931.76</td>
-                            <td class="p-2">₦10,882,931.76</td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </v-window-item>
-
-            <!-- behavioral Section -->
-            <v-window-item value="behavioral">
-              <div class="bg-white shadow-lg border rounded-lg p-6 mt-4">
-                <p class="text-lg font-semibold">Score Card Data Goes Here...</p>
-              </div>
-            </v-window-item>
-
-            <!-- Transactions Section -->
-            <v-window-item value="transactions">
-              <div class="bg-white shadow-lg border rounded-lg p-6 mt-4">
-                <p class="text-lg font-semibold">Transactions History...</p>
-              </div>
-            </v-window-item>
-          </v-window>
         </div>
       </div>
     </div>
@@ -292,6 +94,10 @@ const result = ref(null)
 const loading = ref(true)
 const error = ref(null)
 
+const fileName = ref('')
+const clientName = ref('')
+const statementPeriod = ref('')
+
 const fetchAnalysisResult = async (analysisId) => {
   const savedAuth = JSON.parse(localStorage.getItem('data') || '{}')
   const token = savedAuth?.token || authStore.token
@@ -307,6 +113,19 @@ const fetchAnalysisResult = async (analysisId) => {
     })
     console.log('statement analysis result page data:', response)
     result.value = response.data
+
+    // Extract needed data
+    const analysis = response.data?.data?.analysis_result?.analysis_result
+    fileName.value = analysis?.name || 'N/A'
+    clientName.value = analysis?.clientFullName || 'N/A'
+
+    const start = new Date(analysis?.createdDate)
+    const end = new Date(analysis?.endDate)
+    if (!isNaN(start) && !isNaN(end)) {
+      statementPeriod.value = `${start.toLocaleDateString()} - ${end.toLocaleDateString()}`
+    } else {
+      statementPeriod.value = 'Unknown period'
+    }
   } catch (err) {
     console.error('Error fetching analysis result:', err)
     error.value = 'Unable to fetch analysis result.'
@@ -325,3 +144,9 @@ onMounted(() => {
   }
 })
 </script>
+
+<style scoped>
+.custom-btn {
+  background-color: #1f5aa3;
+}
+</style>

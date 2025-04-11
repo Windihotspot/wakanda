@@ -100,11 +100,11 @@ onUnmounted(() => {
       <img
         src="/src/assets/image.jpg"
         alt="Onboarding Image"
-        class="w-full h-full object-cover rounded-b-lg md:rounded-none md:rounded-l-lg shadow-2xl"
+        class="w-full h-[550px] object-cover rounded-b-lg md:rounded-none md:rounded-l-lg shadow-2xl"
       />
     </div>
     <!-- Left Section -->
-    <div class="w-full md:w-1/2 flex items-center justify-center bg-white p-6">
+    <div class="w-full md:w-1/2 flex items-center justify-center bg-white">
       <div>
         <!-- Login form -->
         <div class="max-w-md w-full">
@@ -113,7 +113,7 @@ onUnmounted(() => {
 
           <form @submit.prevent="submitForm" class="">
             <!-- Email Error -->
-            <p v-if="loginForm.errors.email" class="text-red-500  text-sm">
+            <p v-if="loginForm.errors.email" class="text-red-500 mt-4 text-sm">
               {{ loginForm.errors.email }}
             </p>
             <!-- Email Input -->
@@ -123,6 +123,7 @@ onUnmounted(() => {
               v-model="loginForm.email"
               variant="outlined"
               color="blue"
+              class="mt-4"
             />
 
             <!-- Password Error -->
@@ -150,18 +151,21 @@ onUnmounted(() => {
               <label class="flex items-center">
                 <el-checkbox v-model="loginForm.remember" label="Remember me" size="large" />
               </label>
-              <span class="text-sm text-blue-600 ml-auto cursor-pointer">Reset Password</span>
+              <span class="text-sm ml-auto cursor-pointer" style="color: #1f5aa3;">Reset Password</span>
             </div>
 
             <!-- Submit Button -->
-            <button
-            @click="submitForm"
-              type="submit"
-              :disabled="loginForm.processing"
-              class="flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
-            >
-              {{ loginForm.processing ? 'Signing in...' : 'Sign in' }}
-            </button>
+            <v-btn
+  type="submit"
+  :loading="loginForm.processing"
+  :disabled="loginForm.processing"
+  color="blue"
+  class="w-full text-white font-semibold text-sm custom-btn"
+  height="40"
+>
+  {{ loginForm.processing ? 'Signing in...' : 'Sign in' }}
+</v-btn>
+
           </form>
 
           <p class="mt-6 text-center text-sm text-gray-500">
@@ -218,6 +222,6 @@ onUnmounted(() => {
   opacity: 0;
 }
 .custom-btn {
-  background-color: #0056d2;
+  background-color: #1f5aa3;
 }
 </style>
