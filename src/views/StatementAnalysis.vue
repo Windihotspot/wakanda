@@ -10,7 +10,7 @@
 
         <!-- Document Header -->
         <div class="bg-white shadow-lg rounded-lg p-4 mt-2">
-          <h1 class="text-xl font-semibold text-blue-700">{{ clientName }}</h1>
+         
 
           <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-gray-700 mt-4">
             <p>
@@ -18,18 +18,18 @@
               <strong>Statement Period:</strong> <br />
               {{ statementPeriod }}
             </p>
-            <!-- <p>
-                        <i class="fas fa-file-alt mr-2"></i>
-                        <strong>PDF Created Date:</strong> March 12, 2025
-                    </p> -->
-            <!-- <p>
-                        <i class="fas fa-user mr-2"></i>
-                        <strong>Uploaded By:</strong> Femi Afelogun
-                    </p> -->
+           
             <p>
               <i class="fas fa-user-circle mr-2"></i>
-              <strong>Customer Name:</strong> <br />
+              <strong>Account Name:</strong> <br />
               {{ clientName }}
+            </p>
+
+
+            <p>
+              <i class="fas fa-user-circle mr-2"></i>
+              <strong>Account Number:</strong> <br />
+              {{ accountId }}
             </p>
 
             <!-- Download Report Button -->
@@ -97,6 +97,7 @@ const error = ref(null)
 const fileName = ref('')
 const clientName = ref('')
 const statementPeriod = ref('')
+const accountId = ref('')
 
 const fetchAnalysisResult = async (analysisId) => {
   const savedAuth = JSON.parse(localStorage.getItem('data') || '{}')
@@ -118,6 +119,7 @@ const fetchAnalysisResult = async (analysisId) => {
     const analysis = response.data?.data?.analysis_result?.analysis_result
     fileName.value = analysis?.name || 'N/A'
     clientName.value = analysis?.clientFullName || 'N/A'
+    accountId.value = analysis?.accountId || 'N/A'
 
     const start = new Date(analysis?.createdDate)
     const end = new Date(analysis?.endDate)

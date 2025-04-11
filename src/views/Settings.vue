@@ -169,6 +169,17 @@
                 variant="outlined"
                 color="blue"
               />
+              <v-select
+                  v-model="selectedRole"
+                  :items="roles"
+                  item-title="label"
+                  item-value="value"
+                  label="Select Role"
+                  variant="outlined"
+                  color="blue"
+                  dense
+                  return-object
+                />
               <v-text-field
                 v-model="newUser.password"
                 type="password"
@@ -177,34 +188,7 @@
                 color="blue"
               />
 
-              <div class="relative">
-                <!-- Dropdown menu -->
-                <div
-                  v-if="isDropdownOpen"
-                  class="absolute left-0 mt-2 w-full bg-white border border-gray-300 rounded-lg shadow-lg z-10"
-                >
-                  <ul class="py-2">
-                    <li
-                      v-for="role in roles"
-                      :key="role.value"
-                      class="px-4 py-2 text-gray-700 hover:bg-blue-500 hover:text-white cursor-pointer"
-                      @click="selectRole(role)"
-                    >
-                      {{ role.label }}
-                    </li>
-                  </ul>
-                </div>
-                <!-- Button to toggle dropdown -->
-                <v-text-field
-                  color="blue"
-                  variant="outlined"
-                  v-model="selectedRoleLabel"
-                  label="Role"
-                  readonly
-                  class="w-full cursor-pointer"
-                  @click="toggleDropdown"
-                />
-              </div>
+              
             </form>
           </div>
 

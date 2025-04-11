@@ -97,16 +97,18 @@
       <!-- <div v-if="loadingPayment" class="d-flex justify-center align-center">
         <v-progress-circular indeterminate color="primary" />
       </div> -->
-      <v-card-text>
-        <iframe
-          v-if="!loadingPayment"
-          :src="paymentLink"
-          width="100%"
-          height="400px"
-          frameborder="0"
-          allowfullscreen
-        ></iframe>
-      </v-card-text>
+      <div>
+        <v-card-text>
+          <iframe
+            :src="paymentLink"
+            width="100%"
+            height="400px"
+            frameborder="0"
+            allowfullscreen
+          ></iframe>
+        </v-card-text>
+      </div>
+
       <v-card-actions>
         <v-spacer />
         <v-btn color="danger" @click="paymentModal = false">Close</v-btn>
@@ -221,6 +223,9 @@ const fundWallet = async () => {
   } finally {
     loading.value = false
   }
+}
+const onIframeLoad = () => {
+  loadingPayment.value = false
 }
 
 onMounted(() => {

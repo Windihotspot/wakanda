@@ -236,4 +236,7 @@ onUnmounted(() => {
 .custom-btn {
   background-color: #1f5aa3;
 }
+.v-btn{
+  text-transform: none;
+}
 </style>
