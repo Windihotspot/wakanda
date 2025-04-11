@@ -3,6 +3,7 @@ import daisyui from 'daisyui'
 import defaultTheme from "tailwindcss/defaultTheme";
 
 export default {
+  plugins: [require('@tailwindcss/forms')],
   content: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
   presets: [],
   darkMode: 'media', // or 'class'

@@ -23,10 +23,6 @@ const currentStep = ref(0)
 
 const showPassword = ref(false)
 
-// Compute input type based on visibility
-const passwordInputType = computed(() => (showPassword.value ? 'text' : 'password'))
-
-// Toggle password visibility
 const togglePasswordVisibility = () => {
   showPassword.value = !showPassword.value
 }
@@ -86,13 +82,18 @@ const passwordMessage = ref('')
 
 // Compute password strength
 const strength = computed(() => {
-  const password = registerForm.password
+  const password = registerForm.value.password
   let score = 0
+  // Check for uppercase letter
   if (/[A-Z]/.test(password)) score++
+  // Check for lowercase letter
   if (/[a-z]/.test(password)) score++
+  // Check for number
   if (/[0-9]/.test(password)) score++
-  if (/[!@#$%^&*(),.?":{}|<>]/.test(password)) score++
-  if (password.length >= 8) score++
+  // Check for special characters (including a wider range)
+  if (/[!@#$%^&*(),.?":{}|<>[\]\\/-_+=`~;']/.test(password)) score++
+  // Check for length of at least 8 characters
+  if (password.length >= 4) score++
 
   if (score === 5) return 'Strong'
   if (score >= 3) return 'Medium'
@@ -101,7 +102,7 @@ const strength = computed(() => {
 
 // Watch for password changes
 const checkPasswordStrength = () => {
-  const password = registerForm.password
+  const password = registerForm.value.password
   if (!password) {
     showDialog.value = false
     return
@@ -114,6 +115,9 @@ const checkPasswordStrength = () => {
         ? '⚠️ Medium strength, add more characters or symbols.'
         : '❌ Weak password! Use uppercase, numbers, and symbols.'
 }
+
+
+watch(() => registerForm.value.password, checkPasswordStrength)
 
 const images = [
   'https://images.unsplash.com/photo-1705948354275-d55101017fb6?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTZ8fGNyZWRpdCUyMHNlYXJjaHxlbnwwfHwwfHx8MA%3D%3D',
@@ -146,6 +150,13 @@ onUnmounted(() => {
 
 <template>
   <div class="flex h-screen">
+    <!-- Password Strength Message -->
+    <div
+      v-if="showDialog"
+      class="fixed top-4 right-4 bg-gray-800 text-white p-2 rounded-lg shadow-lg z-50"
+    >
+      <p>{{ passwordMessage }}</p>
+    </div>
     <!-- Sidebar -->
     <div class="w-1/3 justify-center p-4 items-center bg-white shadow-xl">
       <!-- Logo -->
@@ -178,7 +189,7 @@ onUnmounted(() => {
       </ul>
 
       <div class="absolute bottom-8 left-8 flex space-x-4 text-gray-500">
-        <RouterLink to="/login">
+        <RouterLink to="/">
           <v-btn
             no-uppercase
             variant="text"
@@ -236,43 +247,21 @@ onUnmounted(() => {
             class="w-full p-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-100"
           />
 
-          <div class="grid grid-cols-2 gap-4">
-            <div class="relative">
-              <input
-                v-model="registerForm.password"
-                @input="checkPasswordStrength"
-                :type="passwordInputType"
-                placeholder="Password"
-                class="w-full p-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-100"
-              />
-              <span
-                class="absolute inset-y-0 right-3 flex items-center cursor-pointer text-black-200"
+          <v-text-field
+            :type="showPassword ? 'text' : 'password'"
+            v-model="registerForm.password"
+            label="Password"
+            variant="outlined"
+            color="blue"
+          >
+            <template #append-inner>
+              <i
+                :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"
                 @click="togglePasswordVisibility"
-              >
-                <v-icon v-if="showPassword" class="text-xs">mdi-eye-off</v-icon>
-                <v-icon v-else class="text-xs">mdi-eye</v-icon>
-              </span>
-            </div>
-
-            <!-- <div class="relative">
-                          <input
-                              v-model="registerForm.password_confirmation"
-                              :type="passwordInputType"
-                              placeholder="Confirm Password"
-                              class="w-full p-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-100"
-                          />
-                          <span
-                              class="absolute inset-y-0 right-3 flex items-center cursor-pointer text-black-200"
-                              @click="togglePasswordVisibility"
-                          >
-                              <v-icon v-if="showPassword" class="text-md"
-                                  >mdi-eye-off</v-icon
-                              >
-                              <v-icon v-else class="text-md">mdi-eye</v-icon>
-                          </span>
-                      </div> -->
-            <p v-if="passwordsDoNotMatch" class="text-red-500 text-sm">Passwords do not match</p>
-          </div>
+                class="cursor-pointer text-black"
+              ></i>
+            </template>
+          </v-text-field>
 
           <div class="flex mb-4">
             <input

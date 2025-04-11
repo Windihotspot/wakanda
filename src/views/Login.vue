@@ -6,16 +6,6 @@ const authStore = useAuthStore()
 import { useRouter } from 'vue-router'
 const router = useRouter()
 
-const showPassword = ref(false)
-
-// Compute input type based on visibility
-const passwordInputType = computed(() => (showPassword.value ? 'text' : 'password'))
-
-// Toggle password visibility
-const togglePasswordVisibility = () => {
-  showPassword.value = !showPassword.value
-}
-
 const loginForm = ref({
   email: '',
   password: '',
@@ -26,6 +16,11 @@ const loginForm = ref({
   },
   processing: false
 })
+const showPassword = ref(false)
+
+const togglePasswordVisibility = () => {
+  showPassword.value = !showPassword.value
+}
 // Handle Login Submission
 const submitForm = async () => {
   loginForm.value.processing = true
@@ -41,14 +36,12 @@ const submitForm = async () => {
     // Extract data from the response properly
     const { token, user, verification_status } = response.data.data // data is the root response object
 
-     localStorage.setItem('data', JSON.stringify(response.data.data));
+    localStorage.setItem('data', JSON.stringify(response.data.data))
 
     // Pass the data correctly to the store
     authStore.setAuthData({ token, verification_status, user })
 
     router.push('/dashboard')
-
-
 
     // Handle success (e.g., store token, redirect user)
   } catch (error) {
@@ -118,7 +111,12 @@ onUnmounted(() => {
           <h1 class="text-3xl font-bold text-gray-800">Welcome back!</h1>
           <p class="text-gray-600 mt-2">Provide your login credentials to access your account</p>
 
-          <div class="mt-4 space-y-4">
+          <form @submit.prevent="submitForm" class="space-y-4 pt-8">
+            <!-- Email Error -->
+            <p v-if="loginForm.errors.email" class="text-red-500  text-sm">
+              {{ loginForm.errors.email }}
+            </p>
+            <!-- Email Input -->
             <v-text-field
               type="email"
               label="Email address"
@@ -126,58 +124,44 @@ onUnmounted(() => {
               variant="outlined"
               color="blue"
             />
-            <p v-if="loginForm.errors.email" class="text-red-500 text-sm">
-              {{ loginForm.errors.email }}
+
+            <!-- Password Error -->
+            <p v-if="loginForm.errors.password" class="text-red-500 text-sm">
+              {{ loginForm.errors.password }}
             </p>
-            <div class="relative">
-              <v-text-field
-                type="password"
-                v-model="loginForm.password"
-                label="Password"
-                variant="outlined"
-                color="blue"
-              />
-
-              <span
-                class="absolute inset-y-0 right-3 flex items-center cursor-pointer text-black-200"
-                @click="togglePasswordVisibility"
-              >
-                <v-icon v-if="showPassword" class="text-xs">mdi-eye-off</v-icon>
-                <v-icon v-else class="text-xs">mdi-eye</v-icon>
-              </span>
-              <p v-if="loginForm.errors.password" class="text-red-500 text-sm">
-                {{ loginForm.errors.password }}
-              </p>
-            </div>
-
+            <!-- Password Input with Show/Hide Icon -->
+            <v-text-field
+    :type="showPassword ? 'text' : 'password'"
+    v-model="loginForm.password"
+    label="Password"
+    variant="outlined"
+    color="blue"
+  >
+    <template #append-inner>
+      <i
+        :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"
+        @click="togglePasswordVisibility"
+        class="cursor-pointer text-black"
+      ></i>
+    </template>
+  </v-text-field>
+            <!-- Remember Checkbox -->
             <div class="flex items-center justify-between">
-              <div class="flex items-center">
-                <v-checkbox
-                variant="outlined"
-                  v-model="loginForm.remember"
-                  label="Keep me signed in"
-                  color="blue"
-                  density="comfortable"
-                  hide-details
-                />
-              </div>
-              <span class="text-sm text-blue-600 ml-auto">Reset Password</span>
-
-              <div class="text-sm">
-                <span class="font-semibold text-blue-600 hover:text-blue-500"> </span>
-              </div>
+              <label class="flex items-center">
+                <el-checkbox v-model="loginForm.remember" label="Remember me" size="large" />
+              </label>
+              <span class="text-sm text-blue-600 ml-auto cursor-pointer">Reset Password</span>
             </div>
 
-            <v-btn
-              @click="submitForm"
+            <!-- Submit Button -->
+            <button
+              type="submit"
               :disabled="loginForm.processing"
-              no-uppercase
-              size="large"
-              class="normal-case w-full p-4 bg-blue-600 hover:bg-blue-700 text-white text-none mr-2 custom-btn"
+              class="flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
             >
               {{ loginForm.processing ? 'Signing in...' : 'Sign in' }}
-            </v-btn>
-          </div>
+            </button>
+          </form>
 
           <p class="mt-6 text-center text-sm text-gray-500">
             Don't have an account?
