@@ -143,8 +143,8 @@ const getStatusColor = (status) => {
               <td class="py-3 px-6">{{ doc.name }}</td>
               <td class="py-3 px-6">{{ doc.file_name }}</td>
               <td class="py-3 px-6">{{ doc.created_date }}</td>
-              <td class="py-3 px-6">
-                <v-chip plain color="green" small>{{ doc.status }}</v-chip>
+              <td class="py-3 px-6 text-green-600">
+                {{ doc.status }}
               </td>
               <td class="py-3 px-6 text-center">
                 <span
@@ -193,6 +193,6 @@ const getStatusColor = (status) => {
   height: 2rem;
 }
 .custom-btn {
-  background-color: #0056d2;
+  background-color: #1f5aa3;
 }
 </style>

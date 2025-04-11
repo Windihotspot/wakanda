@@ -82,15 +82,15 @@ const sidebarMenu = ref(sidebarItems)
 }
 
 .custom-active {
-  color: blue !important; /* Active state color */
+  color: #1f5aa3 !important; /* Active state color */
   background-color: rgba(0, 0, 255, 0.1); /* Light blue background */
 }
 
 .custom-active .menu-item {
-  color: #3f8cff !important;
+  color: #1f5aa3!important;
 }
 
 .custom-active .v-icon {
-  color: #3f8cff !important;
+  color: #1f5aa3!important;
 }
 </style>
