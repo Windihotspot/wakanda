@@ -40,7 +40,7 @@
 
       <div
         v-if="loading"
-        class="absolute inset-0 bg-white bg-opacity-80 flex items-center justify-center z-10"
+        class="absolute inset-0 bg-white rounded shadow-xl bg-opacity-80 flex items-center justify-center z-10"
       >
         <v-progress-circular indeterminate color="blue" class="mx-auto my-4" />
       </div>

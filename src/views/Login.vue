@@ -132,40 +132,52 @@ onUnmounted(() => {
             </p>
             <!-- Password Input with Show/Hide Icon -->
             <v-text-field
-    :type="showPassword ? 'text' : 'password'"
-    v-model="loginForm.password"
-    label="Password"
-    variant="outlined"
-    color="blue"
-  >
-    <template #append-inner>
-      <i
-        :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"
-        @click="togglePasswordVisibility"
-        class="cursor-pointer text-black"
-      ></i>
-    </template>
-  </v-text-field>
+              :type="showPassword ? 'text' : 'password'"
+              v-model="loginForm.password"
+              label="Password"
+              variant="outlined"
+              color="blue"
+            >
+              <template #append-inner>
+                <i
+                  :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"
+                  @click="togglePasswordVisibility"
+                  class="cursor-pointer text-black"
+                ></i>
+              </template>
+            </v-text-field>
             <!-- Remember Checkbox -->
             <div class="flex items-center justify-between">
               <label class="flex items-center">
                 <el-checkbox v-model="loginForm.remember" label="Remember me" size="large" />
               </label>
-              <span class="text-sm ml-auto cursor-pointer" style="color: #1f5aa3;">Reset Password</span>
+              <RouterLink to="/resetpassword">
+              <v-btn
+                no-uppercase
+                variant="text"
+                size="small"
+                color="#1f5aa3"
+                class="normal-case mb-1 text-none "
+              >
+                Reset password
+              </v-btn>
+            </RouterLink>
+
+
+              
             </div>
 
             <!-- Submit Button -->
             <v-btn
-  type="submit"
-  :loading="loginForm.processing"
-  :disabled="loginForm.processing"
-  color="blue"
-  class="w-full text-white font-semibold text-sm custom-btn"
-  height="40"
->
-  {{ loginForm.processing ? 'Signing in...' : 'Sign in' }}
-</v-btn>
-
+              type="submit"
+              :loading="loginForm.processing"
+              :disabled="loginForm.processing"
+              color="blue"
+              class="w-full text-white font-semibold text-sm custom-btn"
+              height="40"
+            >
+              {{ loginForm.processing ? 'Signing in...' : 'Sign in' }}
+            </v-btn>
           </form>
 
           <p class="mt-6 text-center text-sm text-gray-500">
