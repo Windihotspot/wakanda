@@ -69,13 +69,17 @@
           <v-card-title class="text-h5">Fund Wallet</v-card-title>
           <v-card-text>
             <v-text-field
-              label="Amount"
-              v-model="amount"
-              type="number"
-              variant="outlined"
-              color="blue"
-              prepend-inner-icon="mdi-currency-ngn"
-            />
+  label="Amount"
+  v-model="amount"
+  type="number"
+  variant="outlined"
+  color="blue"
+>
+  <template v-slot:prepend>
+    <span>₦</span>
+  </template>
+</v-text-field>
+
           </v-card-text>
           <v-card-actions>
             <v-btn text @click="fundWalletDialog = false">Cancel</v-btn>
@@ -123,6 +127,9 @@ import axios from 'axios'
 import Swal from 'sweetalert2'
 const loading = ref(false)
 const creditHistory = ref([])
+import Cleave from 'cleave.js'
+
+
 
 // Table Headers
 const headers = [
