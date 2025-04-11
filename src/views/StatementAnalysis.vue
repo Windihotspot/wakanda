@@ -9,61 +9,37 @@
         </button>
 
         <!-- Document Header -->
-        <div class="bg-white shadow-lg rounded-lg p-4 mt-2">
-         
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-gray-700 mt-4">
+          <p>
+            <i class="fas fa-calendar mr-2"></i>
+            <strong>Statement Period:</strong> <br />
+            {{ statementPeriod }}
+          </p>
 
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-gray-700 mt-4">
-            <p>
-              <i class="fas fa-calendar mr-2"></i>
-              <strong>Statement Period:</strong> <br />
-              {{ statementPeriod }}
-            </p>
-           
-            <p>
-              <i class="fas fa-user-circle mr-2"></i>
-              <strong>Account Name:</strong> <br />
-              {{ clientName }}
-            </p>
+          <p>
+            <i class="fas fa-user-circle mr-2"></i>
+            <strong>Account Name:</strong> <br />
+            {{ clientName }}
+          </p>
 
+          <p>
+            <i class="fas fa-id-card mr-2"></i>
+            <strong>Account Number:</strong> <br />
+            {{ accountId }}
+          </p>
 
-            <p>
-              <i class="fas fa-user-circle mr-2"></i>
-              <strong>Account Number:</strong> <br />
-              {{ accountId }}
-            </p>
-
-            <!-- Download Report Button -->
-            <div class="text-right mt-4">
-              <v-btn
-                no-uppercase
-                size="large"
-                class="normal-case p-4 bg-blue-600 hover:bg-blue-700 text-white text-none mr-2 custom-btn"
-              >
-                <i class="fas fa-download mr-2"></i>
-                Download Analysis
-              </v-btn>
-            </div>
+          <!-- Download Report Button -->
+          <div class="text-right mt-4">
+            <v-btn
+              no-uppercase
+              size="large"
+              class="normal-case p-4 bg-blue-600 hover:bg-blue-700 text-white text-none mr-2 custom-btn"
+            >
+              <i class="fas fa-download mr-2"></i>
+              Download Analysis
+            </v-btn>
           </div>
-
-          <!-- Summary Cards -->
-          <!-- <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-                    <div class="bg-blue-100 p-4 rounded-lg text-center">
-                        <p class="text-sm text-gray-500">Created</p>
-                        <p class="text-lg font-semibold">25 March 2025</p>
-                    </div>
-                    <div class="bg-blue-100 p-4 rounded-lg text-center">
-                        <p class="text-sm text-gray-500">
-                            Transacting Month(s)
-                        </p>
-                        <p class="text-lg font-semibold">1</p>
-                    </div>
-                    <div
-                        class="bg-blue-600 text-white p-4 rounded-lg text-center"
-                    >
-                        <p class="text-sm">Status</p>
-                        <p class="text-lg font-semibold">Processed</p>
-                    </div>
-                </div> -->
         </div>
 
         <!-- Vuetify Tabs -->
@@ -74,6 +50,56 @@
             <v-tab value="behavioral">Behavioral</v-tab>
             <v-tab value="transactions">Transactions</v-tab>
           </v-tabs>
+
+          <!-- Tab content area -->
+          <v-tabs-window v-model="activeTab">
+            <!-- Summary Tab -->
+            <v-tabs-window-item value="summary">
+              <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 px-4">
+                <div
+                  class="bg-blue-50 text-center shadow rounded-2xl p-4 flex flex-col items-center justify-center"
+                >
+                  <div class="text-md font-semibold">{{formatCurrency(totalCredits)}}</div>
+                  <div class="text-sm text-gray-500 mt-1">Total Credit</div>
+                </div>
+                <div
+                  class="bg-red-50 text-center shadow rounded-2xl p-4 flex flex-col items-center justify-center"
+                >
+                  <div class="text-md font-semibold">{{formatCurrency(totalDebits)}}</div>
+                  <div class="text-sm text-gray-500 mt-1">Total Debits</div>
+                </div>
+                <div
+                  class="bg-green-50 text-center shadow rounded-2xl p-4 flex flex-col items-center justify-center"
+                >
+                  <div class="text-md font-semibold">{{formatCurrency(averageMonthlyCredits)}}</div>
+                  <div class="text-sm text-gray-500 mt-1">Avg. Monthly Credit</div>
+                </div>
+                <div
+                  class="bg-purple-50 text-center shadow rounded-2xl p-4 flex flex-col items-center justify-center"
+                >
+                  <div class="text-md font-semibold">{{formatCurrency(averageMonthlyDebits)}}</div>
+                  <div class="text-sm text-gray-500 mt-1">Avg. Monthly Debits</div>
+                </div>
+                <div
+                  class="bg-gray-100 text-center shadow rounded-2xl p-4 flex flex-col items-center justify-center"
+                >
+                  <div class="text-md font-semibold">{{formatCurrency(averageMonthlyBalance)}}</div>
+                  <div class="text-sm text-gray-500 mt-1">Average Monthly Balance</div>
+                </div>
+              </div>
+            </v-tabs-window-item>
+
+            <!-- Other Tabs (empty for now) -->
+            <v-tabs-window-item value="cash flow">
+              <div class="text-center text-gray-500 py-10">Cash Flow Content</div>
+            </v-tabs-window-item>
+            <v-tabs-window-item value="behavioral">
+              <div class="text-center text-gray-500 py-10">Behavioral Content</div>
+            </v-tabs-window-item>
+            <v-tabs-window-item value="transactions">
+              <div class="text-center text-gray-500 py-10">Transactions Content</div>
+            </v-tabs-window-item>
+          </v-tabs-window>
         </div>
       </div>
     </div>
@@ -81,11 +107,22 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import Axios from 'axios'
 import { useAuthStore } from '@/stores/auth'
 import MainLayout from '@/layouts/full/MainLayout.vue'
+import moment from 'moment'
+
+const activeTab = ref('Summary')
+
+function formatCurrency(number) {
+  return new Intl.NumberFormat('en-NG', {
+    style: 'currency',
+    currency: 'NGN',
+    minimumFractionDigits: 2
+  }).format(number || 0)
+}
 
 const route = useRoute()
 const authStore = useAuthStore()
@@ -98,6 +135,11 @@ const fileName = ref('')
 const clientName = ref('')
 const statementPeriod = ref('')
 const accountId = ref('')
+const totalDebits = ref(0)
+const totalCredits = ref(0)
+const averageMonthlyDebits = ref(0)
+const averageMonthlyCredits = ref(0)
+const averageMonthlyBalance = ref(0)
 
 const fetchAnalysisResult = async (analysisId) => {
   const savedAuth = JSON.parse(localStorage.getItem('data') || '{}')
@@ -120,11 +162,20 @@ const fetchAnalysisResult = async (analysisId) => {
     fileName.value = analysis?.name || 'N/A'
     clientName.value = analysis?.clientFullName || 'N/A'
     accountId.value = analysis?.accountId || 'N/A'
+    const cashFlow = analysis?.cashFlowAnalysis
+    // Use turnover values directly
+    totalDebits.value = cashFlow?.totalDebitTurnOver || 0
+    totalCredits.value = cashFlow?.totalCreditTurnover || 0
+
+    // Extract averages
+    averageMonthlyDebits.value = cashFlow?.averageMonthlyDebits || 0
+    averageMonthlyCredits.value = cashFlow?.averageMonthlyCredits || 0
+    averageMonthlyBalance.value = cashFlow?.averageMonthlyBalance || 0
 
     const start = new Date(analysis?.createdDate)
     const end = new Date(analysis?.endDate)
     if (!isNaN(start) && !isNaN(end)) {
-      statementPeriod.value = `${start.toLocaleDateString()} - ${end.toLocaleDateString()}`
+      statementPeriod.value = `${moment(start).format('MMMM D, YYYY')} - ${moment(end).format('MMMM D, YYYY')}`
     } else {
       statementPeriod.value = 'Unknown period'
     }

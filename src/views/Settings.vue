@@ -34,6 +34,7 @@
                   color="blue"
                 />
                 <v-text-field v-model="email" label="Email Address" variant="outlined" />
+
                 <v-select
                   v-model="selectedRole"
                   :items="roles"
@@ -45,14 +46,15 @@
                   dense
                   return-object
                 />
+
+                <v-text-field
+                  v-model="profile.password"
+                  label="Password"
+                  variant="outlined"
+                  type="password"
+                  color="blue"
+                />
               </div>
-              <v-text-field
-                v-model="profile.password"
-                label="Password"
-                variant="outlined"
-                type="password"
-                color="blue"
-              />
 
               <v-btn class="mt-4 ml-auto" color="primary" @click="saveProfile">Save changes</v-btn>
             </div>
@@ -170,16 +172,16 @@
                 color="blue"
               />
               <v-select
-                  v-model="selectedRole"
-                  :items="roles"
-                  item-title="label"
-                  item-value="value"
-                  label="Select Role"
-                  variant="outlined"
-                  color="blue"
-                  dense
-                  return-object
-                />
+                v-model="selectedRole"
+                :items="roles"
+                item-title="label"
+                item-value="value"
+                label="Select Role"
+                variant="outlined"
+                color="blue"
+                dense
+                return-object
+              />
               <v-text-field
                 v-model="newUser.password"
                 type="password"
@@ -187,8 +189,6 @@
                 variant="outlined"
                 color="blue"
               />
-
-              
             </form>
           </div>
 
@@ -271,8 +271,6 @@ const getRoles = async () => {
     roles.value = []
   }
 }
-
-
 
 const showModal = ref(false)
 
