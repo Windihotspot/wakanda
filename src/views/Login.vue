@@ -111,7 +111,7 @@ onUnmounted(() => {
           <h1 class="text-3xl font-bold text-gray-800">Welcome back!</h1>
           <p class="text-gray-600 mt-2">Provide your login credentials to access your account</p>
 
-          <form @submit.prevent="submitForm" class="space-y-4 pt-8">
+          <form @submit.prevent="submitForm" class="">
             <!-- Email Error -->
             <p v-if="loginForm.errors.email" class="text-red-500  text-sm">
               {{ loginForm.errors.email }}
@@ -155,6 +155,7 @@ onUnmounted(() => {
 
             <!-- Submit Button -->
             <button
+            @click="submitForm"
               type="submit"
               :disabled="loginForm.processing"
               class="flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
