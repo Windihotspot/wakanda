@@ -2,23 +2,32 @@
   <MainLayout>
     <v-container>
       <!-- Wallet Balance Card -->
-      <v-card class="rounded-lg pa-6" color="primary" dark>
-        <div class="d-flex align-center justify-space-between">
+      <div class="bg-gradient-to-r from-blue-600 to-blue-600 text-white rounded-md p-6 shadow-xl">
+        <div class="flex items-center justify-between">
           <div>
-            <h2 class="text-h5 font-weight-bold">Current Wallet Balance</h2>
-            <h4 class="text-md font-weight-bold mt-2">₦0,00.00</h4>
+            <h2 class="text-xl font-bold tracking-wide">Current Wallet Balance</h2>
+            <p class="mt-2 text-xl font-extrabold tracking-tight">{{ formatCurrency(balance) }}</p>
           </div>
-          <div class="d-flex flex-column">
-            <v-btn class="mb-2 bg-gray" text @click="openFundWallet"> Fund Wallet </v-btn>
+          <div class="flex flex-col">
+            <button
+              @click="openFundWallet"
+              class="mb-2 bg-white text-blue-600 font-semibold py-2 px-6 rounded-lg shadow-md hover:bg-gray-300 transition-colors"
+            >
+              Fund Wallet
+            </button>
           </div>
         </div>
-      </v-card>
+      </div>
 
       <!-- Credit History Table -->
       <v-card class="mt-6 pa-4 rounded-lg">
-        <h3 class="mb-4 font-weight-bold">Credit History</h3>
+        <h3 class="mb-4 font-semibold">Credit History</h3>
+        <div v-if="isLoading" class="flex flex-col items-center justify-center min-h-[200px]">
+          <v-progress-circular indeterminate color="blue" size="40" width="4" />
+          <span class="mt-2 text-gray-600 text-sm">Loading wallet history...</span>
+        </div>
 
-        <div class="overflow-x-auto" v-if="creditHistory.length > 0">
+        <div class="overflow-x-auto" v-else-if="creditHistory.length > 0">
           <table class="min-w-full bg-white border border-gray-300 rounded-lg shadow-md">
             <thead class="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
               <tr>
@@ -30,11 +39,16 @@
               </tr>
             </thead>
 
-            <tbody class="text-gray-700 text-sm font-light"></tbody>
+            <tbody class="text-gray-700 text-sm font-light">
+              <tr v-for="(entry, index) in creditHistory" :key="index">
+                <td class="py-3 px-6 text-left">{{ entry.date }}</td>
+                <td class="py-3 px-6 text-left">{{ entry.description }}</td>
+                <td class="py-3 px-6 text-left">{{ formatCurrency(entry.amount) }}</td>
+                <td class="py-3 px-6 text-left">{{ formatCurrency(entry.old_balance) }}</td>
+                <td class="py-3 px-6 text-center">{{ formatCurrency(entry.new_balance) }}</td>
+              </tr>
+            </tbody>
           </table>
-        </div>
-        <div v-else class="fill-height align-center justify-center">
-          <h1>Loading credit history</h1>
         </div>
 
         <!-- Empty state -->
@@ -129,6 +143,14 @@ import Swal from 'sweetalert2'
 const loading = ref(false)
 const creditHistory = ref([])
 import Cleave from 'cleave.js'
+function formatCurrency(number) {
+  return new Intl.NumberFormat('en-NG', {
+    style: 'currency',
+    currency: 'NGN',
+    minimumFractionDigits: 2
+  }).format(number || 0)
+}
+const isLoading = ref(true)
 
 // Table Headers
 const headers = [
@@ -145,13 +167,14 @@ const fundWalletDialog = ref(false)
 const amount = ref('')
 const paymentModal = ref(false)
 const paymentLink = ref('')
+const balance = ref('')
 
 // Open Modal
 const openFundWallet = () => {
   fundWalletDialog.value = true
 }
 
-const fetchTransactions = async () => {
+const fetchWallet = async () => {
   const savedAuth = localStorage.getItem('data') ? JSON.parse(localStorage.getItem('data')) : null
 
   console.log(JSON.parse(localStorage.getItem('data')))
@@ -160,17 +183,31 @@ const fetchTransactions = async () => {
     ? savedAuth?.user?.tenant_id
     : computed(() => authStore.tenant_id)?.value
   const API_URL = `https://dev02201.getjupita.com/api/${tenantId}/get-tenant-wallet`
-
+  isLoading.value = true
   try {
     const response = await axios.get(API_URL, {
       headers: {
         Authorization: `Bearer ${token}`
       }
     })
-    console.log('fetch statements data:', response)
+    console.log('fetch wallet data:', response)
+    const wallet = response.data.data.wallet
+    balance.value = wallet.balance
+
+    // Populate credit history with wallet details
+    creditHistory.value = [
+      {
+        date: new Date(wallet.updated_at).toLocaleString(),
+        description: 'Wallet Funded',
+        amount: wallet.balance - wallet.previous_balance,
+        old_balance: wallet.previous_balance,
+        new_balance: wallet.balance
+      }
+    ]
   } catch (error) {
-    console.error('Error fetching wallet transactions:', error)
+    console.error('Error fetching wallet:', error)
   } finally {
+    isLoading.value = false
   }
 }
 
@@ -212,6 +249,7 @@ const fundWallet = async () => {
     paymentModal.value = true
 
     fundWalletDialog.value = false
+    fetchWallet()
   } catch (error) {
     console.error('Funding error:', error)
     fundWalletDialog.value = false
@@ -229,7 +267,7 @@ const onIframeLoad = () => {
 }
 
 onMounted(() => {
-  fetchTransactions()
+  fetchWallet()
 })
 </script>
 

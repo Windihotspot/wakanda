@@ -33,7 +33,12 @@
                   variant="outlined"
                   color="blue"
                 />
-                <v-text-field v-model="email" label="Email Address" variant="outlined" />
+                <v-text-field
+                  v-model="email"
+                  label="Email Address"
+                  variant="outlined"
+                  color="blue"
+                />
 
                 <v-select
                   v-model="selectedRole"
@@ -79,28 +84,45 @@
                 <v-btn color="blue" @click="openModal">Invite User</v-btn>
               </div>
 
-              <v-table v-else>
-                <thead>
-                  <tr>
-                    <th class="text-left">S/N</th>
-                    <th class="text-left">Name</th>
-                    <th class="text-left">Email</th>
-                    <th class="text-left">Status</th>
-                    <th class="text-left">Role</th>
-                    <th class="text-left">Creation Date</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="(user, index) in users" :key="index">
-                    <td>{{ index + 1 }}</td>
-                    <td>{{ user.name }}</td>
-                    <td>{{ user.email }}</td>
-                    <td class="text-green-600 font-semibold">{{ user.status }}</td>
-                    <td>{{ user.role }}</td>
-                    <td>{{ user.creationDate }}</td>
-                  </tr>
-                </tbody>
-              </v-table>
+              <div v-else class="overflow-x-auto bg-white shadow-md rounded-md mt-6">
+                <table class="min-w-full divide-y divide-gray-200 text-sm text-left">
+                  <thead class="bg-gray-50">
+                    <tr>
+                      <th class="px-6 py-3 text-gray-600 font-semibold">S/N</th>
+                      <th class="px-6 py-3 text-gray-600 font-semibold">Full Name</th>  
+                      <th class="px-6 py-3 text-gray-600 font-semibold">Email</th>
+                      <th class="px-6 py-3 text-gray-600 font-semibold">Status</th>
+                      <th class="px-6 py-3 text-gray-600 font-semibold">Role</th>
+                      <th class="px-6 py-3 text-gray-600 font-semibold">Created At</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-gray-200 text-gray-700">
+                    <tr
+                      v-for="(user, index) in users"
+                      :key="user.id"
+                      class="hover:bg-gray-50 transition"
+                    >
+                      <td class="px-6 py-4">{{ index + 1 }}</td>
+                      <td class="px-6 py-4 font-medium">{{ user.name }}</td>
+
+                      <td class="px-6 py-4">{{ user.email }}</td>
+                      <td class="px-6 py-4">
+                        <span
+                          :class="
+                            user.status === 'Active'
+                              ? 'text-green-600 bg-green-100 px-2 py-1 rounded-full text-xs font-semibold'
+                              : 'text-red-600 bg-red-100 px-2 py-1 rounded-full text-xs font-semibold'
+                          "
+                        >
+                          {{ user.status }}
+                        </span>
+                      </td>
+                      <td class="px-6 py-4">?</td>
+                      <td class="px-6 py-4">{{ user.creationDate }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
           </v-window-item>
 
@@ -292,6 +314,45 @@ const newUser = ref({
   role: 'tenant'
 })
 
+const fetchTeam = async () => {
+  const savedAuth = localStorage.getItem('data') ? JSON.parse(localStorage.getItem('data')) : null
+
+  console.log(JSON.parse(localStorage.getItem('data')))
+  const token = savedAuth ? savedAuth?.token : computed(() => authStore.token)?.value
+  const tenantId = savedAuth
+    ? savedAuth?.user?.tenant_id
+    : computed(() => authStore.tenant_id)?.value
+  const API_URL = `https://dev02201.getjupita.com/api/${tenantId}/get-team`
+
+  try {
+    const response = await axios.get(API_URL, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+    console.log('fetch team data:', response)
+    const members = response.data.data.members
+
+    // Normalize the members
+    const normalized = members.map((m) => {
+      const user = m.me ?? m
+      return {
+        id: user.id,
+        name: `${user.firstname} ${user.lastname}`,
+        email: user.email,
+        phone: user.phone_number || 'N/A',
+        status: user.active === 1 ? 'Active' : 'Inactive',
+        creationDate: new Date(user.created_at).toLocaleDateString()
+      }
+    })
+
+    users.value = normalized
+  } catch (error) {
+    console.error('Error fetching team data:', error)
+  } finally {
+  }
+}
+
 const inviteUser = async () => {
   const savedAuth = JSON.parse(localStorage.getItem('data') || '{}')
   const token = savedAuth?.token || authStore.token
@@ -401,6 +462,7 @@ const copyToClipboard = (text) => {
 }
 
 onMounted(() => {
+  fetchTeam()
   console.log('User data from storage:', user)
   if (user) {
     profile.value = {
