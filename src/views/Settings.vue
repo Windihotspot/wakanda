@@ -60,8 +60,9 @@
                   color="blue"
                 />
               </div>
-
-              <v-btn class="mt-4 ml-auto" color="primary" @click="saveProfile">Save changes</v-btn>
+              <div class="flex justify-end mt-auto pt-6">
+                <v-btn class="custom-btn text-white" @click="saveProfile">Save changes</v-btn>
+              </div>
             </div>
           </v-window-item>
 
@@ -71,7 +72,9 @@
             <div class="p-6">
               <div class="flex justify-between items-center mb-4">
                 <h2 class="text-xl font-bold mb-4">Users</h2>
-                <!-- <v-btn @click="openModal" class="mt-4" color="primary">Invite User</v-btn> -->
+                <v-btn @click="openModal" class="mt-4 custom-btn" color="primary"
+                  >Invite User</v-btn
+                >
               </div>
 
               <div
@@ -89,7 +92,7 @@
                   <thead class="bg-gray-50">
                     <tr>
                       <th class="px-6 py-3 text-gray-600 font-semibold">S/N</th>
-                      <th class="px-6 py-3 text-gray-600 font-semibold">Full Name</th>  
+                      <th class="px-6 py-3 text-gray-600 font-semibold">Full Name</th>
                       <th class="px-6 py-3 text-gray-600 font-semibold">Email</th>
                       <th class="px-6 py-3 text-gray-600 font-semibold">Status</th>
                       <th class="px-6 py-3 text-gray-600 font-semibold">Role</th>
@@ -480,6 +483,7 @@ onMounted(() => {
 
 <style scoped>
 .custom-btn {
+  background-color: #1f5aa3;
   text-transform: none !important;
 }
 .v-card {

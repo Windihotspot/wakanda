@@ -172,7 +172,7 @@ onUnmounted(() => {
               type="submit"
               :loading="loginForm.processing"
               :disabled="loginForm.processing"
-              color="blue"
+              
               class="w-full text-white font-semibold text-sm custom-btn"
               height="40"
             >

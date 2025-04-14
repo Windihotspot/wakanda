@@ -6,24 +6,40 @@
         <p class="text-gray-500 text-sm mt-1">No worries, we'll send you reset instructions.</p>
       </div>
 
+      <!-- Alert -->
+      <transition name="fade">
+        <div
+          v-if="showAlert"
+          :class="[
+            'fixed top-6 right-6 px-4 py-3 rounded-md shadow-md text-white z-50',
+            alertType === 'success' ? 'bg-green-600' : 'bg-red-600'
+          ]"
+        >
+          {{ alertMessage }}
+        </div>
+      </transition>
+
       <form @submit.prevent="onSubmit" class="mt-6">
         <div class="mb-4">
           <v-text-field
+            v-model="email"
             type="email"
             label="Email address"
             placeholder="Enter email address"
             variant="outlined"
             color="blue"
             class="mt-4"
+            :error-messages="emailError"
+            @blur="validateEmail"
           />
         </div>
 
-        <button
+        <v-btn
           type="submit"
-          class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-lg transition"
+          class="w-full custom-btn hover:bg-blue-700 text-white font-medium py-2.5 rounded-md transition"
         >
           Reset password
-        </button>
+        </v-btn>
       </form>
 
       <div class="text-center mt-6">
@@ -45,23 +61,74 @@
 
 <script setup>
 import { ref } from 'vue'
+import axios from 'axios'
 import { useRouter } from 'vue-router'
-
-const email = ref('')
 const router = useRouter()
 
-const onSubmit = () => {
-  if (!email.value || !email.value.includes('@')) {
-    alert('Please enter a valid email.')
-    return
+const email = ref('')
+const emailError = ref('')
+const showAlert = ref(false)
+const alertType = ref('success')
+const alertMessage = ref('')
+
+const validateEmail = () => {
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  if (!email.value) {
+    emailError.value = 'Email is required'
+    return false
+  } else if (!emailPattern.test(email.value)) {
+    emailError.value = 'Please enter a valid email address'
+    return false
+  }
+  emailError.value = ''
+  return true
+}
+
+const onSubmit = async () => {
+  if (!validateEmail()) return
+
+  try {
+    const response = await axios.post('https://dev02201.getjupita.com/api/forgot-password', {
+      email: email.value
+    })
+    console.log('reset password response:', response)
+
+    alertType.value = 'success'
+    alertMessage.value = 'Password reset link sent to your email!'
+    showAlert.value = true
+    email.value = ''
+
+    // ⏳ Wait a moment, then navigate
+    setTimeout(() => {
+      showAlert.value = false
+      router.push('/')
+    }, 3000)
+  } catch (error) {
+    alertType.value = 'error'
+    alertMessage.value =
+      error.response?.data?.message || 'Failed to send password reset. Please try again.'
+    showAlert.value = true
   }
 
-  // Simulate sending reset instructions
-  console.log('Sending reset link to:', email.value)
-  alert('Reset instructions sent to ' + email.value)
-}
-
-const goToLogin = () => {
-  router.push('/login')
+  // Hide alert after 5 seconds
+  setTimeout(() => {
+    showAlert.value = false
+  }, 5000)
 }
 </script>
+
+<style scoped>
+.custom-btn {
+  background-color: #1f5aa3;
+  text-transform: none;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>

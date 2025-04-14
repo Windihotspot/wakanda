@@ -131,7 +131,7 @@ const getStatusColor = (status) => {
         <table class="min-w-full bg-white border border-gray-300 rounded-lg shadow-md">
           <thead class="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
             <tr>
-              <th class="py-3 px-6 text-left">Name</th>
+              <th class="py-3 px-6 text-left">Uploaded by</th>
               <th class="py-3 px-6 text-left">File Name</th>
               <th class="py-3 px-6 text-left">Created Date</th>
               <th class="py-3 px-6 text-left">Status</th>
@@ -143,8 +143,17 @@ const getStatusColor = (status) => {
               <td class="py-3 px-6">{{ doc.name }}</td>
               <td class="py-3 px-6">{{ doc.file_name }}</td>
               <td class="py-3 px-6">{{ doc.created_date }}</td>
-              <td class="py-3 px-6 text-green-600">
-                {{ doc.status }}
+              <td class="py-3 px-6 ">
+                <span
+                          :class="
+                            doc.status === 'PROCESSED'
+                              ? 'text-green-600 py-1 text-xs font-semibold'
+                              : 'text-red-600 py-1  text-xs font-semibold'
+                          "
+                        >
+                          {{ doc.status }}
+                        </span>
+               
               </td>
               <td class="py-3 px-6 text-center">
                 <span
@@ -163,7 +172,7 @@ const getStatusColor = (status) => {
         <table class="min-w-full bg-white border border-gray-300 rounded-lg shadow-md">
           <thead class="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
             <tr>
-              <th class="py-3 px-6 text-left">Name</th>
+              <th class="py-3 px-6 text-left">Uploaded by</th>
               <th class="py-3 px-6 text-left">File Name</th>
               <th class="py-3 px-6 text-left">Created Date</th>
               <th class="py-3 px-6 text-left">Status</th>

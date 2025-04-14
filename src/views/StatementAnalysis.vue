@@ -1,107 +1,130 @@
 <template>
   <MainLayout>
     <div class="p-2">
-      <h2 class="text-xl font-bold m-8">Statement Analysis Result</h2>
-      <div class="p-2 md:p-8">
-        <!-- Back Button -->
-        <button @click="goBack" class="flex items-center text-blue-600 font-semibold">
-          <i class="fas fa-arrow-left mr-2"></i> Back
-        </button>
+      <h2 class="text-xl font-bold mt-2 ml-6">Statement Analysis Result</h2>
+      <template v-if="loading">
+        <div class="flex items-center justify-center h-96">
+          <v-progress-circular
+            :size="100"
+            :width="10"
+            color="primary"
+            indeterminate
+          ></v-progress-circular>
+        </div>
+      </template>
+      <template v-else>
+        <div class="p-2 md:p-8">
+          <!-- Back Button -->
+          <div class="flex justify-between">
+            <RouterLink to="/dashboard">
+              <button @click="goBack" class="mb-2 flex items-center text-blue-600 font-semibold">
+                <i class="fas fa-arrow-left mr-2"></i> Back
+              </button>
+            </RouterLink>
+            <!-- Download Report Button -->
+            <div class="text-right">
+              <v-btn
+                no-uppercase
+                size="small"
+                class="normal-case p-4 bg-blue-600 hover:bg-blue-700 text-white text-none mr-2 custom-btn"
+              >
+                <i class="fas fa-download mr-2"></i>
+                Download Analysis
+              </v-btn>
+            </div>
+          </div>
 
-        <!-- Document Header -->
-        
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-gray-700 mt-4">
-          <p>
-            <i class="fas fa-calendar mr-2"></i>
-            <strong>Statement Period:</strong> <br />
-            {{ statementPeriod }}
-          </p>
+          <!-- Document Header -->
 
-          <p>
-            <i class="fas fa-user-circle mr-2"></i>
-            <strong>Account Name:</strong> <br />
-            {{ clientName }}
-          </p>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-gray-700 mt-4">
+            <p>
+              <i class="fas fa-calendar mr-2"></i>
+              <strong>Statement Period:</strong> <br />
+              {{ statementPeriod }}
+            </p>
 
-          <p>
-            <i class="fas fa-id-card mr-2"></i>
-            <strong>Account Number:</strong> <br />
-            {{ accountId }}
-          </p>
+            <p>
+              <i class="fas fa-user-circle mr-2"></i>
+              <strong>Account Name:</strong> <br />
+              {{ clientName }}
+            </p>
 
-          <!-- Download Report Button -->
-          <div class="text-right mt-4">
-            <v-btn
-              no-uppercase
-              size="large"
-              class="normal-case p-4 bg-blue-600 hover:bg-blue-700 text-white text-none mr-2 custom-btn"
-            >
-              <i class="fas fa-download mr-2"></i>
-              Download Analysis
-            </v-btn>
+            <p>
+              <i class="fas fa-id-card mr-2"></i>
+              <strong>Account Number:</strong> <br />
+              {{ accountId }}
+            </p>
+          </div>
+
+          <!-- Vuetify Tabs -->
+          <div class="mt-6">
+            <v-tabs align-tabs="center" class="mb-4" v-model="activeTab" color="primary">
+              <v-tab value="summary">Summary</v-tab>
+              <v-tab value="cash flow">Cash Flow</v-tab>
+              <v-tab value="behavioral">Behavioral</v-tab>
+              <v-tab value="transactions">Transactions</v-tab>
+            </v-tabs>
+
+            <!-- Tab content area -->
+            <v-tabs-window v-model="activeTab">
+              <!-- Summary Tab -->
+              <v-tabs-window-item value="summary">
+                <div
+                  class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 px-4"
+                >
+                  <div
+                    class="bg-blue-50 text-center shadow rounded-2xl p-4 flex flex-col items-center justify-center"
+                  >
+                    <div class="text-md font-semibold">{{ formatCurrency(totalCredits) }}</div>
+                    <div class="text-sm text-gray-500 mt-1">Total Credit</div>
+                  </div>
+                  <div
+                    class="bg-red-50 text-center shadow rounded-2xl p-4 flex flex-col items-center justify-center"
+                  >
+                    <div class="text-md font-semibold">{{ formatCurrency(totalDebits) }}</div>
+                    <div class="text-sm text-gray-500 mt-1">Total Debits</div>
+                  </div>
+                  <div
+                    class="bg-green-50 text-center shadow rounded-2xl p-4 flex flex-col items-center justify-center"
+                  >
+                    <div class="text-md font-semibold">
+                      {{ formatCurrency(averageMonthlyCredits) }}
+                    </div>
+                    <div class="text-sm text-gray-500 mt-1">Avg. Monthly Credit</div>
+                  </div>
+                  <div
+                    class="bg-purple-50 text-center shadow rounded-2xl p-4 flex flex-col items-center justify-center"
+                  >
+                    <div class="text-md font-semibold">
+                      {{ formatCurrency(averageMonthlyDebits) }}
+                    </div>
+                    <div class="text-sm text-gray-500 mt-1">Avg. Monthly Debits</div>
+                  </div>
+                  <div
+                    class="bg-gray-100 text-center shadow rounded-2xl p-4 flex flex-col items-center justify-center"
+                  >
+                    <div class="text-md font-semibold">
+                      {{ formatCurrency(averageMonthlyBalance) }}
+                    </div>
+                    <div class="text-sm text-gray-500 mt-1">Average Monthly Balance</div>
+                  </div>
+                </div>
+              </v-tabs-window-item>
+
+              <!-- Other Tabs (empty for now) -->
+              <v-tabs-window-item value="cash flow">
+                <div class="text-center text-gray-500 py-10">Cash Flow Content</div>
+              </v-tabs-window-item>
+              <v-tabs-window-item value="behavioral">
+                <div class="text-center text-gray-500 py-10">Behavioral Content</div>
+              </v-tabs-window-item>
+              <v-tabs-window-item value="transactions">
+                <div class="text-center text-gray-500 py-10">Transactions Content</div>
+              </v-tabs-window-item>
+            </v-tabs-window>
           </div>
         </div>
-
-        <!-- Vuetify Tabs -->
-        <div class="mt-6">
-          <v-tabs align-tabs="center" class="mb-4" v-model="activeTab" color="primary">
-            <v-tab value="summary">Summary</v-tab>
-            <v-tab value="cash flow">Cash Flow</v-tab>
-            <v-tab value="behavioral">Behavioral</v-tab>
-            <v-tab value="transactions">Transactions</v-tab>
-          </v-tabs>
-
-          <!-- Tab content area -->
-          <v-tabs-window v-model="activeTab">
-            <!-- Summary Tab -->
-            <v-tabs-window-item value="summary">
-              <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 px-4">
-                <div
-                  class="bg-blue-50 text-center shadow rounded-2xl p-4 flex flex-col items-center justify-center"
-                >
-                  <div class="text-md font-semibold">{{formatCurrency(totalCredits)}}</div>
-                  <div class="text-sm text-gray-500 mt-1">Total Credit</div>
-                </div>
-                <div
-                  class="bg-red-50 text-center shadow rounded-2xl p-4 flex flex-col items-center justify-center"
-                >
-                  <div class="text-md font-semibold">{{formatCurrency(totalDebits)}}</div>
-                  <div class="text-sm text-gray-500 mt-1">Total Debits</div>
-                </div>
-                <div
-                  class="bg-green-50 text-center shadow rounded-2xl p-4 flex flex-col items-center justify-center"
-                >
-                  <div class="text-md font-semibold">{{formatCurrency(averageMonthlyCredits)}}</div>
-                  <div class="text-sm text-gray-500 mt-1">Avg. Monthly Credit</div>
-                </div>
-                <div
-                  class="bg-purple-50 text-center shadow rounded-2xl p-4 flex flex-col items-center justify-center"
-                >
-                  <div class="text-md font-semibold">{{formatCurrency(averageMonthlyDebits)}}</div>
-                  <div class="text-sm text-gray-500 mt-1">Avg. Monthly Debits</div>
-                </div>
-                <div
-                  class="bg-gray-100 text-center shadow rounded-2xl p-4 flex flex-col items-center justify-center"
-                >
-                  <div class="text-md font-semibold">{{formatCurrency(averageMonthlyBalance)}}</div>
-                  <div class="text-sm text-gray-500 mt-1">Average Monthly Balance</div>
-                </div>
-              </div>
-            </v-tabs-window-item>
-
-            <!-- Other Tabs (empty for now) -->
-            <v-tabs-window-item value="cash flow">
-              <div class="text-center text-gray-500 py-10">Cash Flow Content</div>
-            </v-tabs-window-item>
-            <v-tabs-window-item value="behavioral">
-              <div class="text-center text-gray-500 py-10">Behavioral Content</div>
-            </v-tabs-window-item>
-            <v-tabs-window-item value="transactions">
-              <div class="text-center text-gray-500 py-10">Transactions Content</div>
-            </v-tabs-window-item>
-          </v-tabs-window>
-        </div>
-      </div>
+      </template>
     </div>
   </MainLayout>
 </template>
@@ -146,6 +169,7 @@ const fetchAnalysisResult = async (analysisId) => {
   const token = savedAuth?.token || authStore.token
   const tenantId = savedAuth?.user?.tenant_id || authStore.tenant_id
   const apiUrl = `https://dev02201.getjupita.com/api/${tenantId}/get-analysis-result?analysis_id=${analysisId}`
+  loading.value = true
 
   try {
     const response = await Axios.get(apiUrl, {
