@@ -58,11 +58,10 @@
           </div>
 
           <!-- Vuetify Tabs -->
-          <div class="mt-6 ">
+          <div class="mt-6">
             <v-tabs
               align-tabs="center"
               class="custom-tabs mb-6"
-              
               v-model="activeTab"
               color="primary"
             >
@@ -314,6 +313,7 @@ import Axios from 'axios'
 import { useAuthStore } from '@/stores/auth'
 import MainLayout from '@/layouts/full/MainLayout.vue'
 import moment from 'moment'
+import { ElMessage } from 'element-plus'
 
 const activeTab = ref('Summary')
 
@@ -498,20 +498,68 @@ const downloadAnalysis = async () => {
 
   const apiUrl = `https://dev02201.getjupita.com/api/${tenantId}/download-insight-report?analysis_id=${analysisId}`
 
+  let loadingMessage = null
+
   try {
+    // Show persistent snackbar
+    loadingMessage = ElMessage({
+      message: 'Getting your analysis report...',
+      type: 'success',
+      duration: 0, // stays visible until manually closed
+      showClose: true
+    })
+
     const response = await Axios.get(apiUrl, {
       headers: {
         Authorization: `Bearer ${token}`
-      },
-    
+      }
     })
 
     console.log('download analysis response:', response.data)
+    console.log('response.data.download:', response.data?.download)
+
+    const download = response.data.data.download
+    
+    if (!download || !download.document_url || !download.document_name) {
+      throw new Error('No download information or document URL found in the response.')
+    }
+
+    // Close loading toast
+    ElMessage.closeAll()
+
+    // Get the original document name
+    const originalFileName = download.document_name || 'analysis_report.pdf'
+    
+    // Ensure the file has a .pdf extension
+    const fileExtension = originalFileName.split('.').pop()
+    const correctFileName = fileExtension === 'pdf' ? originalFileName : `${originalFileName}.pdf`
+
+    // Get the document URL
+    const fileUrl = download.document_url
+
+    // Trigger file download
+    const link = document.createElement('a')
+    link.href = fileUrl
+    link.download = correctFileName  // Ensure the file name is set correctly
+    link.target = '_blank'
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+
+    // Show success toast
+    ElMessage({
+      message: 'Analysis report downloaded successfully.',
+      type: 'success',
+      duration: 60000,
+    })
+
   } catch (error) {
     console.error('Download failed:', error)
-    alert('Failed to download analysis. Please try again.')
+    ElMessage.closeAll()
+    ElMessage.error('Failed to download analysis. Please try again.')
   }
 }
+
 </script>
 
 <style scoped>
@@ -521,13 +569,12 @@ const downloadAnalysis = async () => {
 .custom-tabs {
   background-color: #f0f4f8; /* Light background */
   border-radius: 1000px;
- 
+
   max-width: fit-content;
   margin: auto;
 }
 
 .custom-tabs .v-tab {
- 
   border-radius: 10000px;
   min-width: 120px;
   text-transform: none;
