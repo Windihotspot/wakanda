@@ -24,6 +24,7 @@
             <!-- Download Report Button -->
             <div class="text-right">
               <v-btn
+                @click="downloadAnalysis"
                 no-uppercase
                 size="small"
                 class="normal-case p-4 bg-blue-600 hover:bg-blue-700 text-white text-none mr-2 custom-btn"
@@ -113,7 +114,78 @@
 
               <!-- Other Tabs (empty for now) -->
               <v-tabs-window-item value="cash flow">
-                <div class="text-center text-gray-500 py-10">Cash Flow Content</div>
+                <div class="flex flex-col md:flex-row gap-4 text-center text-gray-500 py-10">
+                  <!-- Inflow Summary -->
+                  <div class="flex-1 bg-white p-6 rounded-xl shadow">
+                    <h2 class="text-lg font-semibold text-blue-800 mb-4">Inflow Summary</h2>
+                    <div class="space-y-2">
+                      <div class="flex justify-between">
+                        <span>Total Inflow</span>
+                        <span class="text-green-600 font-bold">{{
+                          formatCurrency(totalInflow)
+                        }}</span>
+                      </div>
+                      <div class="flex justify-between">
+                        <span>Average Monthly Inflow</span>
+                        <span class="font-medium">{{ formatCurrency(averageMonthlyCredits) }}</span>
+                      </div>
+                      <div class="flex justify-between">
+                        <span>Average Weekly Inflow</span>
+                        <span class="font-medium">{{ formatCurrency(averageWeeklyInflow) }}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Outflow Summary -->
+                  <div class="flex-1 bg-white p-6 rounded-xl shadow">
+                    <h2 class="text-lg font-semibold text-blue-800 mb-4">Outflow Summary</h2>
+                    <div class="space-y-2">
+                      <div class="flex justify-between">
+                        <span>Total Outflow</span>
+                        <span class="text-red-600 font-bold">{{
+                          formatCurrency(totalOutflow)
+                        }}</span>
+                      </div>
+                      <div class="flex justify-between">
+                        <span>Average Monthly Outflow</span>
+                        <span class="font-medium">{{ formatCurrency(averageMonthlyDebits) }}</span>
+                      </div>
+                      <div class="flex justify-between">
+                        <span>Average Weekly Outflow</span>
+                        <span class="font-medium">{{ formatCurrency(averageWeeklyOutflow) }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="flex gap-4 justify-between bg-[#f0f8ff] p-6">
+                  <!-- Card 1 -->
+                  <div class="flex justify-between bg-[#1f4e99] text-white rounded-2xl p-6 w-full">
+                    <div class="flex-1 text-xl font-semibold">
+                      {{ formatCurrency(averageMonthlyBalance) }}
+                      <div class="text-sm mt-2">Average Monthly Balance</div>
+                    </div>
+
+                    <div class="flex-1 text-xl font-semibold">
+                      {{ formatCurrency(averageWeeklyBalance) }}
+                      <div class="text-sm mt-2">Average Weekly Balance</div>
+                    </div>
+                  </div>
+
+                  <!-- cash flow-->
+                  <div class="flex justify-between bg-[#1f4e99] text-white rounded-2xl p-6 w-full">
+                    <div class="flex-1">
+                      <div class="text-xl font-semibold">Negative Cash Flow</div>
+                      <div class="text-sm mt-2">Inflow to Outflow Rate</div>
+                    </div>
+                    <div class="flex-1">
+                      <div class="text-xl font-semibold">Negative Cash Flow</div>
+                      <div class="text-sm mt-2">Overall Inflow to Outflow</div>
+                    </div>
+                  </div>
+
+                  <!-- Card 4 -->
+                </div>
               </v-tabs-window-item>
               <v-tabs-window-item value="behavioral">
                 <div class="text-center text-gray-500 py-10">Behavioral Content</div>
@@ -163,6 +235,18 @@ const totalCredits = ref(0)
 const averageMonthlyDebits = ref(0)
 const averageMonthlyCredits = ref(0)
 const averageMonthlyBalance = ref(0)
+const averageWeeklyBalance = ref(0)
+
+const totalInflow = ref(0)
+const averageMonthlyInflow = ref(0)
+const averageWeeklyInflow = ref(0)
+
+const totalOutflow = ref(0)
+const averageMonthlyOutflow = ref(0)
+const averageWeeklyOutflow = ref(0)
+
+const monthlyData = ref([])
+const weeklyData = ref([])
 
 const fetchAnalysisResult = async (analysisId) => {
   const savedAuth = JSON.parse(localStorage.getItem('data') || '{}')
@@ -195,6 +279,31 @@ const fetchAnalysisResult = async (analysisId) => {
     averageMonthlyDebits.value = cashFlow?.averageMonthlyDebits || 0
     averageMonthlyCredits.value = cashFlow?.averageMonthlyCredits || 0
     averageMonthlyBalance.value = cashFlow?.averageMonthlyBalance || 0
+    averageWeeklyBalance.value = cashFlow?.averageWeeklyBalance || 0
+
+    totalInflow.value = cashFlow?.totalCreditTurnover || 0
+    averageMonthlyInflow.value = cashFlow?.averageMonthlyCredits || 0
+    averageWeeklyInflow.value = cashFlow?.averageWeeklyCredits || 0
+
+    totalOutflow.value = cashFlow?.totalDebitTurnOver || 0
+    averageMonthlyOutflow.value = cashFlow?.averageMonthlyDebits || 0
+    averageWeeklyOutflow.value = cashFlow?.averageWeeklyDebits || 0
+
+    // Set Monthly Data
+    const inflows = cashFlow?.monthlyInflow || []
+    monthlyData.value = inflows.map((item) => ({
+      month: item.month_name + ' ' + item.year,
+      credit: item.amount,
+      debit: item.amount // Adjust if you get real debit data
+    }))
+
+    // Set Weekly Data
+    const weeklyInflows = cashFlow?.weeklyInflow || []
+    weeklyData.value = weeklyInflows.map((item) => ({
+      week: `${item.month_name} ${item.year} Wk ${item.week}`,
+      credit: item.amount,
+      debit: item.amount // Same here: adjust if real debit is available
+    }))
 
     const start = new Date(analysis?.createdDate)
     const end = new Date(analysis?.endDate)
@@ -220,6 +329,29 @@ onMounted(() => {
     loading.value = false
   }
 })
+
+const downloadAnalysis = async () => {
+  const savedAuth = JSON.parse(localStorage.getItem('data') || '{}')
+  const token = savedAuth?.token || authStore.token
+  const tenantId = savedAuth?.user?.tenant_id || authStore.tenant_id
+  const analysisId = route.params.id
+
+  const apiUrl = `https://dev02201.getjupita.com/api/${tenantId}/download-insight-report?analysis_id=${analysisId}`
+
+  try {
+    const response = await Axios.get(apiUrl, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      },
+      responseType: 'blob'
+    })
+
+    console.log('download analysis response:', response)
+  } catch (error) {
+    console.error('Download failed:', error)
+    alert('Failed to download analysis. Please try again.')
+  }
+}
 </script>
 
 <style scoped>

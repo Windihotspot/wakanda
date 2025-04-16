@@ -98,16 +98,19 @@ onUnmounted(() => {
     <!-- Image Section (Visible on all screens) -->
     <div class="w-full p-4 sm:w-1/2 md:w-1/2 h-64 md:h-full relative">
       <img
-        src="/src/assets/image.jpg"
-        alt="Onboarding Image"
-        class="w-full h-[550px] object-cover rounded-b-lg md:rounded-none md:rounded-l-lg shadow-2xl"
-      />
+  src="/src/assets/image.jpg"
+  alt="Onboarding Image"
+  class="w-full h-64 sm:h-96 md:h-full object-cover rounded-b-lg md:rounded-none md:rounded-l-lg shadow-2xl"
+/>
+
     </div>
     <!-- Left Section -->
     <div class="w-full md:w-1/2 flex items-center justify-center bg-white">
       <div>
         <!-- Login form -->
-        <div class="max-w-md w-full">
+        <div class="max-w-md w-full px-4 sm:px-6 lg:px-8">
+
+
           <h1 class="text-3xl font-bold text-gray-800">Welcome back!</h1>
           <p class="text-gray-600 mt-2">Provide your login credentials to access your account</p>
 
