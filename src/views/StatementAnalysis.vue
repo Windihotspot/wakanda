@@ -58,8 +58,14 @@
           </div>
 
           <!-- Vuetify Tabs -->
-          <div class="mt-6">
-            <v-tabs align-tabs="center" class="mb-4" v-model="activeTab" color="primary">
+          <div class="mt-6 ">
+            <v-tabs
+              align-tabs="center"
+              class="custom-tabs mb-6"
+              
+              v-model="activeTab"
+              color="primary"
+            >
               <v-tab value="summary">Summary</v-tab>
               <v-tab value="cash flow">Cash Flow</v-tab>
               <v-tab value="behavioral">Behavioral</v-tab>
@@ -109,6 +115,57 @@
                     </div>
                     <div class="text-sm text-gray-500 mt-1">Average Monthly Balance</div>
                   </div>
+                </div>
+
+                <div class="flex flex-col md:flex-row gap-4 p-4">
+                  <!-- Most Frequent Expense -->
+                  <div class="bg-white rounded-2xl shadow-md p-4 w-full md:w-1/3">
+                    <p class="text-sm text-gray-500 mb-1">Most Frequent Expense</p>
+                    <p class="font-semibold text-gray-800 leading-tight">
+                      {{ mostFrequentExpense }}<br />
+                    </p>
+                  </div>
+
+                  <!-- Highest Spend -->
+                  <div class="bg-white rounded-2xl shadow-md p-4 w-full md:w-1/3">
+                    <p class="text-sm text-gray-500 mb-1">Highest Spend</p>
+                    <p class="font-semibold text-gray-800 text-lg">{{}}</p>
+                    <p class="text-sm font-semibold text-gray-600 mt-1">Transaction Date: {{}}</p>
+                  </div>
+
+                  <!-- Most Frequent Expense Amount -->
+                  <div class="bg-white rounded-2xl shadow-md p-4 w-full md:w-1/3">
+                    <p class="text-sm text-gray-500 mb-1">Most Frequent Expense Amount</p>
+                    <p class="font-semibold text-gray-800 text-lg">
+                      {{ formatCurrency(mostFrequentExpenseAmount) }}
+                    </p>
+                  </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl shadow-md overflow-x-auto">
+                  <h2 class="text-lg font-semibold text-gray-800 mb-4">Expenses</h2>
+                  <table class="min-w-full table-auto border-collapse">
+                    <thead>
+                      <tr
+                        class="text-left text-sm font-semibold text-gray-600 border-b border-gray-200"
+                      >
+                        <th class="py-3 px-4">Expenses</th>
+                        <th class="py-3 px-4">Average Monthly Expenditure</th>
+                        <th class="py-3 px-4">Total Expenditure</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr
+                        v-for="(item, index) in expenseItems"
+                        :key="index"
+                        class="text-sm text-gray-700 border-b border-gray-100 hover:bg-gray-50"
+                      >
+                        <td class="py-3 px-4">{{ item.label }}</td>
+                        <td class="py-3 px-4">{{ formatCurrency(item.monthly) }}</td>
+                        <td class="py-3 px-4">{{ formatCurrency(item.total) }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
                 </div>
               </v-tabs-window-item>
 
@@ -183,8 +240,57 @@
                       <div class="text-sm mt-2">Overall Inflow to Outflow</div>
                     </div>
                   </div>
+                </div>
 
-                  <!-- Card 4 -->
+                <div class="bg-gray-50 p-6 rounded-lg shadow-md">
+                  <h2 class="text-xl font-semibold text-gray-800 mb-4">Credit & Debit Summary</h2>
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Monthly Section -->
+                    <div class="bg-white p-4 rounded-lg shadow">
+                      <h3 class="text-lg font-bold text-gray-700 mb-3">Monthly Credit & Debit</h3>
+                      <div class="overflow-y-auto max-h-96">
+                        <table class="min-w-full table-auto text-sm text-left text-gray-600">
+                          <thead class="bg-gray-100 font-medium text-gray-700">
+                            <tr>
+                              <th class="px-4 py-2">Month</th>
+                              <th class="px-4 py-2">Total Credit</th>
+                              <th class="px-4 py-2">Total Debit</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr v-for="(entry, index) in monthlyData" :key="index" class="border-b">
+                              <td class="px-4 py-2">{{ entry.month }}</td>
+                              <td class="px-4 py-2">{{ formatCurrency(entry.credit) }}</td>
+                              <td class="px-4 py-2">{{ formatCurrency(entry.debit) }}</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+
+                    <!-- Weekly Section -->
+                    <div class="bg-white p-4 rounded-lg shadow">
+                      <h3 class="text-lg font-bold text-gray-700 mb-3">Weekly Credit & Debit</h3>
+                      <div class="overflow-y-auto max-h-96">
+                        <table class="min-w-full table-auto text-sm text-left text-gray-600">
+                          <thead class="bg-gray-100 font-medium text-gray-700">
+                            <tr>
+                              <th class="px-4 py-2">Week</th>
+                              <th class="px-4 py-2">Total Credit</th>
+                              <th class="px-4 py-2">Total Debit</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr v-for="(entry, index) in weeklyData" :key="index" class="border-b">
+                              <td class="px-4 py-2">{{ entry.week }}</td>
+                              <td class="px-4 py-2">{{ formatCurrency(entry.credit) }}</td>
+                              <td class="px-4 py-2">{{ formatCurrency(entry.debit) }}</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </v-tabs-window-item>
               <v-tabs-window-item value="behavioral">
@@ -248,6 +354,11 @@ const averageWeeklyOutflow = ref(0)
 const monthlyData = ref([])
 const weeklyData = ref([])
 
+const mostFrequentExpense = ref(0)
+const mostFrequentExpenseAmount = ref(0)
+
+const expenseItems = ref([])
+
 const fetchAnalysisResult = async (analysisId) => {
   const savedAuth = JSON.parse(localStorage.getItem('data') || '{}')
   const token = savedAuth?.token || authStore.token
@@ -271,6 +382,55 @@ const fetchAnalysisResult = async (analysisId) => {
     clientName.value = analysis?.clientFullName || 'N/A'
     accountId.value = analysis?.accountId || 'N/A'
     const cashFlow = analysis?.cashFlowAnalysis
+
+    mostFrequentExpense.value = analysis?.spendAnalysis.mostFrequentExpense
+    mostFrequentExpenseAmount.value = analysis?.spendAnalysis.mostFrequentExpenseAmount
+
+    const spend = response.data?.data?.analysis_result?.analysis_result?.spendAnalysis || {}
+
+    expenseItems.value = [
+      {
+        label: 'Others',
+        monthly: spend.averageMonthlySpendOnOthers ?? 0,
+        total: 12 * (spend.averageMonthlySpendOnOthers ?? 0)
+      },
+      {
+        label: 'Rent',
+        monthly: spend.averageMonthlySpendOnRent ?? 0,
+        total: 12 * (spend.averageMonthlySpendOnRent ?? 0)
+      },
+      {
+        label: 'Hospitality and Food',
+        monthly: spend.averageMonthlySpendOnHospitalityAndFood ?? 0,
+        total: 12 * (spend.averageMonthlySpendOnHospitalityAndFood ?? 0)
+      },
+      {
+        label: 'Transportation',
+        monthly: spend.averageMonthlySpendOnTransportation ?? 0,
+        total: 12 * (spend.averageMonthlySpendOnTransportation ?? 0)
+      },
+      {
+        label: 'Utilities',
+        monthly: spend.averageMonthlySpendOnUtilities ?? 0,
+        total: 12 * (spend.averageMonthlySpendOnUtilities ?? 0)
+      },
+      {
+        label: 'Charges and Stamp Duty',
+        monthly: spend.averageMonthlySpendOnChargesAndStampDuty ?? 0,
+        total: 12 * (spend.averageMonthlySpendOnChargesAndStampDuty ?? 0)
+      },
+      {
+        label: 'Transfer',
+        monthly: spend.averageMonthlySpendOnTransfer ?? 0,
+        total: 12 * (spend.averageMonthlySpendOnTransfer ?? 0)
+      },
+      {
+        label: 'ATM Withdrawals and POS',
+        monthly: spend.averageMonthlySpendOnAtmAndPOS ?? 0,
+        total: 12 * (spend.averageMonthlySpendOnAtmAndPOS ?? 0)
+      }
+    ]
+
     // Use turnover values directly
     totalDebits.value = cashFlow?.totalDebitTurnOver || 0
     totalCredits.value = cashFlow?.totalCreditTurnover || 0
@@ -343,10 +503,10 @@ const downloadAnalysis = async () => {
       headers: {
         Authorization: `Bearer ${token}`
       },
-      responseType: 'blob'
+    
     })
 
-    console.log('download analysis response:', response)
+    console.log('download analysis response:', response.data)
   } catch (error) {
     console.error('Download failed:', error)
     alert('Failed to download analysis. Please try again.')
@@ -357,5 +517,26 @@ const downloadAnalysis = async () => {
 <style scoped>
 .custom-btn {
   background-color: #1f5aa3;
+}
+.custom-tabs {
+  background-color: #f0f4f8; /* Light background */
+  border-radius: 1000px;
+ 
+  max-width: fit-content;
+  margin: auto;
+}
+
+.custom-tabs .v-tab {
+ 
+  border-radius: 10000px;
+  min-width: 120px;
+  text-transform: none;
+  font-weight: 500;
+  color: #555;
+}
+
+.custom-tabs .v-tab--selected {
+  background-color: #1e5db3; /* Active tab color */
+  color: white !important;
 }
 </style>
