@@ -37,7 +37,7 @@
 
           <!-- Document Header -->
 
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-gray-700 mt-4">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-gray-700 mt-4 mb-6">
             <p>
               <i class="fas fa-calendar mr-2"></i>
               <strong>Statement Period:</strong> <br />
@@ -59,12 +59,7 @@
 
           <!-- Vuetify Tabs -->
           <div class="mt-6">
-            <v-tabs
-              align-tabs="center"
-              class="custom-tabs mb-6"
-              v-model="activeTab"
-              color="primary"
-            >
+            <v-tabs align-tabs="center" class="mb-6" v-model="activeTab" color="primary">
               <v-tab value="summary">Summary</v-tab>
               <v-tab value="cash flow">Cash Flow</v-tab>
               <v-tab value="behavioral">Behavioral</v-tab>
@@ -217,12 +212,12 @@
                 <div class="flex gap-4 justify-between bg-[#f0f8ff] p-6">
                   <!-- Card 1 -->
                   <div class="flex justify-between bg-[#1f4e99] text-white rounded-2xl p-6 w-full">
-                    <div class="flex-1 text-xl font-semibold">
+                    <div class="flex-1 text-md font-semibold">
                       {{ formatCurrency(averageMonthlyBalance) }}
                       <div class="text-sm mt-2">Average Monthly Balance</div>
                     </div>
 
-                    <div class="flex-1 text-xl font-semibold">
+                    <div class="flex-1 text-md text-md font-semibold">
                       {{ formatCurrency(averageWeeklyBalance) }}
                       <div class="text-sm mt-2">Average Weekly Balance</div>
                     </div>
@@ -231,18 +226,18 @@
                   <!-- cash flow-->
                   <div class="flex justify-between bg-[#1f4e99] text-white rounded-2xl p-6 w-full">
                     <div class="flex-1">
-                      <div class="text-xl font-semibold">Negative Cash Flow</div>
+                      <div class="text-md font-semibold">Negative Cash Flow</div>
                       <div class="text-sm mt-2">Inflow to Outflow Rate</div>
                     </div>
                     <div class="flex-1">
-                      <div class="text-xl font-semibold">Negative Cash Flow</div>
+                      <div class="text-md font-semibold">Negative Cash Flow</div>
                       <div class="text-sm mt-2">Overall Inflow to Outflow</div>
                     </div>
                   </div>
                 </div>
 
                 <div class="bg-gray-50 p-6 rounded-lg shadow-md">
-                  <h2 class="text-xl font-semibold text-gray-800 mb-4">Credit & Debit Summary</h2>
+                  <h2 class="text-lg font-semibold text-gray-800 mb-4">Credit & Debit Summary</h2>
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Monthly Section -->
                     <div class="bg-white p-4 rounded-lg shadow">
@@ -293,7 +288,119 @@
                 </div>
               </v-tabs-window-item>
               <v-tabs-window-item value="behavioral">
-                <div class="text-center text-gray-500 py-10">Behavioral Content</div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
+                  <!-- Loan Analysis Card -->
+                  <div class="bg-white p-6 rounded-2xl shadow-md">
+                    <h2 class="text-lg font-semibold text-blue-700 mb-4">Loan Analysis</h2>
+                    <div class="space-y-2">
+                      <div class="flex justify-between">
+                        <span>Number of Loan Transactions</span
+                        ><span>{{ numberLoanTransactions }}</span>
+                      </div>
+                      <div class="flex justify-between">
+                        <span>Total Loan Amount</span
+                        ><span>{{ formatCurrency(totalLoanAmount) }}</span>
+                      </div>
+                      <div class="flex justify-between">
+                        <span>Average Monthly Loan Amount</span
+                        ><span>{{ formatCurrency(averageMonthlyLoanAmount) }}</span>
+                      </div>
+                      <div class="flex justify-between">
+                        <span>Total Loan Repayment Amount</span
+                        ><span>{{ formatCurrency(totalLoanRepaymentAmount) }}</span>
+                      </div>
+                      <div class="flex justify-between">
+                        <span>Average Monthly Loan Repayment Amount</span
+                        ><span>{{ formatCurrency(averageMonthlyLoanRepaymentAmount) }}</span>
+                      </div>
+                      <div class="flex justify-between">
+                        <span>Loan to Inflow Rate</span><span>{{ loanToInflowRate }}%</span>
+                      </div>
+                      <div class="flex justify-between">
+                        <span>Latest Loan Transaction Date</span
+                        ><span>{{ latestLoanTransaction }}</span>
+                      </div>
+                      <div class="flex justify-between">
+                        <span>Latest Loan Repayment Transaction Date</span
+                        ><span>{{ latestLoanTransaction }}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Patterns Card -->
+                  <div class="bg-white p-6 rounded-2xl shadow-md">
+                    <h2 class="text-lg font-semibold text-blue-700 mb-4">Patterns</h2>
+                    <div class="space-y-2">
+                      <div class="flex justify-between">
+                        <span>Account Sweep</span
+                        ><span
+                          class="font-semibold"
+                          :class="accountSweep === 'YES' ? 'text-green-600' : 'text-gray-600'"
+                          >{{ accountSweep }}</span
+                        >
+                      </div>
+                      <div class="flex justify-between">
+                        <span>Number of Betting Transactions</span><span>0</span>
+                      </div>
+                      <div class="flex justify-between">
+                        <span>Gambling Rate</span><span>{{ gamblingRate }}</span>
+                      </div>
+                      <div class="flex justify-between">
+                        <span>Percentage of Debit Transactions</span><span>74%</span>
+                      </div>
+                      <div class="flex justify-between">
+                        <span>Percentage of Credit Transactions</span><span>26%</span>
+                      </div>
+                      <div class="flex justify-between">
+                        <span>Percentage of Transactions between 500k - 1M</span><span>4%</span>
+                      </div>
+                      <div class="flex justify-between">
+                        <span>Percentage of Transactions Greater Than 1M</span><span>23%</span>
+                      </div>
+                      <div class="flex justify-between">
+                        <span>Most Frequent Balance Rage</span><span>1,000,000 - 5,000,000</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="flex flex-wrap gap-4 p-4 bg-gray-100 rounded-lg">
+                    <!-- Self Transfers Card -->
+                    <div
+                      class="bg-[#1f56a6] text-white rounded-2xl p-6 w-full md:w-[48%] space-y-4"
+                    >
+                      <div class="flex justify-between">
+                        <div class="text-sm">Number of Self Transfers</div>
+                        <div class="text-center">
+                          <div class="text-sm">Outflow</div>
+                          <div class="font-bold">24</div>
+                        </div>
+                        <div class="text-center">
+                          <div class="text-sm">Inflow</div>
+                          <div class="font-bold">25</div>
+                        </div>
+                      </div>
+                      <div class="flex justify-between">
+                        <div class="text-sm">Value of Self Transfers</div>
+                        <div class="font-bold">₦32,587,204.18</div>
+                        <div class="font-bold">₦32,587,204.18</div>
+                      </div>
+                    </div>
+
+                    <!-- Total Transactions and Returned Cheque Card -->
+                    <div
+                      class="bg-[#1f56a6] text-white rounded-2xl p-6 w-full md:w-[48%] flex justify-between items-center"
+                    >
+                      <div class="text-center">
+                        <div class="text-2xl font-bold">1234</div>
+                        <div class="text-sm">Total Transactions</div>
+                      </div>
+                      <div class="text-center">
+                        <div class="text-2xl font-bold">1234</div>
+                        <div class="text-sm">Returned Cheque</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </v-tabs-window-item>
               <v-tabs-window-item value="transactions">
                 <div class="text-center text-gray-500 py-10">Transactions Content</div>
@@ -359,6 +466,24 @@ const mostFrequentExpenseAmount = ref(0)
 
 const expenseItems = ref([])
 
+const accountSweep = ref('')
+const gamblingRate = ref(0)
+const gamblingStatus = ref('')
+const loanInflowRate = ref(0)
+const accountActivity = ref(0)
+const totalLoanAmount = ref(0)
+const loanToInflowRate = ref(0)
+const numberLoanTransactions = ref(0)
+const averageMonthlyLoanAmount = ref(0)
+const totalLoanRepaymentAmount = ref(0)
+const loanRepaymentToInflowRate = ref(0)
+const numberRepaymentTransactions = ref(0)
+const latestLoanTransaction = ref('')
+const overallInflowToOutflowRate = ref('')
+const percentOfInflowIrregularity = ref(0)
+const monthToMonthInflowToOutflowRate = ref('')
+const averageMonthlyLoanRepaymentAmount = ref(0)
+
 const fetchAnalysisResult = async (analysisId) => {
   const savedAuth = JSON.parse(localStorage.getItem('data') || '{}')
   const token = savedAuth?.token || authStore.token
@@ -381,7 +506,33 @@ const fetchAnalysisResult = async (analysisId) => {
     fileName.value = analysis?.name || 'N/A'
     clientName.value = analysis?.clientFullName || 'N/A'
     accountId.value = analysis?.accountId || 'N/A'
+
+    const behavior = analysis?.behavioralAnalysis || {}
+
+    accountSweep.value = behavior.accountSweep || 'No'
+    gamblingRate.value = behavior.gamblingRate || 0
+    gamblingStatus.value = behavior.gamblingStatus || 'N/A'
+    loanInflowRate.value = behavior.loanInflowRate || 0
+    accountActivity.value = behavior.accountActivity || 0
+    totalLoanAmount.value = behavior.totalLoanAmount || 0
+    loanToInflowRate.value = behavior.loanToInflowRate || 0
+    numberLoanTransactions.value = behavior.numberLoanTransactions || 0
+    averageMonthlyLoanAmount.value = behavior.averageMonthlyLoanAmount || 0
+    totalLoanRepaymentAmount.value = behavior.totalLoanRepaymentAmount || 0
+    loanRepaymentToInflowRate.value = behavior.loanRepaymentToInflowRate || 0
+    numberRepaymentTransactions.value = behavior.numberRepaymentTransactions || 0
+
+    const latestLoan = behavior.latestLoanTransaction?.[0]
+    latestLoanTransaction.value = latestLoan
+      ? `₦${latestLoan.amount.toLocaleString()} on ${moment(latestLoan.date).format('MMMM D, YYYY')}`
+      : 'N/A'
+
+    overallInflowToOutflowRate.value = behavior.overallInflowToOutflowRate || 'N/A'
+    percentOfInflowIrregularity.value = behavior.percentOfInflowIrregularity || 0
+    monthToMonthInflowToOutflowRate.value = behavior.monthToMonthInflowToOutflowRate || 'N/A'
+    averageMonthlyLoanRepaymentAmount.value = behavior.averageMonthlyLoanRepaymentAmount || 0
     const cashFlow = analysis?.cashFlowAnalysis
+    console.log('cash flow data:', cashFlow)
 
     mostFrequentExpense.value = analysis?.spendAnalysis.mostFrequentExpense
     mostFrequentExpenseAmount.value = analysis?.spendAnalysis.mostFrequentExpenseAmount
@@ -451,19 +602,66 @@ const fetchAnalysisResult = async (analysisId) => {
 
     // Set Monthly Data
     const inflows = cashFlow?.monthlyInflow || []
-    monthlyData.value = inflows.map((item) => ({
-      month: item.month_name + ' ' + item.year,
-      credit: item.amount,
-      debit: item.amount // Adjust if you get real debit data
-    }))
+    const outflows = cashFlow?.monthlyOutflow || []
 
-    // Set Weekly Data
+    const monthlyMap = new Map()
+
+    // First, map inflows to months
+    inflows.forEach((item) => {
+      const key = `${item.month_name}-${item.year}`
+      monthlyMap.set(key, {
+        month: `${item.month_name} ${item.year}`,
+        credit: item.amount,
+        debit: 0
+      })
+    })
+
+    // Then, merge outflows into the same months
+    outflows.forEach((item) => {
+      const key = `${item.month_name}-${item.year}`
+      if (monthlyMap.has(key)) {
+        monthlyMap.get(key).debit = item.amount
+      } else {
+        monthlyMap.set(key, {
+          month: `${item.month_name} ${item.year}`,
+          credit: 0,
+          debit: item.amount
+        })
+      }
+    })
+
+    monthlyData.value = Array.from(monthlyMap.values())
+
     const weeklyInflows = cashFlow?.weeklyInflow || []
-    weeklyData.value = weeklyInflows.map((item) => ({
-      week: `${item.month_name} ${item.year} Wk ${item.week}`,
-      credit: item.amount,
-      debit: item.amount // Same here: adjust if real debit is available
-    }))
+    const weeklyOutflows = cashFlow?.weeklyOutflow || []
+
+    const weeklyMap = new Map()
+
+    // Map inflows to weeks
+    weeklyInflows.forEach((item) => {
+      const key = `${item.year}-${item.month_name}-W${item.week}`
+      weeklyMap.set(key, {
+        week: `${item.month_name} ${item.year} Wk ${item.week}`,
+        credit: item.amount,
+        debit: 0
+      })
+    })
+
+    // Merge outflows to existing or new weeks
+    weeklyOutflows.forEach((item) => {
+      const key = `${item.year}-${item.month_name}-W${item.week}`
+      if (weeklyMap.has(key)) {
+        weeklyMap.get(key).debit = item.amount
+      } else {
+        weeklyMap.set(key, {
+          week: `${item.month_name} ${item.year} Wk ${item.week}`,
+          credit: 0,
+          debit: item.amount
+        })
+      }
+    })
+
+    weeklyData.value = Array.from(weeklyMap.values())
 
     const start = new Date(analysis?.createdDate)
     const end = new Date(analysis?.endDate)
@@ -516,10 +714,9 @@ const downloadAnalysis = async () => {
     })
 
     console.log('download analysis response:', response.data)
-    console.log('response.data.download:', response.data?.download)
 
     const download = response.data.data.download
-    
+
     if (!download || !download.document_url || !download.document_name) {
       throw new Error('No download information or document URL found in the response.')
     }
@@ -529,7 +726,7 @@ const downloadAnalysis = async () => {
 
     // Get the original document name
     const originalFileName = download.document_name || 'analysis_report.pdf'
-    
+
     // Ensure the file has a .pdf extension
     const fileExtension = originalFileName.split('.').pop()
     const correctFileName = fileExtension === 'pdf' ? originalFileName : `${originalFileName}.pdf`
@@ -540,7 +737,7 @@ const downloadAnalysis = async () => {
     // Trigger file download
     const link = document.createElement('a')
     link.href = fileUrl
-    link.download = correctFileName  // Ensure the file name is set correctly
+    link.download = correctFileName // Ensure the file name is set correctly
     link.target = '_blank'
     document.body.appendChild(link)
     link.click()
@@ -550,16 +747,14 @@ const downloadAnalysis = async () => {
     ElMessage({
       message: 'Analysis report downloaded successfully.',
       type: 'success',
-      duration: 60000,
+      duration: 60000
     })
-
   } catch (error) {
     console.error('Download failed:', error)
     ElMessage.closeAll()
     ElMessage.error('Failed to download analysis. Please try again.')
   }
 }
-
 </script>
 
 <style scoped>
