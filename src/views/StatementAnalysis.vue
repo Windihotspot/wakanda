@@ -123,7 +123,7 @@
                   <!-- Highest Spend -->
                   <div class="bg-white rounded-2xl shadow-md p-4 w-full md:w-1/3">
                     <p class="text-sm text-gray-500 mb-1">Highest Spend</p>
-                    <p class="font-semibold text-gray-800 text-lg">{{highestSpend}}</p>
+                    <p class="font-semibold text-gray-800 text-lg">{{formatCurrency(highestSpend) }}</p>
                     <p class="text-sm font-semibold text-gray-600 mt-1">Transaction Date: {{monthWithHighestSpend}}</p>
                   </div>
 
