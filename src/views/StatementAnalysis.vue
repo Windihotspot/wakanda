@@ -123,8 +123,12 @@
                   <!-- Highest Spend -->
                   <div class="bg-white rounded-2xl shadow-md p-4 w-full md:w-1/3">
                     <p class="text-sm text-gray-500 mb-1">Highest Spend</p>
-                    <p class="font-semibold text-gray-800 text-lg">{{formatCurrency(highestSpend) }}</p>
-                    <p class="text-sm font-semibold text-gray-600 mt-1">Transaction Date: {{monthWithHighestSpend}}</p>
+                    <p class="font-semibold text-gray-800 text-lg">
+                      {{ formatCurrency(highestSpend) }}
+                    </p>
+                    <p class="text-sm font-semibold text-gray-600 mt-1">
+                      Transaction Date: {{ monthWithHighestSpend }}
+                    </p>
                   </div>
 
                   <!-- Most Frequent Expense Amount -->
@@ -163,7 +167,7 @@
                 </div>
               </v-tabs-window-item>
 
-              <!-- Other Tabs (empty for now) -->
+              <!-- Cash flow-->
               <v-tabs-window-item value="cash flow">
                 <div class="flex flex-col md:flex-row gap-4 text-center text-gray-500 py-10">
                   <!-- Inflow Summary -->
@@ -287,6 +291,8 @@
                   </div>
                 </div>
               </v-tabs-window-item>
+
+              <!-- Behavioral -->
               <v-tabs-window-item value="behavioral">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
                   <!-- Loan Analysis Card -->
@@ -363,21 +369,99 @@
                     </div>
                   </div>
                 </div>
-                <div class="flex gap-4 justify-between bg-[#f0f8ff] p-6">
-                  <!-- Card 1 -->
-                  <div class="flex justify-between bg-[#1f4e99] text-white rounded-2xl p-6 w-full">
-                    <div class="flex-1 text-md font-semibold">
-                      {{ formatCurrency(averageMonthlyBalance) }}
-                      <div class="text-sm mt-2">Average Monthly Balance</div>
-                    </div>
 
-                    <div class="flex-1 text- text-md font-semibold">
-                      {{ formatCurrency(averageWeeklyBalance) }}
-                      <div class="text-sm mt-2">Average Weekly Balance</div>
+                <!-- Transfers -->
+                <div class="flex flex-wrap gap-4 justify-between mt-4">
+                  <!-- Self Transfers Card -->
+                  <div class="bg-[#2059a5] text-white p-6 rounded-2xl w-full md:w-[48%] shadow">
+                    <div class="grid grid-cols-3 gap-4 text-sm md:text-base">
+                      <div></div>
+                      <div class="text-center font-medium">Outflow</div>
+                      <div class="text-center font-medium">Inflow</div>
+
+                      <div class="text-left">Number of Self Transfers</div>
+                      <div class="text-center font-semibold">
+                        {{ numberOfSelfTransfersOutflows }}
+                      </div>
+                      <div class="text-center font-semibold">
+                        {{ numberOfSelfTransfersInflows }}
+                      </div>
+
+                      <div class="text-left">Value of Self Transfers</div>
+                      <div class="text-center font-semibold">
+                        {{ formatCurrency(selfTransferOutflowAmount) }}
+                      </div>
+                      <div class="text-center font-semibold">
+                        {{ formatCurrency(selfTransferInflowAmount) }}
+                      </div>
                     </div>
                   </div>
 
-                  <!-- cash flow-->
+                  <!-- Total Transactions and Returned Cheque Card -->
+                  <div class="bg-[#2059a5] text-white p-6 rounded-2xl w-full md:w-[48%] shadow">
+                    <div class="grid grid-cols-2 gap-4 text-center">
+                      <div>
+                        <div class="text-2xl font-bold">{{ totalNumberOfTransactions }}</div>
+                        <div class="text-sm">Total Transactions</div>
+                      </div>
+                      <div>
+                        <div class="text-2xl font-bold">{{ returnCheque }}</div>
+                        <div class="text-sm">Returned Cheque</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="flex flex-col md:flex-row gap-6 justify-between mt-4">
+                  <!-- Self Transfer Transactions Table -->
+                  <div class="w-full md:w-1/2">
+                    <h3 class="font-semibold text-sm md:text-base mb-2">
+                      Self Transfer Transactions
+                    </h3>
+                    <div class="bg-white rounded-xl shadow p-4 max-h-96 overflow-y-auto">
+                      <table class="w-full text-sm text-left">
+                        <thead class="text-gray-600">
+                          <tr>
+                            <th class="py-2 px-4">Month</th>
+                            <th class="py-2 px-4">Inflow</th>
+                            <th class="py-2 px-4">Outflow</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr
+                            v-for="(item, index) in selfTableData"
+                            :key="index"
+                            class="border-b last:border-none"
+                          >
+                            <td class="py-2 px-4">{{ item.month }}</td>
+                            <td class="py-2 px-4">{{ formatCurrency(item.inflow) }}</td>
+                            <td class="py-2 px-4">{{ formatCurrency(item.outflow) }}</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  <!-- Account Balance Analysis Table -->
+                  <div class="w-full md:w-1/2">
+                    <h3 class="font-semibold text-sm md:text-base mb-2">
+                      Account Balance Analysis
+                    </h3>
+                    <div class="bg-white rounded-xl shadow p-4 max-h-96 overflow-y-auto">
+                      <table class="w-full text-sm text-left">
+                        <thead class="text-gray-600">
+                          <tr>
+                            <th class="py-2 px-4">Month</th>
+                            <th class="py-2 px-4">Highest Balance</th>
+                            <th class="py-2 px-4">Lowest Balance</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                         
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
                 </div>
               </v-tabs-window-item>
               <v-tabs-window-item value="transactions">
@@ -392,7 +476,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import Axios from 'axios'
 import { useAuthStore } from '@/stores/auth'
@@ -443,7 +527,7 @@ const mostFrequentExpense = ref(0)
 const mostFrequentExpenseAmount = ref(0)
 
 const highestSpend = ref(0)
- const monthWithHighestSpend = ref('')
+const monthWithHighestSpend = ref('')
 
 const expenseItems = ref([])
 
@@ -464,6 +548,17 @@ const overallInflowToOutflowRate = ref('')
 const percentOfInflowIrregularity = ref(0)
 const monthToMonthInflowToOutflowRate = ref('')
 const averageMonthlyLoanRepaymentAmount = ref(0)
+
+const numberOfSelfTransfersInflows = ref(0)
+const numberOfSelfTransfersOutflows = ref(0)
+
+const selfTransferInflowAmount = ref(0)
+const selfTransferOutflowAmount = ref(0)
+
+const totalNumberOfTransactions = ref(0)
+const returnCheque = ref(0)
+
+const selfTableData = ref([])
 
 const fetchAnalysisResult = async (analysisId) => {
   const savedAuth = JSON.parse(localStorage.getItem('data') || '{}')
@@ -519,10 +614,60 @@ const fetchAnalysisResult = async (analysisId) => {
     mostFrequentExpenseAmount.value = analysis?.spendAnalysis.mostFrequentExpenseAmount
 
     const spend = response.data?.data?.analysis_result?.analysis_result?.spendAnalysis || {}
+    const pattern =
+      response.data?.data?.analysis_result?.analysis_result?.transactionPatternAnalysis || {}
+    console.log('pattern analysis:', pattern)
+
+    numberOfSelfTransfersInflows.value = pattern.noOfSelfTransferInflows
+    numberOfSelfTransfersOutflows.value = pattern.noOfSelfTransferOutflows
+
+    selfTransferInflowAmount.value = pattern.selfTransferInflowAmount
+    selfTransferOutflowAmount.value = pattern.selfTransferOutflowAmount
+
+    totalNumberOfTransactions.value = pattern.totalNumberOfTransactions
+    returnCheque.value = pattern.returnCheque
+
+    const selfTransferInflow = pattern.selfTransferInflowTransactionsByMonth || []
+    const selfTransferOutflow = pattern.selfTransferOutflowTransactionsByMonth || []
+
+    const selfTransferMap = new Map()
+
+    // Helper to format "4-2024" to "Apr 2024"
+    function formatMonth(dateString) {
+      return moment(dateString, 'M-YYYY').format('MMM YYYY')
+    }
+
+    // Populate inflow data
+    selfTransferInflow.forEach((item) => {
+      const formattedMonth = formatMonth(item.date)
+      selfTransferMap.set(formattedMonth, {
+        month: formattedMonth,
+        inflow: item.amount,
+        outflow: 0
+      })
+    })
+
+    // Populate outflow data, merge if exists
+    selfTransferOutflow.forEach((item) => {
+      const formattedMonth = formatMonth(item.date)
+      if (selfTransferMap.has(formattedMonth)) {
+        selfTransferMap.get(formattedMonth).outflow = item.amount
+      } else {
+        selfTransferMap.set(formattedMonth, {
+          month: formattedMonth,
+          inflow: 0,
+          outflow: item.amount
+        })
+      }
+    })
+
+    // Convert map to array for the table
+    selfTableData.value = Array.from(selfTransferMap.values()).sort(
+      (a, b) => moment(a.month, 'MMM YYYY') - moment(b.month, 'MMM YYYY')
+    )
 
     highestSpend.value = spend.highestSpend
     monthWithHighestSpend.value = moment(spend.monthWithHighestSpend, 'M/YYYY').format('MMMM YYYY')
-
 
     expenseItems.value = [
       {
@@ -592,33 +737,33 @@ const fetchAnalysisResult = async (analysisId) => {
     const monthlyMap = new Map()
 
     inflows.forEach((item) => {
-  const dateKey = `${item.month_name} ${item.year}`
-  const formattedMonth = moment(dateKey, 'MMMM YYYY').format('MMM YYYY') // e.g., Jan 2024
+      const dateKey = `${item.month_name} ${item.year}`
+      const formattedMonth = moment(dateKey, 'MMMM YYYY').format('MMM YYYY') // e.g., Jan 2024
 
-  const key = `${item.month_name}-${item.year}`
-  monthlyMap.set(key, {
-    month: formattedMonth,
-    credit: item.amount,
-    debit: 0
-  })
-})
-
-// Then, merge outflows into the same months
-outflows.forEach((item) => {
-  const dateKey = `${item.month_name} ${item.year}`
-  const formattedMonth = moment(dateKey, 'MMMM YYYY').format('MMM YYYY')
-
-  const key = `${item.month_name}-${item.year}`
-  if (monthlyMap.has(key)) {
-    monthlyMap.get(key).debit = item.amount
-  } else {
-    monthlyMap.set(key, {
-      month: formattedMonth,
-      credit: 0,
-      debit: item.amount
+      const key = `${item.month_name}-${item.year}`
+      monthlyMap.set(key, {
+        month: formattedMonth,
+        credit: item.amount,
+        debit: 0
+      })
     })
-  }
-})
+
+    // Then, merge outflows into the same months
+    outflows.forEach((item) => {
+      const dateKey = `${item.month_name} ${item.year}`
+      const formattedMonth = moment(dateKey, 'MMMM YYYY').format('MMM YYYY')
+
+      const key = `${item.month_name}-${item.year}`
+      if (monthlyMap.has(key)) {
+        monthlyMap.get(key).debit = item.amount
+      } else {
+        monthlyMap.set(key, {
+          month: formattedMonth,
+          credit: 0,
+          debit: item.amount
+        })
+      }
+    })
 
     monthlyData.value = Array.from(monthlyMap.values())
 
