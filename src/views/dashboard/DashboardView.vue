@@ -44,12 +44,13 @@ const fetchStatements = async () => {
     const rawAnalyses = response.data?.data?.analyses || []
 
     statements.value = rawAnalyses.map((item) => ({
-      id: item.id,
-      name: `${item.firstname} ${item.lastname}`,
-      file_name: item.file_name,
-      created_date: moment(item.created_at).format('MMMM Do, YYYY'),
-      status: item.status
-    }))
+  id: item.id,
+  name: `${item.firstname} ${item.lastname}`,
+  file_name: item.file_name,
+  created_date: item.created_at, // raw date
+  status: item.status
+}))
+
   } catch (error) {
     console.error('Error fetching statements:', error)
     statements.value = []
@@ -57,6 +58,12 @@ const fetchStatements = async () => {
     isLoading.value = false
   }
 }
+
+const sortedStatements = computed(() => {
+  return [...statements.value].sort(
+    (a, b) => new Date(b.created_date) - new Date(a.created_date)
+  )
+})
 
 const fetchAnalysisResult = async (analysisId) => {
   const apiUrl = `https://dev02201.getjupita.com/api/${tenantId.value}/get-analysis-result?analysis_id=${analysisId};`
@@ -131,6 +138,7 @@ const getStatusColor = (status) => {
         <table class="min-w-full bg-white border border-gray-300 rounded-lg shadow-md">
           <thead class="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
             <tr>
+              <th class="py-3 px-6 text-left">S/N</th>
               <th class="py-3 px-6 text-left">Uploaded by</th>
               <th class="py-3 px-6 text-left">File Name</th>
               <th class="py-3 px-6 text-left">Created Date</th>
@@ -139,31 +147,34 @@ const getStatusColor = (status) => {
             </tr>
           </thead>
           <tbody class="text-gray-700 text-sm font-light">
-            <tr v-for="doc in statements" :key="doc.id" class="border-b border-gray-200">
-              <td class="py-3 px-6">{{ doc.name }}</td>
-              <td class="py-3 px-6">{{ doc.file_name }}</td>
-              <td class="py-3 px-6">{{ doc.created_date }}</td>
-              <td class="py-3 px-6 ">
-                <span
-                          :class="
-                            doc.status === 'PROCESSED'
-                              ? 'text-green-600 py-1 text-xs font-semibold'
-                              : 'text-red-600 py-1  text-xs font-semibold'
-                          "
-                        >
-                          {{ doc.status }}
-                        </span>
-               
-              </td>
-              <td class="py-3 px-6 text-center">
-                <span
-                  @click="goToAnalysis(doc.id)"
-                  class="bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-600 cursor-pointer"
-                >
-                  View
-                </span>
-              </td>
-            </tr>
+            <tr
+  v-for="(doc, index) in sortedStatements"
+  :key="doc.id"
+  class="border-b border-gray-200 hover:bg-gray-100"
+>
+  <td class="py-3 px-6 text-left">{{ index + 1 }}</td>
+  <td class="py-3 px-6">{{ doc.name }}</td>
+  <td class="py-3 px-6">{{ doc.file_name }}</td>
+  <td class="py-3 px-6">{{ moment(doc.created_date).format('MMMM Do, YYYY') }}</td>
+  <td class="py-3 px-6">
+    <span
+      :class="doc.status === 'PROCESSED'
+        ? 'text-green-600 py-1 text-xs font-semibold'
+        : 'text-red-600 py-1 text-xs font-semibold'"
+    >
+      {{ doc.status }}
+    </span>
+  </td>
+  <td class="py-3 px-6 text-center">
+    <span
+      @click="goToAnalysis(doc.id)"
+      class="bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-600 cursor-pointer"
+    >
+      View
+    </span>
+  </td>
+</tr>
+
           </tbody>
         </table>
       </div>

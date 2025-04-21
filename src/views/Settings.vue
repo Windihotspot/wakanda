@@ -120,7 +120,7 @@
                           {{ user.status }}
                         </span>
                       </td>
-                      <td class="px-6 py-4">?</td>
+                      <td class="px-6 py-4">{{ user.role }}</td>
                       <td class="px-6 py-4">{{ user.creationDate }}</td>
                     </tr>
                   </tbody>
@@ -234,6 +234,7 @@
 </template>
 
 <script setup>
+import moment from 'moment'
 import MainLayout from '@/layouts/full/MainLayout.vue'
 const activeTab = ref('profile')
 import { ref, onMounted, computed } from 'vue'
@@ -269,6 +270,10 @@ const roles = ref([
   { value: 'analysis_manager', label: 'Analysis Manager' },
   { value: 'observer', label: 'Observer' }
 ])
+const getRoleLabel = (roleValue) => {
+  const found = roles.value.find((r) => r.value === roleValue)
+  return found ? found.label : 'N/A'
+}
 const isLoading = ref(true)
 
 const getRoles = async () => {
@@ -339,13 +344,16 @@ const fetchTeam = async () => {
     // Normalize the members
     const normalized = members.map((m) => {
       const user = m.me ?? m
+      const rawRole = user.role?.title || m.role?.title
+
       return {
         id: user.id,
         name: `${user.firstname} ${user.lastname}`,
         email: user.email,
         phone: user.phone_number || 'N/A',
         status: user.active === 1 ? 'Active' : 'Inactive',
-        creationDate: new Date(user.created_at).toLocaleDateString()
+        creationDate: moment(user.created_at).format('MMMM Do YYYY, h:mm a'),
+        role: getRoleLabel(rawRole)
       }
     })
 
@@ -465,6 +473,7 @@ const copyToClipboard = (text) => {
 }
 
 onMounted(() => {
+  getRoleLabel()
   fetchTeam()
   console.log('User data from storage:', user)
   if (user) {

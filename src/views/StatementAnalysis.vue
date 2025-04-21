@@ -123,8 +123,8 @@
                   <!-- Highest Spend -->
                   <div class="bg-white rounded-2xl shadow-md p-4 w-full md:w-1/3">
                     <p class="text-sm text-gray-500 mb-1">Highest Spend</p>
-                    <p class="font-semibold text-gray-800 text-lg">{{}}</p>
-                    <p class="text-sm font-semibold text-gray-600 mt-1">Transaction Date: {{}}</p>
+                    <p class="font-semibold text-gray-800 text-lg">{{highestSpend}}</p>
+                    <p class="text-sm font-semibold text-gray-600 mt-1">Transaction Date: {{monthWithHighestSpend}}</p>
                   </div>
 
                   <!-- Most Frequent Expense Amount -->
@@ -217,7 +217,7 @@
                       <div class="text-sm mt-2">Average Monthly Balance</div>
                     </div>
 
-                    <div class="flex-1 text-md text-md font-semibold">
+                    <div class="flex-1 text- text-md font-semibold">
                       {{ formatCurrency(averageWeeklyBalance) }}
                       <div class="text-sm mt-2">Average Weekly Balance</div>
                     </div>
@@ -246,16 +246,16 @@
                         <table class="min-w-full table-auto text-sm text-left text-gray-600">
                           <thead class="bg-gray-100 font-medium text-gray-700">
                             <tr>
-                              <th class="px-4 py-2">Month</th>
-                              <th class="px-4 py-2">Total Credit</th>
-                              <th class="px-4 py-2">Total Debit</th>
+                              <th class="px-2 py-2">Month</th>
+                              <th class="px-2 py-2">Total Credit</th>
+                              <th class="px-2 py-2">Total Debit</th>
                             </tr>
                           </thead>
                           <tbody>
                             <tr v-for="(entry, index) in monthlyData" :key="index" class="border-b">
-                              <td class="px-4 py-2">{{ entry.month }}</td>
-                              <td class="px-4 py-2">{{ formatCurrency(entry.credit) }}</td>
-                              <td class="px-4 py-2">{{ formatCurrency(entry.debit) }}</td>
+                              <td class="px-2 py-2">{{ entry.month }}</td>
+                              <td class="px-2 py-2">{{ formatCurrency(entry.credit) }}</td>
+                              <td class="px-2 py-2">{{ formatCurrency(entry.debit) }}</td>
                             </tr>
                           </tbody>
                         </table>
@@ -269,16 +269,16 @@
                         <table class="min-w-full table-auto text-sm text-left text-gray-600">
                           <thead class="bg-gray-100 font-medium text-gray-700">
                             <tr>
-                              <th class="px-4 py-2">Week</th>
-                              <th class="px-4 py-2">Total Credit</th>
-                              <th class="px-4 py-2">Total Debit</th>
+                              <th class="px-2 py-2">Week</th>
+                              <th class="px-2 py-2">Total Credit</th>
+                              <th class="px-2 py-2">Total Debit</th>
                             </tr>
                           </thead>
                           <tbody>
                             <tr v-for="(entry, index) in weeklyData" :key="index" class="border-b">
-                              <td class="px-4 py-2">{{ entry.week }}</td>
-                              <td class="px-4 py-2">{{ formatCurrency(entry.credit) }}</td>
-                              <td class="px-4 py-2">{{ formatCurrency(entry.debit) }}</td>
+                              <td class="px-2 py-2">{{ entry.week }}</td>
+                              <td class="px-2 py-2">{{ formatCurrency(entry.credit) }}</td>
+                              <td class="px-2 py-2">{{ formatCurrency(entry.debit) }}</td>
                             </tr>
                           </tbody>
                         </table>
@@ -362,44 +362,22 @@
                       </div>
                     </div>
                   </div>
-
-                  <div class="flex flex-wrap gap-4 p-4 bg-gray-100 rounded-lg">
-                    <!-- Self Transfers Card -->
-                    <div
-                      class="bg-[#1f56a6] text-white rounded-2xl p-6 w-full md:w-[48%] space-y-4"
-                    >
-                      <div class="flex justify-between">
-                        <div class="text-sm">Number of Self Transfers</div>
-                        <div class="text-center">
-                          <div class="text-sm">Outflow</div>
-                          <div class="font-bold">24</div>
-                        </div>
-                        <div class="text-center">
-                          <div class="text-sm">Inflow</div>
-                          <div class="font-bold">25</div>
-                        </div>
-                      </div>
-                      <div class="flex justify-between">
-                        <div class="text-sm">Value of Self Transfers</div>
-                        <div class="font-bold">₦32,587,204.18</div>
-                        <div class="font-bold">₦32,587,204.18</div>
-                      </div>
+                </div>
+                <div class="flex gap-4 justify-between bg-[#f0f8ff] p-6">
+                  <!-- Card 1 -->
+                  <div class="flex justify-between bg-[#1f4e99] text-white rounded-2xl p-6 w-full">
+                    <div class="flex-1 text-md font-semibold">
+                      {{ formatCurrency(averageMonthlyBalance) }}
+                      <div class="text-sm mt-2">Average Monthly Balance</div>
                     </div>
 
-                    <!-- Total Transactions and Returned Cheque Card -->
-                    <div
-                      class="bg-[#1f56a6] text-white rounded-2xl p-6 w-full md:w-[48%] flex justify-between items-center"
-                    >
-                      <div class="text-center">
-                        <div class="text-2xl font-bold">1234</div>
-                        <div class="text-sm">Total Transactions</div>
-                      </div>
-                      <div class="text-center">
-                        <div class="text-2xl font-bold">1234</div>
-                        <div class="text-sm">Returned Cheque</div>
-                      </div>
+                    <div class="flex-1 text- text-md font-semibold">
+                      {{ formatCurrency(averageWeeklyBalance) }}
+                      <div class="text-sm mt-2">Average Weekly Balance</div>
                     </div>
                   </div>
+
+                  <!-- cash flow-->
                 </div>
               </v-tabs-window-item>
               <v-tabs-window-item value="transactions">
@@ -463,6 +441,9 @@ const weeklyData = ref([])
 
 const mostFrequentExpense = ref(0)
 const mostFrequentExpenseAmount = ref(0)
+
+const highestSpend = ref(0)
+ const monthWithHighestSpend = ref('')
 
 const expenseItems = ref([])
 
@@ -539,6 +520,10 @@ const fetchAnalysisResult = async (analysisId) => {
 
     const spend = response.data?.data?.analysis_result?.analysis_result?.spendAnalysis || {}
 
+    highestSpend.value = spend.highestSpend
+    monthWithHighestSpend.value = moment(spend.monthWithHighestSpend, 'M/YYYY').format('MMMM YYYY')
+
+
     expenseItems.value = [
       {
         label: 'Others',
@@ -606,55 +591,63 @@ const fetchAnalysisResult = async (analysisId) => {
 
     const monthlyMap = new Map()
 
-    // First, map inflows to months
     inflows.forEach((item) => {
-      const key = `${item.month_name}-${item.year}`
-      monthlyMap.set(key, {
-        month: `${item.month_name} ${item.year}`,
-        credit: item.amount,
-        debit: 0
-      })
-    })
+  const dateKey = `${item.month_name} ${item.year}`
+  const formattedMonth = moment(dateKey, 'MMMM YYYY').format('MMM YYYY') // e.g., Jan 2024
 
-    // Then, merge outflows into the same months
-    outflows.forEach((item) => {
-      const key = `${item.month_name}-${item.year}`
-      if (monthlyMap.has(key)) {
-        monthlyMap.get(key).debit = item.amount
-      } else {
-        monthlyMap.set(key, {
-          month: `${item.month_name} ${item.year}`,
-          credit: 0,
-          debit: item.amount
-        })
-      }
+  const key = `${item.month_name}-${item.year}`
+  monthlyMap.set(key, {
+    month: formattedMonth,
+    credit: item.amount,
+    debit: 0
+  })
+})
+
+// Then, merge outflows into the same months
+outflows.forEach((item) => {
+  const dateKey = `${item.month_name} ${item.year}`
+  const formattedMonth = moment(dateKey, 'MMMM YYYY').format('MMM YYYY')
+
+  const key = `${item.month_name}-${item.year}`
+  if (monthlyMap.has(key)) {
+    monthlyMap.get(key).debit = item.amount
+  } else {
+    monthlyMap.set(key, {
+      month: formattedMonth,
+      credit: 0,
+      debit: item.amount
     })
+  }
+})
 
     monthlyData.value = Array.from(monthlyMap.values())
 
+    //set weekly data
     const weeklyInflows = cashFlow?.weeklyInflow || []
     const weeklyOutflows = cashFlow?.weeklyOutflow || []
 
     const weeklyMap = new Map()
 
-    // Map inflows to weeks
     weeklyInflows.forEach((item) => {
-      const key = `${item.year}-${item.month_name}-W${item.week}`
+      const month = moment().month(item.month_name).format('MMM') // e.g., "Jan"
+      const key = `${item.year}-${month}-W${item.week}`
       weeklyMap.set(key, {
-        week: `${item.month_name} ${item.year} Wk ${item.week}`,
+        week: `${month} ${item.year} | ${item.week}`,
+
         credit: item.amount,
         debit: 0
       })
     })
 
-    // Merge outflows to existing or new weeks
     weeklyOutflows.forEach((item) => {
-      const key = `${item.year}-${item.month_name}-W${item.week}`
+      const month = moment().month(item.month_name).format('MMM')
+      const key = `${item.year}-${month}-W${item.week}`
       if (weeklyMap.has(key)) {
         weeklyMap.get(key).debit = item.amount
       } else {
         weeklyMap.set(key, {
-          week: `${item.month_name} ${item.year} Wk ${item.week}`,
+          week: `${month} ${item.year} ${item.week}`,
+
           credit: 0,
           debit: item.amount
         })
@@ -663,7 +656,7 @@ const fetchAnalysisResult = async (analysisId) => {
 
     weeklyData.value = Array.from(weeklyMap.values())
 
-    const start = new Date(analysis?.createdDate)
+    const start = new Date(analysis?.startDate)
     const end = new Date(analysis?.endDate)
     if (!isNaN(start) && !isNaN(end)) {
       statementPeriod.value = `${moment(start).format('MMMM D, YYYY')} - ${moment(end).format('MMMM D, YYYY')}`
