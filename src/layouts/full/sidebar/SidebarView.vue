@@ -1,15 +1,50 @@
 <script setup>
-import { ref } from 'vue'
+import { ref , computed} from 'vue'
 import sidebarItems from './sidebarItem'
 import { useRoute, useRouter } from 'vue-router'
+import axios from 'axios'
 const route = useRoute()
 const router = useRouter()
 // Function to check if the current route is active
 const isActive = (path) => {
   return route.path === path
 }
+import { useAuthStore } from '@/stores/auth'
+const authStore = useAuthStore()
+const token = computed(() => authStore.token)
+const tenantId = computed(() => authStore.tenant_id)
 
 const sidebarMenu = ref(sidebarItems)
+const logout = async () => {
+  const savedAuth = JSON.parse(localStorage.getItem('data') || '{}')
+  const token = savedAuth?.token || authStore.token
+  const tenantId = savedAuth?.user?.tenant_id || authStore.tenant_id
+  
+
+  try {
+    const response = await axios.post(
+      `https://dev02201.getjupita.com/api/${tenantId}/logout`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    )
+
+    // Handle the successful logout
+    console.log('Logged out successfully:', response.data)
+
+    // Redirect to login page or any other page
+    router.push('/') 
+  } catch (error) {
+    // Handle errors
+    errorMessage.value = error.response?.data?.message || error.message
+    console.error('Logout failed:', errorMessage.value)
+  } finally {
+    isLoading.value = false
+  }
+}
 </script>
 
 <template>
@@ -40,7 +75,7 @@ const sidebarMenu = ref(sidebarItems)
 
     <!-- Footer Logout -->
     <div class="pa-4">
-      <v-list-item class="custom-btn logout-btn" rounded="lg" block>
+      <v-list-item @click="logout" class="custom-btn logout-btn" rounded="lg" block>
         <v-icon class="text-lg" left>
           <i class="fas fa-sign-out-alt"></i>
         </v-icon>
