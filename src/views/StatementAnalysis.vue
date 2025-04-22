@@ -240,8 +240,10 @@
                   </div>
                 </div>
 
-                <div class=" p-2 rounded-lg shadow-md">
-                  <h2 class="text-lg font-semibold text-gray-800 mb-2 mt-2">Credit & Debit Summary</h2>
+                <div class="p-2 rounded-lg shadow-md">
+                  <h2 class="text-lg font-semibold text-gray-800 mb-2 mt-2">
+                    Credit & Debit Summary
+                  </h2>
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Monthly Section -->
                     <div class="bg-white p-4 rounded-lg shadow">
@@ -911,7 +913,29 @@ const fetchAnalysisResult = async (analysisId) => {
   }
 }
 
+const fetchTransactions = async () => {
+  const savedAuth = JSON.parse(localStorage.getItem('data') || '{}')
+  const token = savedAuth?.token || authStore.token
+  const tenantId = savedAuth?.user?.tenant_id || authStore.tenant_id
+  const analysisId = route.params.id
+
+  const apiUrl = `https://dev02201.getjupita.com/api/${tenantId}/get-statement-transactions?analysis_id=${analysisId}`
+
+  try {
+    const response = await Axios.get(apiUrl, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+
+    console.log('fetch transactions response:', response)
+  } catch (error) {
+    console.error( error)
+  }
+}
+
 onMounted(() => {
+  fetchTransactions()
   const id = route.params.id
   if (id) {
     fetchAnalysisResult(id)
@@ -988,6 +1012,8 @@ const downloadAnalysis = async () => {
     ElMessage.error('Failed to download analysis. Please try again.')
   }
 }
+
+
 </script>
 
 <style scoped>

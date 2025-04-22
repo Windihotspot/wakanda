@@ -9,36 +9,53 @@ const isActive = (path) => {
   return route.path === path
 }
 
-
 const sidebarMenu = ref(sidebarItems)
 </script>
 
 <template>
-  <div class="side-bar">
+  <div class="side-bar d-flex flex-column h-full justify-between">
     <!-- Logo part -->
     <div class="logo pa-4">
-      <!-- Logo -->
       <img src="/src/assets/images/white.png" class="" />
     </div>
 
     <!-- Navigation -->
-    <div class="scrollnavbar">
+    <div class="scrollnavbar flex-grow">
       <v-list class="pa-4" color="transparent">
-        <!-- Menu Loop -->
         <template v-for="(item, i) in sidebarMenu" :key="i">
-          <!-- Single Item -->
-
-          <v-list-item  @click="router.push(item.path)" class="mb-4 pr-4 custom-btn no-uppercase" size="small" rounded="lg" block :class="{ 'custom-active': isActive(item.path) }">
+          <v-list-item
+            @click="router.push(item.path)"
+            class="mb-4 pr-4 custom-btn no-uppercase"
+            size="small"
+            rounded="lg"
+            block
+            :class="{ 'custom-active': isActive(item.path) }"
+          >
             <v-icon left>{{ item.icon }}</v-icon>
             <span class="menu-item ml-4" v-text="item.title"></span>
           </v-list-item>
         </template>
       </v-list>
     </div>
+
+    <!-- Footer Logout -->
+    <div class="pa-4">
+      <v-list-item class="custom-btn logout-btn" rounded="lg" block>
+        <v-icon class="text-lg" left>
+          <i class="fas fa-sign-out-alt"></i>
+        </v-icon>
+        <span class="menu-item ml-4">Logout</span>
+      </v-list-item>
+    </div>
   </div>
 </template>
 
 <style scoped>
+.logout-btn:hover {
+  background-color: #ffecec;
+}
+
+
 .logo {
   width: 50%;
 }
@@ -87,10 +104,10 @@ const sidebarMenu = ref(sidebarItems)
 }
 
 .custom-active .menu-item {
-  color: #1f5aa3!important;
+  color: #1f5aa3 !important;
 }
 
 .custom-active .v-icon {
-  color: #1f5aa3!important;
+  color: #1f5aa3 !important;
 }
 </style>
