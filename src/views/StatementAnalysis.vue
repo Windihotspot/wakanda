@@ -1,6 +1,6 @@
 <template>
   <MainLayout>
-    <div class="p-2">
+    <div class="p-2 bg-[#f0f8ff]">
       <h2 class="text-xl font-bold mt-2 ml-6">Statement Analysis Result</h2>
       <template v-if="loading">
         <div class="flex items-center justify-center h-96">
@@ -141,7 +141,7 @@
                 </div>
 
                 <div class="bg-white p-6 rounded-2xl shadow-md overflow-x-auto">
-                  <h2 class="text-lg font-semibold text-gray-800 mb-4">Expenses</h2>
+                  <h2 class="text-lg font-semibold text-gray-800 m-4">Expenses</h2>
                   <table class="min-w-full table-auto border-collapse">
                     <thead>
                       <tr
@@ -171,7 +171,7 @@
               <v-tabs-window-item value="cash flow">
                 <div class="flex flex-col md:flex-row gap-4 text-center text-gray-500 py-10">
                   <!-- Inflow Summary -->
-                  <div class="flex-1 bg-white p-6 rounded-xl shadow">
+                  <div class="flex-1 bg-white border p-6 rounded-xl shadow">
                     <h2 class="text-lg font-semibold text-blue-800 mb-4">Inflow Summary</h2>
                     <div class="space-y-2">
                       <div class="flex justify-between">
@@ -192,7 +192,7 @@
                   </div>
 
                   <!-- Outflow Summary -->
-                  <div class="flex-1 bg-white p-6 rounded-xl shadow">
+                  <div class="flex-1 bg-white border p-6 rounded-xl shadow">
                     <h2 class="text-lg font-semibold text-blue-800 mb-4">Outflow Summary</h2>
                     <div class="space-y-2">
                       <div class="flex justify-between">
@@ -213,7 +213,7 @@
                   </div>
                 </div>
 
-                <div class="flex gap-4 justify-between bg-[#f0f8ff] p-6">
+                <div class="flex gap-4 justify-between p-2">
                   <!-- Card 1 -->
                   <div class="flex justify-between bg-[#1f4e99] text-white rounded-2xl p-6 w-full">
                     <div class="flex-1 text-md font-semibold">
@@ -240,8 +240,8 @@
                   </div>
                 </div>
 
-                <div class="bg-gray-50 p-6 rounded-lg shadow-md">
-                  <h2 class="text-lg font-semibold text-gray-800 mb-4">Credit & Debit Summary</h2>
+                <div class=" p-2 rounded-lg shadow-md">
+                  <h2 class="text-lg font-semibold text-gray-800 mb-2 mt-2">Credit & Debit Summary</h2>
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Monthly Section -->
                     <div class="bg-white p-4 rounded-lg shadow">
@@ -328,7 +328,7 @@
                       </div>
                       <div class="flex justify-between">
                         <span>Latest Loan Repayment Transaction Date</span
-                        ><span>{{ latestLoanTransaction }}</span>
+                        ><span>{{ loanRepaymentDate }}</span>
                       </div>
                     </div>
                   </div>
@@ -346,25 +346,30 @@
                         >
                       </div>
                       <div class="flex justify-between">
-                        <span>Number of Betting Transactions</span><span>0</span>
+                        <span>Number of Betting Transactions</span><span>{{ gamblingStatus }}</span>
                       </div>
                       <div class="flex justify-between">
                         <span>Gambling Rate</span><span>{{ gamblingRate }}</span>
                       </div>
                       <div class="flex justify-between">
-                        <span>Percentage of Debit Transactions</span><span>74%</span>
+                        <span>Percentage of Debit Transactions</span
+                        ><span>{{ percentOfDebit }}</span>
                       </div>
                       <div class="flex justify-between">
-                        <span>Percentage of Credit Transactions</span><span>26%</span>
+                        <span>Percentage of Credit Transactions</span
+                        ><span>{{ percentOfCredit }}</span>
                       </div>
                       <div class="flex justify-between">
-                        <span>Percentage of Transactions between 500k - 1M</span><span>4%</span>
+                        <span>Percentage of Transactions between 500k - 1M</span
+                        ><span>{{ percentOfTransactionsBetween500ThousandToOneMillionNaira }}</span>
                       </div>
                       <div class="flex justify-between">
-                        <span>Percentage of Transactions Greater Than 1M</span><span>23%</span>
+                        <span>Percentage of Transactions Greater Than 1M</span
+                        ><span>{{ percentOfTransactionsGreaterThanOneMillionNaira }}</span>
                       </div>
                       <div class="flex justify-between">
-                        <span>Most Frequent Balance Rage</span><span>1,000,000 - 5,000,000</span>
+                        <span>Most Frequent Balance Range</span
+                        ><span>{{ mostFrequentBalanceRange }}</span>
                       </div>
                     </div>
                   </div>
@@ -418,7 +423,7 @@
                     <h3 class="font-semibold text-sm md:text-base mb-2">
                       Self Transfer Transactions
                     </h3>
-                    <div class="bg-white rounded-xl shadow p-4 max-h-96 overflow-y-auto">
+                    <div class="bg-white rounded-xl border shadow p-4 max-h-96 overflow-y-auto">
                       <table class="w-full text-sm text-left">
                         <thead class="text-gray-600">
                           <tr>
@@ -428,6 +433,13 @@
                           </tr>
                         </thead>
                         <tbody>
+                          <!-- Empty state check -->
+                          <tr v-if="!selfTableData || selfTableData.length === 0">
+                            <td colspan="3" class="text-center py-4 text-gray-500">
+                              No data available
+                            </td>
+                          </tr>
+                          <!-- Data rows -->
                           <tr
                             v-for="(item, index) in selfTableData"
                             :key="index"
@@ -447,7 +459,7 @@
                     <h3 class="font-semibold text-sm md:text-base mb-2">
                       Account Balance Analysis
                     </h3>
-                    <div class="bg-white rounded-xl shadow p-4 max-h-96 overflow-y-auto">
+                    <div class="bg-white border rounded-xl shadow p-4 max-h-96 overflow-y-auto">
                       <table class="w-full text-sm text-left">
                         <thead class="text-gray-600">
                           <tr>
@@ -457,7 +469,11 @@
                           </tr>
                         </thead>
                         <tbody>
-                         
+                          <tr v-for="(item, index) in monthlyBalance" :key="index">
+                            <td class="py-2 px-4">{{ item.month }}</td>
+                            <td class="py-2 px-4">{{ formatCurrency(item.highest) }}</td>
+                            <td class="py-2 px-4">{{ formatCurrency(item.lowest) }}</td>
+                          </tr>
                         </tbody>
                       </table>
                     </div>
@@ -531,6 +547,11 @@ const monthWithHighestSpend = ref('')
 
 const expenseItems = ref([])
 
+const percentOfDebit = ref('')
+const percentOfCredit = ref('')
+const percentOfTransactionsBetween500ThousandToOneMillionNaira = ref('')
+const percentOfTransactionsGreaterThanOneMillionNaira = ref('')
+const mostFrequentBalanceRange = ref(0)
 const accountSweep = ref('')
 const gamblingRate = ref(0)
 const gamblingStatus = ref('')
@@ -544,6 +565,9 @@ const totalLoanRepaymentAmount = ref(0)
 const loanRepaymentToInflowRate = ref(0)
 const numberRepaymentTransactions = ref(0)
 const latestLoanTransaction = ref('')
+const loanRepayment = ref([])
+const loanRepaymentDate = ref('')
+
 const overallInflowToOutflowRate = ref('')
 const percentOfInflowIrregularity = ref(0)
 const monthToMonthInflowToOutflowRate = ref('')
@@ -559,6 +583,23 @@ const totalNumberOfTransactions = ref(0)
 const returnCheque = ref(0)
 
 const selfTableData = ref([])
+
+const monthlyBalance = ref([])
+
+// Function to format the balance range (e.g., "1000 - 100000")
+const formatBalanceRange = () => {
+  if (!range || !range.includes(' - ')) {
+    return '₦0.00 - ₦0.00' // Return a fallback if the range format is invalid
+  }
+
+  const [lower, upper] = range.split(' - ').map((val) => parseFloat(val.trim()))
+
+  if (isNaN(lower) || isNaN(upper)) {
+    return '₦0.00 - ₦0.00' // Return fallback if parsing fails
+  }
+
+  return `${formatCurrency(lower)} - ${formatCurrency(upper)}`
+}
 
 const fetchAnalysisResult = async (analysisId) => {
   const savedAuth = JSON.parse(localStorage.getItem('data') || '{}')
@@ -597,10 +638,20 @@ const fetchAnalysisResult = async (analysisId) => {
     totalLoanRepaymentAmount.value = behavior.totalLoanRepaymentAmount || 0
     loanRepaymentToInflowRate.value = behavior.loanRepaymentToInflowRate || 0
     numberRepaymentTransactions.value = behavior.numberRepaymentTransactions || 0
+    // Assign loanRepayment array
+    loanRepayment.value = behavior.latestRepaymentTransaction || []
+
+    // Get first object if it exists
+    const firstRepayment = loanRepayment.value[0] || null
+
+    // Format using moment in the script
+    loanRepaymentDate.value = firstRepayment?.date
+      ? moment(firstRepayment.date).format('MMM D, YYYY')
+      : 'N/A'
 
     const latestLoan = behavior.latestLoanTransaction?.[0]
     latestLoanTransaction.value = latestLoan
-      ? `₦${latestLoan.amount.toLocaleString()} on ${moment(latestLoan.date).format('MMMM D, YYYY')}`
+      ? moment(latestLoan.date).format('MMMM D, YYYY')
       : 'N/A'
 
     overallInflowToOutflowRate.value = behavior.overallInflowToOutflowRate || 'N/A'
@@ -617,6 +668,14 @@ const fetchAnalysisResult = async (analysisId) => {
     const pattern =
       response.data?.data?.analysis_result?.analysis_result?.transactionPatternAnalysis || {}
     console.log('pattern analysis:', pattern)
+
+    percentOfDebit.value = (pattern.percentDebitTransactions * 100).toFixed(2) + '%'
+    percentOfCredit.value = (pattern.percentDebitTransactions * 100).toFixed(2) + '%'
+    percentOfTransactionsBetween500ThousandToOneMillionNaira.value =
+      (pattern.percentOfTransactionsBetween500ThousandToOneMillionNaira * 100).toFixed(2) + '%'
+    percentOfTransactionsGreaterThanOneMillionNaira.value =
+      (pattern.percentOfTransactionsGreaterThanOneMillionNaira * 100).toFixed(2) + '%'
+    mostFrequentBalanceRange.value = pattern.mostFrequentBalanceRange
 
     numberOfSelfTransfersInflows.value = pattern.noOfSelfTransferInflows
     numberOfSelfTransfersOutflows.value = pattern.noOfSelfTransferOutflows
@@ -729,6 +788,42 @@ const fetchAnalysisResult = async (analysisId) => {
     totalOutflow.value = cashFlow?.totalDebitTurnOver || 0
     averageMonthlyOutflow.value = cashFlow?.averageMonthlyDebits || 0
     averageWeeklyOutflow.value = cashFlow?.averageWeeklyDebits || 0
+
+    // set monthly balance
+    const highest = cashFlow?.monthlyHighestBalance || []
+    const lowest = cashFlow?.monthlyLowestBalance || []
+
+    const monthlyBalanceMap = new Map()
+
+    highest.forEach((item) => {
+      const dateKey = `${item.month_name} ${item.year}`
+      const formattedMonth = moment(dateKey, 'MMMM YYYY').format('MMM YYYY') // e.g., Jan 2024
+
+      const key = `${item.month_name}-${item.year}`
+      monthlyBalanceMap.set(key, {
+        month: formattedMonth,
+        highest: item.highest_balance,
+        lowest: 0
+      })
+    })
+
+    lowest.forEach((item) => {
+      const dateKey = `${item.month_name} ${item.year}`
+      const formattedMonth = moment(dateKey, 'MMMM YYYY').format('MMM YYYY')
+
+      const key = `${item.month_name}-${item.year}`
+      if (monthlyBalanceMap.has(key)) {
+        monthlyBalanceMap.get(key).lowest = item.lowest_balance
+      } else {
+        monthlyBalanceMap.set(key, {
+          month: formattedMonth,
+          highest: 0,
+          lowest: item.lowest_balance
+        })
+      }
+    })
+
+    monthlyBalance.value = Array.from(monthlyBalanceMap.values())
 
     // Set Monthly Data
     const inflows = cashFlow?.monthlyInflow || []
@@ -918,5 +1013,8 @@ const downloadAnalysis = async () => {
 .custom-tabs .v-tab--selected {
   background-color: #1e5db3; /* Active tab color */
   color: white !important;
+}
+.v-tab {
+  text-transform: none !important;
 }
 </style>
