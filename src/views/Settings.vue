@@ -234,6 +234,7 @@
 </template>
 
 <script setup>
+import { ElNotification, ElLoading } from 'element-plus'
 import moment from 'moment'
 import MainLayout from '@/layouts/full/MainLayout.vue'
 const activeTab = ref('profile')
@@ -368,6 +369,15 @@ const inviteUser = async () => {
   const savedAuth = JSON.parse(localStorage.getItem('data') || '{}')
   const token = savedAuth?.token || authStore.token
   const tenantId = savedAuth?.user?.tenant_id || authStore.tenant_id
+
+  closeModal()
+  // Start loading
+  const loadingInstance = ElLoading.service({
+    lock: true,
+    text: 'Inviting user...',
+    background: 'rgba(0, 0, 0, 0.3)',
+  })
+
   try {
     const payload = {
       firstname: newUser.value.firstname,
@@ -375,39 +385,51 @@ const inviteUser = async () => {
       email: newUser.value.email,
       phone_number: newUser.value.phone_number,
       password: newUser.value.password,
-      roles: newUser.value.role
+      roles: newUser.value.role,
     }
+
     console.log('invite user request payload:', payload)
+
     const response = await axios.post(
       `https://dev02201.getjupita.com/api/${tenantId}/add-member`,
       payload,
       {
         headers: {
-          Authorization: `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
       }
     )
 
     console.log(response)
+   
 
-    Swal.fire({
-      icon: 'success',
-      title: 'User Invited',
-      text: 'The user was successfully invited.',
-      confirmButtonColor: '#2563eb'
+    ElNotification({
+      title: 'Success',
+      message: 'User was successfully invited.',
+      type: 'success',
+      duration: 4000,
     })
+
+    // Reset form fields after success
+    newUser.value.firstname = ''
+    newUser.value.lastname = ''
+    newUser.value.email = ''
+    newUser.value.phone_number = ''
+    newUser.value.password = ''
+    newUser.value.role = ''
 
     closeModal()
   } catch (err) {
     console.error('Invite failed:', err)
-    closeModal()
 
-    Swal.fire({
-      icon: 'error',
+    ElNotification({
       title: 'Invitation Failed',
-      text: 'There was a problem inviting the user.',
-      confirmButtonColor: '#dc2626'
+      message: err.response?.data?.message || 'There was a problem inviting the user.',
+      type: 'error',
+      duration: 5000,
     })
+  } finally {
+    loadingInstance.close()
   }
 }
 

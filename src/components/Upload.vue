@@ -88,6 +88,7 @@
 </template>
 
 <script setup>
+import { ElLoading, ElNotification  } from 'element-plus'
 import { ref, computed, defineProps } from 'vue'
 import axios from 'axios'
 import Swal from 'sweetalert2'
@@ -166,8 +167,15 @@ const uploadFile = async () => {
     console.log(`   📌 ${key}:`, value instanceof Blob ? value.name : value)
   }
 
+  let loadingInstance = null
+
   try {
-    loading.value = true
+    closeForm()
+    loadingInstance = ElLoading.service({
+      lock: true,
+      text: 'Uploading...',
+      background: 'rgba(0, 0, 0, 0.2)',
+    })
 
     // Axios upload with progress
     const response = await axios.post(API_URL, formData, {
@@ -185,10 +193,17 @@ const uploadFile = async () => {
     })
 
     console.log('✅ Success:', response)
-    Swal.fire('Success', 'File uploaded successfully!', 'success')
-    if (props.onSuccess) {
-      props.onSuccess()
-    }
+   
+    ElNotification({
+  title: 'Success',
+  message: 'File uploaded!',
+  type: 'success',
+  position: 'top-right',
+  showClose: true
+})
+
+
+    if (props.onSuccess) props.onSuccess()
 
     // Reset input values
     selectedFile.value = null
@@ -198,10 +213,16 @@ const uploadFile = async () => {
     closeForm()
   } catch (error) {
     console.error('❌ Upload error:', error)
+    ElNotification({
+      title: 'Upload Failed',
+      message: error.response?.data?.message || 'An error occurred during upload.',
+      type: 'error',
+      duration: 5000,
+    })
     closeForm()
-    Swal.fire('Upload Failed', error.response?.data?.message || 'An error occurred.', 'error')
+   
   } finally {
-    loading.value = false
+    if (loadingInstance) loadingInstance.close()
   }
 }
 </script>

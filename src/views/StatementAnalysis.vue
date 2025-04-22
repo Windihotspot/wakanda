@@ -483,7 +483,66 @@
                 </div>
               </v-tabs-window-item>
               <v-tabs-window-item value="transactions">
-                <div class="text-center text-gray-500 py-10">Transactions Content</div>
+                <div class="py-4">
+    <v-card class="rounded-lg shadow-md">
+      <v-card-title class="text-2xl font-semibold  px-6 py-4">Transaction History</v-card-title>
+
+      <v-table class="min-w-full text-sm pa-4">
+        <thead class="font-semibold text-gray-600">
+          <tr>
+            <th class="px-2 py-3 font-medium">S/N</th>
+            <th class="px-2 py-3 font-medium">Date</th>
+            <th class="px-2 py-3 font-medium">Description</th>
+            <th class="px-2 py-3 font-medium">Type</th>
+            <th class="px-2 py-3 font-medium">Amount</th>
+            <th class="px-2 py-3 font-medium">Balance</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            v-for="(txn, index) in transactions"
+            :key="index"
+            class="border-t border-gray-200 hover:bg-gray-50 transition-colors"
+          >
+          <td class="px-2 py-4">{{ index + 1  }}</td>
+            <td class="px-2 py-4">{{ formatDate(txn.date)  }}</td>
+            <td class="px-2 py-4">{{ txn.description }}</td>
+            <td
+  class="px-6 py-4 font-semibold"
+  :class="txn.type === 'CREDIT' ? 'text-green-600' : 'text-red-600'"
+>
+  {{ txn.type }}
+</td>
+
+
+            <td class="px-2 py-4">{{formatCurrency(txn.amount)  }}</td>
+            <td class="px-2 py-4">{{formatCurrency(txn.balance)  }}</td>
+          </tr>
+        </tbody>
+      </v-table>
+
+      <v-card-actions class="justify-between px-6 py-4 text-sm text-gray-500">
+        <span>1–12 of 12</span>
+        <div class="flex items-center space-x-2">
+          <span>Rows per page:</span>
+          <v-select
+            :items="[15, 30, 45]"
+            v-model="rowsPerPage"
+            density="compact"
+            hide-details
+            class="w-20"
+            variant="outlined"
+          />
+          <v-btn icon density="comfortable">
+            <v-icon>mdi-chevron-left</v-icon>
+          </v-btn>
+          <v-btn icon density="comfortable">
+            <v-icon>mdi-chevron-right</v-icon>
+          </v-btn>
+        </div>
+      </v-card-actions>
+    </v-card>
+  </div>
               </v-tabs-window-item>
             </v-tabs-window>
           </div>
@@ -501,8 +560,13 @@ import { useAuthStore } from '@/stores/auth'
 import MainLayout from '@/layouts/full/MainLayout.vue'
 import moment from 'moment'
 import { ElMessage } from 'element-plus'
+import { formatDiagnosticsWithColorAndContext } from 'typescript'
 
 const activeTab = ref('Summary')
+
+const formatDate = (date) => {
+  return moment(date).format('MMMM Do YYYY,')
+}
 
 function formatCurrency(number) {
   return new Intl.NumberFormat('en-NG', {
@@ -511,7 +575,7 @@ function formatCurrency(number) {
     minimumFractionDigits: 2
   }).format(number || 0)
 }
-
+const rowsPerPage = ref(15)
 const route = useRoute()
 const authStore = useAuthStore()
 
@@ -587,6 +651,8 @@ const returnCheque = ref(0)
 const selfTableData = ref([])
 
 const monthlyBalance = ref([])
+
+const transactions = ref([])
 
 // Function to format the balance range (e.g., "1000 - 100000")
 const formatBalanceRange = () => {
@@ -929,10 +995,13 @@ const fetchTransactions = async () => {
     })
 
     console.log('fetch transactions response:', response)
+    transactions.value = response.data.data.transactions
   } catch (error) {
-    console.error( error)
+    console.error(error)
   }
 }
+
+
 
 onMounted(() => {
   fetchTransactions()
@@ -1012,8 +1081,6 @@ const downloadAnalysis = async () => {
     ElMessage.error('Failed to download analysis. Please try again.')
   }
 }
-
-
 </script>
 
 <style scoped>

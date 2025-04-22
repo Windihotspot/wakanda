@@ -150,7 +150,7 @@ const getStatusColor = (status) => {
             <tr
   v-for="(doc, index) in sortedStatements"
   :key="doc.id"
-  class="border-b border-gray-200 hover:bg-gray-100"
+  class="border-b border-gray-200 "
 >
   <td class="py-3 px-6 text-left">{{ index + 1 }}</td>
   <td class="py-3 px-6">{{ doc.name }}</td>
