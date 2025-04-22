@@ -559,8 +559,8 @@ import Axios from 'axios'
 import { useAuthStore } from '@/stores/auth'
 import MainLayout from '@/layouts/full/MainLayout.vue'
 import moment from 'moment'
-import { ElMessage } from 'element-plus'
-import { formatDiagnosticsWithColorAndContext } from 'typescript'
+import { ElMessage, ElNotification } from 'element-plus'
+import { saveAs } from 'file-saver'
 
 const activeTab = ref('Summary')
 
@@ -1022,15 +1022,13 @@ const downloadAnalysis = async () => {
 
   const apiUrl = `https://dev02201.getjupita.com/api/${tenantId}/download-insight-report?analysis_id=${analysisId}`
 
-  let loadingMessage = null
-
   try {
-    // Show persistent snackbar
-    loadingMessage = ElMessage({
+    // Show persistent notification
+    ElNotification({
+      title: 'Downloading',
       message: 'Getting your analysis report...',
-      type: 'success',
-      duration: 0, // stays visible until manually closed
-      showClose: true
+      type: 'info',
+      duration: 3000
     })
 
     const response = await Axios.get(apiUrl, {
@@ -1039,46 +1037,41 @@ const downloadAnalysis = async () => {
       }
     })
 
-    console.log('download analysis response:', response.data)
+    const download = response?.data?.data?.download
 
-    const download = response.data.data.download
-
-    if (!download || !download.document_url || !download.document_name) {
+    if (!download?.document_url || !download?.document_name) {
       throw new Error('No download information or document URL found in the response.')
     }
 
-    // Close loading toast
-    ElMessage.closeAll()
-
-    // Get the original document name
-    const originalFileName = download.document_name || 'analysis_report.pdf'
-
-    // Ensure the file has a .pdf extension
-    const fileExtension = originalFileName.split('.').pop()
-    const correctFileName = fileExtension === 'pdf' ? originalFileName : `${originalFileName}.pdf`
-
-    // Get the document URL
     const fileUrl = download.document_url
 
-    // Trigger file download
-    const link = document.createElement('a')
-    link.href = fileUrl
-    link.download = correctFileName // Ensure the file name is set correctly
-    link.target = '_blank'
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
+    // Sanitize and create filename from clientName
+    const baseName =  'analysis_report'
+    const correctFileName = `${baseName}.pdf`
 
-    // Show success toast
-    ElMessage({
+    // Download blob
+    const fileBlobResponse = await Axios.get(fileUrl, {
+      responseType: 'blob'
+    })
+
+    saveAs(fileBlobResponse.data, correctFileName)
+
+    // Success notification
+    ElNotification({
+      title: 'Success',
       message: 'Analysis report downloaded successfully.',
       type: 'success',
-      duration: 60000
+      duration: 6000
     })
   } catch (error) {
     console.error('Download failed:', error)
-    ElMessage.closeAll()
-    ElMessage.error('Failed to download analysis. Please try again.')
+
+    ElNotification({
+      title: 'Error',
+      message: 'Failed to download analysis. Please try again.',
+      type: 'error',
+      duration: 6000
+    })
   }
 }
 </script>
