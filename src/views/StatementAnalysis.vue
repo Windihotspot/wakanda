@@ -484,68 +484,196 @@
               </v-tabs-window-item>
               <v-tabs-window-item value="transactions">
                 <div class="py-4">
-    <v-card class="rounded-lg shadow-md">
-      <v-card-title class="text-2xl font-semibold  px-6 py-4">Transaction History</v-card-title>
+                  <v-card class="rounded-lg shadow-md">
+                    <v-card-title class="d-flex justify-between items-center px-6 py-4">
+                      <span class="text-2xl font-semibold">Transaction History</span>
 
-      <v-table class="min-w-full text-sm pa-4">
-        <thead class="font-semibold text-gray-600">
-          <tr>
-            <th class="px-2 py-3 font-medium">S/N</th>
-            <th class="px-2 py-3 font-medium">Date</th>
-            <th class="px-2 py-3 font-medium">Description</th>
-            <th class="px-2 py-3 font-medium">Type</th>
-            <th class="px-2 py-3 font-medium">Amount</th>
-            <th class="px-2 py-3 font-medium">Balance</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            v-for="(txn, index) in transactions"
-            :key="index"
-            class="border-t border-gray-200 hover:bg-gray-50 transition-colors"
-          >
-          <td class="px-2 py-4">{{ index + 1  }}</td>
-            <td class="px-2 py-4">{{ formatDate(txn.date)  }}</td>
-            <td class="px-2 py-4">{{ txn.description }}</td>
-            <td
-  class="px-6 py-4 font-semibold"
-  :class="txn.type === 'CREDIT' ? 'text-green-600' : 'text-red-600'"
->
-  {{ txn.type }}
-</td>
+                      <!-- Font Awesome Filter Icon -->
+                      <v-btn @click="showFilter = true" icon variant="text">
+                        <i class="fas fa-filter text-black-600 text-lg"></i>
+                      </v-btn>
+                    </v-card-title>
 
+                    <v-table class="min-w-full text-sm pa-4">
+                      <thead class="font-semibold text-gray-600">
+                        <tr>
+                          <th class="px-2 py-3 font-semibold">S/N</th>
+                          <th class="px-2 py-3 font-semibold">Date</th>
+                          <th class="px-2 py-3 font-semibold">Description</th>
+                          <th class="px-2 py-3 font-semibold">Type</th>
+                          <th class="px-2 py-3 font-semibold">Amount</th>
+                          <th class="px-2 py-3 font-semibold">Balance</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr
+                          v-for="(txn, index) in transactions"
+                          :key="index"
+                          class="border-t border-gray-200 hover:bg-gray-50 transition-colors"
+                        >
+                          <td class="px-2 py-4">{{ index + 1 }}</td>
+                          <td class="px-2 py-4">{{ formatDate(txn.date) }}</td>
+                          <td class="px-2 py-4">{{ txn.description }}</td>
+                          <td
+                            class="px-6 py-4 font-semibold"
+                            :class="txn.type === 'CREDIT' ? 'text-green-600' : 'text-red-600'"
+                          >
+                            {{ txn.type }}
+                          </td>
 
-            <td class="px-2 py-4">{{formatCurrency(txn.amount)  }}</td>
-            <td class="px-2 py-4">{{formatCurrency(txn.balance)  }}</td>
-          </tr>
-        </tbody>
-      </v-table>
+                          <td class="px-2 py-4">{{ formatCurrency(txn.amount) }}</td>
+                          <td class="px-2 py-4">{{ formatCurrency(txn.balance) }}</td>
+                        </tr>
+                      </tbody>
+                    </v-table>
 
-      <v-card-actions class="justify-between px-6 py-4 text-sm text-gray-500">
-        <span>1–12 of 12</span>
-        <div class="flex items-center space-x-2">
-          <span>Rows per page:</span>
-          <v-select
-            :items="[15, 30, 45]"
-            v-model="rowsPerPage"
-            density="compact"
-            hide-details
-            class="w-20"
-            variant="outlined"
-          />
-          <v-btn icon density="comfortable">
-            <v-icon>mdi-chevron-left</v-icon>
-          </v-btn>
-          <v-btn icon density="comfortable">
-            <v-icon>mdi-chevron-right</v-icon>
-          </v-btn>
-        </div>
-      </v-card-actions>
-    </v-card>
-  </div>
+                    <v-card-actions class="justify-between px-6 py-4 text-sm text-gray-500">
+                      <span>1–12 of 12</span>
+                      <div class="flex items-center space-x-2">
+                        <span>Rows per page:</span>
+                        <v-select
+                          :items="[15, 30, 45]"
+                          v-model="rowsPerPage"
+                          density="compact"
+                          hide-details
+                          class="w-20"
+                          variant="outlined"
+                        />
+                        <v-btn icon density="comfortable">
+                          <v-icon>mdi-chevron-left</v-icon>
+                        </v-btn>
+                        <v-btn icon density="comfortable">
+                          <v-icon>mdi-chevron-right</v-icon>
+                        </v-btn>
+                      </div>
+                    </v-card-actions>
+                  </v-card>
+                </div>
               </v-tabs-window-item>
             </v-tabs-window>
           </div>
+          <!-- Filter Drawer -->
+          <v-navigation-drawer
+            v-model="showFilter"
+            location="right"
+            temporary
+            width="500"
+            class="px-4 pt-6"
+          >
+            <div class="flex justify-between items-center mb-4">
+              <h2 class="text-lg font-semibold">Filter Transactions</h2>
+              <div icon @click="showFilter = false">
+                <i class="fas fa-sign-out-alt"></i>
+              </div>
+            </div>
+
+            <div class="space-y-4">
+              <!-- Date Picker -->
+              <div>
+  <label class="text-sm font-medium">Date</label>
+  <div class="flex gap-2 mt-1">
+    <!-- From Date -->
+    <v-menu
+      v-model="menuFrom"
+      :close-on-content-click="false"
+      transition="scale-transition"
+      offset-y
+    >
+      <template #activator="{ props }">
+        <v-text-field
+          :model-value="formattedDateFrom"
+          label="From"
+          readonly
+          v-bind="props"
+          density="compact"
+          variant="outlined"
+          prepend-inner-icon="mdi-calendar"
+        />
+      </template>
+      <v-date-picker
+        v-model="filters.dateRange[0]"
+        @update:modelValue="menuFrom = false"
+      />
+    </v-menu>
+
+    <!-- To Date -->
+    <v-menu
+      v-model="menuTo"
+      :close-on-content-click="false"
+      transition="scale-transition"
+      offset-y
+    >
+      <template #activator="{ props }">
+        <v-text-field
+          :model-value="formattedDateTo"
+          label="To"
+          readonly
+          v-bind="props"
+          density="compact"
+          variant="outlined"
+          prepend-inner-icon="mdi-calendar"
+        />
+      </template>
+      <v-date-picker
+        v-model="filters.dateRange[1]"
+        @update:modelValue="menuTo = false"
+      />
+    </v-menu>
+  </div>
+</div>
+
+              <!-- Description -->
+              <div>
+                <v-text-field
+                color="blue"
+                  label="Description"
+                  v-model="filters.description"
+                  density="compact"
+                  variant="outlined"
+                  placeholder="Enter description"
+                />
+              </div>
+
+              <!-- Type -->
+              <div>
+                <label class="text-sm font-medium">Type</label>
+                <v-select
+                color="blue"
+                  v-model="filters.type"
+                  :items="['CREDIT', 'DEBIT']"
+                  density="compact"
+                  variant="outlined"
+                  placeholder="Select type"
+                />
+              </div>
+
+              <!-- Amount Range -->
+              <div class="flex gap-2">
+                <v-text-field
+                color="blue"
+                  v-model="filters.minAmount"
+                  label="Min Amount"
+                  density="compact"
+                  variant="outlined"
+                  type="number"
+                />
+                <v-text-field
+                color="blue"
+                  v-model="filters.maxAmount"
+                  label="Max Amount"
+                  density="compact"
+                  variant="outlined"
+                  type="number"
+                />
+              </div>
+
+              <!-- Apply & Reset Buttons -->
+              <div class="flex justify-end gap-2 mt-4">
+                <v-btn @click="applyFilters" variant="tonal" color="primary">Apply</v-btn>
+                <v-btn @click="resetFilters" variant="text" color="grey">Reset</v-btn>
+              </div>
+            </div>
+          </v-navigation-drawer>
         </div>
       </template>
     </div>
@@ -553,7 +681,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, reactive } from 'vue'
 import { useRoute } from 'vue-router'
 import Axios from 'axios'
 import { useAuthStore } from '@/stores/auth'
@@ -561,6 +689,36 @@ import MainLayout from '@/layouts/full/MainLayout.vue'
 import moment from 'moment'
 import { ElMessage, ElNotification } from 'element-plus'
 import { saveAs } from 'file-saver'
+
+const menuFrom = ref(false)
+const menuTo = ref(false)
+
+const filters = reactive({
+  dateRange: [null, null], // [From, To]
+})
+
+
+const formattedDateFrom = computed(() => formatDate(filters.dateRange[0]))
+const formattedDateTo = computed(() => formatDate(filters.dateRange[1]))
+const showFilter = ref(false)
+
+const resetFilters = () => {
+  filters.value = {
+    dateFrom: '',
+    dateTo: '',
+    description: '',
+    type: 'All',
+    amountMin: '',
+    amountMax: ''
+  }
+
+}
+
+const applyFilters = () => {
+  // Apply your filtering logic here
+  console.log('Filters applied:', filters.value)
+  showFilter.value = false
+}
 
 const activeTab = ref('Summary')
 
@@ -1001,8 +1159,6 @@ const fetchTransactions = async () => {
   }
 }
 
-
-
 onMounted(() => {
   fetchTransactions()
   const id = route.params.id
@@ -1046,7 +1202,7 @@ const downloadAnalysis = async () => {
     const fileUrl = download.document_url
 
     // Sanitize and create filename from clientName
-    const baseName =  'analysis_report'
+    const baseName = 'analysis_report'
     const correctFileName = `${baseName}.pdf`
 
     // Download blob
