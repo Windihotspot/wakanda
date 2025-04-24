@@ -264,6 +264,13 @@
                               <td class="px-2 py-2">{{ formatCurrency(entry.debit) }}</td>
                             </tr>
                           </tbody>
+                          <tfoot class="font-semibold text-gray-800 bg-gray-50 border-t">
+                            <tr>
+                              <td class="px-2 py-2">Total</td>
+                              <td class="px-2 text-green-800 py-2">{{ formatCurrency(totalMonthlyCredit) }}</td>
+                              <td class="px-2 text-red-800 py-2">{{ formatCurrency(totalMonthlyDebit) }}</td>
+                            </tr>
+                          </tfoot>
                         </table>
                       </div>
                     </div>
@@ -283,10 +290,17 @@
                           <tbody>
                             <tr v-for="(entry, index) in weeklyData" :key="index" class="border-b">
                               <td class="px-2 py-2">{{ entry.week }}</td>
-                              <td class="px-2 py-2">{{ formatCurrency(entry.credit) }}</td>
-                              <td class="px-2 py-2">{{ formatCurrency(entry.debit) }}</td>
+                              <td class="px-2  py-2">{{ formatCurrency(entry.credit) }}</td>
+                              <td class="px-2  py-2">{{ formatCurrency(entry.debit) }}</td>
                             </tr>
                           </tbody>
+                          <tfoot class="font-semibold text-gray-800 bg-gray-50 border-t">
+                            <tr>
+                              <td class="px-2 py-2">Total</td>
+                              <td class="px-2 text-green-800 py-2">{{ formatCurrency(totalWeeklyCredit) }}</td>
+                              <td class="px-2 text-red-800 py-2">{{ formatCurrency(totalWeeklyDebit) }}</td>
+                            </tr>
+                          </tfoot>
                         </table>
                       </div>
                     </div>
@@ -570,62 +584,63 @@
             <div class="space-y-4">
               <!-- Date Picker -->
               <div>
-  <label class="text-sm font-medium">Date</label>
-  <div class="flex gap-2 mt-1">
-    <!-- From Date -->
-    <v-menu
-      v-model="menuFrom"
-      :close-on-content-click="false"
-      transition="scale-transition"
-      offset-y
-    >
-      <template #activator="{ props }">
-        <v-text-field
-          :model-value="formattedDateFrom"
-          label="From"
-          readonly
-          v-bind="props"
-          density="compact"
-          variant="outlined"
-          prepend-inner-icon="mdi-calendar"
-        />
-      </template>
-      <v-date-picker
-        v-model="filters.dateRange[0]"
-        @update:modelValue="menuFrom = false"
-      />
-    </v-menu>
+                <label class="text-sm font-medium">Date</label>
+                <div class="flex gap-2 mt-1">
+                  <!-- From Date -->
+                  <v-menu
+                    v-model="menuFrom"
+                    :close-on-content-click="false"
+                    transition="scale-transition"
+                    offset-y
+                  >
+                    <template #activator="{ props }">
+                      <v-text-field
+                        
+                        label="From"
+                        readonly
+                        v-bind="props"
+                        density="compact"
+                        variant="outlined"
+                        prepend-inner-icon="mdi-calendar"
+                      />
+                    </template>
+                    <v-date-picker
+                    class="vdp-small"
+                      v-model="filters.dateRange[0]"
+                      @update:modelValue="menuFrom = false"
+                    />
+                  </v-menu>
 
-    <!-- To Date -->
-    <v-menu
-      v-model="menuTo"
-      :close-on-content-click="false"
-      transition="scale-transition"
-      offset-y
-    >
-      <template #activator="{ props }">
-        <v-text-field
-          :model-value="formattedDateTo"
-          label="To"
-          readonly
-          v-bind="props"
-          density="compact"
-          variant="outlined"
-          prepend-inner-icon="mdi-calendar"
-        />
-      </template>
-      <v-date-picker
-        v-model="filters.dateRange[1]"
-        @update:modelValue="menuTo = false"
-      />
-    </v-menu>
-  </div>
-</div>
+                  <!-- To Date -->
+                  <v-menu
+                    v-model="menuTo"
+                    :close-on-content-click="false"
+                    transition="scale-transition"
+                    offset-y
+                  >
+                    <template #activator="{ props }">
+                      <v-text-field
+                       
+                        label="To"
+                        readonly
+                        v-bind="props"
+                        density="compact"
+                        variant="outlined"
+                        prepend-inner-icon="mdi-calendar"
+                      />
+                    </template>
+                    <v-date-picker
+                      v-model="filters.dateRange[1]"
+                      @update:modelValue="menuTo = false"
+                    />
+                  </v-menu>
+                </div>
+              </div>
 
               <!-- Description -->
               <div>
                 <v-text-field
-                color="blue"
+                  color="blue"
                   label="Description"
                   v-model="filters.description"
                   density="compact"
@@ -638,7 +653,7 @@
               <div>
                 <label class="text-sm font-medium">Type</label>
                 <v-select
-                color="blue"
+                  color="blue"
                   v-model="filters.type"
                   :items="['CREDIT', 'DEBIT']"
                   density="compact"
@@ -650,7 +665,7 @@
               <!-- Amount Range -->
               <div class="flex gap-2">
                 <v-text-field
-                color="blue"
+                  color="blue"
                   v-model="filters.minAmount"
                   label="Min Amount"
                   density="compact"
@@ -658,7 +673,7 @@
                   type="number"
                 />
                 <v-text-field
-                color="blue"
+                  color="blue"
                   v-model="filters.maxAmount"
                   label="Max Amount"
                   density="compact"
@@ -689,31 +704,6 @@ import MainLayout from '@/layouts/full/MainLayout.vue'
 import moment from 'moment'
 import { ElMessage, ElNotification } from 'element-plus'
 import { saveAs } from 'file-saver'
-
-const menuFrom = ref(false)
-const menuTo = ref(false)
-
-const filters = reactive({
-  dateRange: [null, null], // [From, To]
-})
-
-
-const formattedDateFrom = computed(() => formatDate(filters.dateRange[0]))
-const formattedDateTo = computed(() => formatDate(filters.dateRange[1]))
-const showFilter = ref(false)
-
-const resetFilters = () => {
-  filters.value = {
-    dateFrom: '',
-    dateTo: '',
-    description: '',
-    type: 'All',
-    amountMin: '',
-    amountMax: ''
-  }
-
-}
-
 
 
 const activeTab = ref('Summary')
@@ -758,6 +748,21 @@ const averageWeeklyOutflow = ref(0)
 
 const monthlyData = ref([])
 const weeklyData = ref([])
+
+const totalMonthlyCredit = computed(() =>
+  monthlyData.value.reduce((sum, entry) => sum + entry.credit, 0)
+)
+
+const totalMonthlyDebit = computed(() =>
+  monthlyData.value.reduce((sum, entry) => sum + entry.debit, 0)
+)
+const totalWeeklyCredit = computed(() =>
+  weeklyData.value.reduce((sum, entry) => sum + entry.credit, 0)
+)
+
+const totalWeeklyDebit = computed(() =>
+  weeklyData.value.reduce((sum, entry) => sum + entry.debit, 0)
+)
 
 const mostFrequentExpense = ref(0)
 const mostFrequentExpenseAmount = ref(0)
@@ -808,7 +813,6 @@ const monthlyBalance = ref([])
 
 const transactions = ref([])
 const allTransactions = ref([])
-
 
 // Function to format the balance range (e.g., "1000 - 100000")
 const formatBalanceRange = () => {
@@ -1152,25 +1156,46 @@ const fetchTransactions = async () => {
 
     console.log('fetch transactions response:', response)
     allTransactions.value = response.data.data.transactions
-transactions.value = [...allTransactions.value]
-
+    transactions.value = [...allTransactions.value]
   } catch (error) {
     console.error(error)
   }
 }
 
+const menuFrom = ref(false)
+const menuTo = ref(false)
+
+const filters = reactive({
+  dateRange: [null, null] // [From, To]
+})
+
+const formattedDateFrom = computed(() => formatDate(filters.dateRange[0]))
+const formattedDateTo = computed(() => formatDate(filters.dateRange[1]))
+const showFilter = ref(false)
+
+const resetFilters = () => {
+  filters.value = {
+    dateFrom: '',
+    dateTo: '',
+    description: '',
+    type: 'All',
+    amountMin: '',
+    amountMax: ''
+  }
+}
+
+
 const applyFilters = () => {
-  transactions.value = allTransactions.value.filter(txn => {
+  transactions.value = allTransactions.value.filter((txn) => {
     const matchesDescription =
-      !filters.description || txn.description.toLowerCase().includes(filters.description.toLowerCase())
+      !filters.description ||
+      txn.description.toLowerCase().includes(filters.description.toLowerCase())
 
     const txnDate = new Date(txn.date)
     const fromDate = filters.dateRange[0] ? new Date(filters.dateRange[0]) : null
     const toDate = filters.dateRange[1] ? new Date(filters.dateRange[1]) : null
 
-    const inDateRange =
-      (!fromDate || txnDate >= fromDate) &&
-      (!toDate || txnDate <= toDate)
+    const inDateRange = (!fromDate || txnDate >= fromDate) && (!toDate || txnDate <= toDate)
 
     return matchesDescription && inDateRange
   })
@@ -1252,6 +1277,13 @@ const downloadAnalysis = async () => {
 </script>
 
 <style scoped>
+.vdp-small {
+  font-size: 0.8rem;
+  max-width: 400px; /* adjust as needed */
+}
+.vdp-small .v-date-picker-table {
+  padding: 8px;
+}
 .custom-btn {
   background-color: #1f5aa3;
 }

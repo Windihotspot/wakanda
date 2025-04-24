@@ -2,94 +2,87 @@
   <div class="max-w-2xl mx-auto p-6 bg-white shadow-lg rounded-lg">
     <div class="flex justify-between items-center pb-4 m-4">
       <h2 class="text-xl font-bold text-blue-600">Upload A PDF Statement</h2>
-
       <div @click="closeForm">
         <i class="fa-solid fa-close text-red text-3xl"></i>
       </div>
     </div>
 
-    <!-- Drag and Drop Area -->
-    <div
-      class="border-dashed border-2 border-blue-400 p-8 text-center rounded-lg mb-4 cursor-pointer"
-      :class="{ 'bg-blue-50 border-blue-600': isDragging }"
-      @click="triggerFileInput"
-      @dragover.prevent="isDragging = true"
-      @dragleave="isDragging = false"
-      @drop.prevent="handleDrop"
-    >
-      <input ref="fileInput" type="file" accept=".pdf" class="hidden" @change="onFileSelect" />
+    <form submit.prevent="">
+      <!-- Drag and Drop Area -->
+      <div
+        class="border-dashed border-2 border-blue-400 p-8 text-center rounded-lg mb-4 cursor-pointer"
+        :class="{ 'bg-blue-50 border-blue-600': isDragging }"
+        @click="triggerFileInput"
+        @dragover.prevent="isDragging = true"
+        @dragleave="isDragging = false"
+        @drop.prevent="handleDrop"
+      >
+        <input ref="fileInput" type="file" accept=".pdf" class="hidden" @change="onFileSelect" />
 
-      <v-icon size="48" class="text-blue-500">mdi-cloud-upload</v-icon>
-      <p class="text-gray-700 font-medium">
-        Drag 'n' drop your file here, or
-        <span class="text-blue-600 cursor-pointer underline">Open File Dialog</span>
-      </p>
-      <p class="text-gray-500 text-sm mt-2">MAX FILE SIZE: 10MB | FILE SUPPORTED: PDF</p>
-    </div>
+        <v-icon size="48" class="text-blue-500">mdi-cloud-upload</v-icon>
+        <p class="text-gray-700 font-medium">
+          Drag 'n' drop your file here, or
+          <span class="text-blue-600 cursor-pointer underline">Open File Dialog</span>
+        </p>
+        <p class="text-gray-500 text-sm mt-2">MAX FILE SIZE: 10MB | FILE SUPPORTED: PDF</p>
+      </div>
+      <!-- Selected File Info -->
+      <div v-if="selectedFile" class="border rounded-lg p-4">
+        <div class="flex justify-between items-center mb-3">
+          <div class="flex items-center gap-2">
+            <i class="fas fa-file-pdf text-red-600"></i>
+            <p class="text-gray-700 text-sm">{{ selectedFile.name }} ({{ fileSize }} MB)</p>
+          </div>
 
-    <!-- Selected File Info -->
-    <div v-if="selectedFile" class="border rounded-lg p-4">
-      <div class="flex justify-between items-center mb-3">
-        <div class="flex items-center gap-2">
-          <i class="fas fa-file-pdf text-red-600"></i>
-          <p class="text-gray-700 text-sm">{{ selectedFile.name }} ({{ fileSize }} MB)</p>
+          <i class="fas fa-trash-alt text-red-600 cursor-pointer" @click="removeFile"></i>
         </div>
 
-        <i class="fas fa-trash-alt text-red-600 cursor-pointer" @click="removeFile"></i>
-      </div>
+        <div
+          v-if="loading"
+          class="absolute inset-0 border bg-white rounded-lg shadow-2xl bg-opacity-90 flex flex-col items-center justify-center z-50 p-8 space-y-6"
+        >
+          <img src="/src/assets/relax.png" class="w-35 h-50 mb-4" alt="" />
+          <p class="text-md font-semibold text-center">
+            🧘Please sit and relax while we process your file…
+          </p>
+          <v-progress-circular indeterminate color="blue" size="48" />
+        </div>
 
-      <div
-        v-if="loading"
-        class="absolute inset-0 bg-white rounded-lg shadow-2xl bg-opacity-90 flex flex-col items-center justify-center z-50 p-8 space-y-6"
-      >
-       
-
-        <img src="/src/assets/relax.png" class="w-35 h-50 mb-4" alt="">
-        <p class="text-md font-semibold text-center">
-          🧘Please sit and relax while we process your file…
-        </p>
-        <v-progress-circular indeterminate color="blue" size="48" />
-      </div>
-
-      <p class="text-gray-600 text-sm font-semibold mb-2">Select a Statement Type</p>
-      <div class="mb-4">
+        <p class="text-gray-600 text-sm font-semibold mb-2">Select a Statement Type</p>
         <div class="mb-4">
-          <div
-            v-for="(type, index) in statementTypes"
-            :key="index"
-            class="flex items-center mt-4 space-x-3 p-4 border rounded-lg shadow hover:bg-gray-100 cursor-pointer transition"
-          >
-            <input
-              type="radio"
-              :id="type.value"
-              :value="type.value"
-              v-model="statementType"
-              name="statement-type"
-              class="w-5 h-5 text-blue-600 border-gray-300 focus:ring-blue-500"
-            />
-            <label :for="type.value" class="text-gray-700 font-medium">
-              {{ type.label }}
-            </label>
+          <div class="mb-4">
+            <div
+              v-for="(type, index) in statementTypes"
+              :key="index"
+              class="flex items-center mt-4 space-x-3 p-4 border rounded-lg shadow hover:bg-gray-100 cursor-pointer transition"
+            >
+              <input
+                type="radio"
+                :id="type.value"
+                :value="type.value"
+                v-model="statementType"
+                name="statement-type"
+                class="w-5 h-5 text-blue-600 border-gray-300 focus:ring-blue-500"
+              />
+              <label :for="type.value" class="text-gray-700 font-medium">
+                {{ type.label }}
+              </label>
+            </div>
+
+            <v-text-field
+              v-model="filePassword"
+              label="File Password (optional)"
+              variant="outlined"
+              class="mt-4"
+            ></v-text-field>
           </div>
         </div>
       </div>
 
-      <v-text-field
-        v-model="filePassword"
-        label="File Password (optional)"
-        variant="outlined"
-        class="mt-4"
-      ></v-text-field>
-    </div>
-
-    <v-btn
-      :disabled="!selectedFile"
-      color="blue"
-      class="w-full bg-blue-600 text-white mt-4"
-      @click="uploadFile"
-    >
-      Upload
-    </v-btn>
+      <v-btn color="#1f5aa3" :disabled="!selectedFile" class="w-full custom-btn text-white mt-4" type="submit">
+        Upload
+      </v-btn>
+    </form>
   </div>
 </template>
 
@@ -229,5 +222,8 @@ const uploadFile = async () => {
 <style scoped>
 .hidden {
   display: none;
+}
+.custom-btn {
+  background-color: #1f5aa3;
 }
 </style>

@@ -197,7 +197,7 @@
                 color="blue"
               />
               <v-select
-                v-model="selectedRole"
+                v-model="newUser.role"
                 :items="roles"
                 item-title="label"
                 item-value="value"
@@ -214,19 +214,15 @@
                 variant="outlined"
                 color="blue"
               />
+
+               <!-- Footer -->
+          <div class="pb-6">
+            <v-btn type="submit" class="w-full text-white mt-4 custom-btn"> Invite User </v-btn>
+          </div>
             </form>
           </div>
 
-          <!-- Footer -->
-          <div class="px-6 pb-6">
-            <v-btn
-              color="blue"
-              class="w-full bg-blue-600 text-white mt-4 custom-btn"
-              @click="inviteUser"
-            >
-              Invite User
-            </v-btn>
-          </div>
+         
         </v-card>
       </v-dialog>
     </v-container>
@@ -320,7 +316,7 @@ const newUser = ref({
   phone_number: '',
   email: '',
   password: '',
-  role: 'tenant'
+  role: ''
 })
 
 const fetchTeam = async () => {
@@ -371,11 +367,11 @@ const inviteUser = async () => {
   const tenantId = savedAuth?.user?.tenant_id || authStore.tenant_id
 
   closeModal()
-  // Start loading
-  const loadingInstance = ElLoading.service({
-    lock: true,
-    text: 'Inviting user...',
-    background: 'rgba(0, 0, 0, 0.3)',
+  ElNotification({
+    title: 'Downloading',
+    message: 'Inviting your new user...',
+    type: 'info',
+    duration: 3000
   })
 
   try {
@@ -385,7 +381,7 @@ const inviteUser = async () => {
       email: newUser.value.email,
       phone_number: newUser.value.phone_number,
       password: newUser.value.password,
-      roles: newUser.value.role,
+      roles: newUser.value.role.value
     }
 
     console.log('invite user request payload:', payload)
@@ -395,19 +391,18 @@ const inviteUser = async () => {
       payload,
       {
         headers: {
-          Authorization: `Bearer ${token}`,
-        },
+          Authorization: `Bearer ${token}`
+        }
       }
     )
 
     console.log(response)
-   
 
     ElNotification({
       title: 'Success',
       message: 'User was successfully invited.',
       type: 'success',
-      duration: 4000,
+      duration: 10000
     })
 
     // Reset form fields after success
@@ -426,10 +421,10 @@ const inviteUser = async () => {
       title: 'Invitation Failed',
       message: err.response?.data?.message || 'There was a problem inviting the user.',
       type: 'error',
-      duration: 5000,
+      duration: 5000
     })
   } finally {
-    loadingInstance.close()
+    closeModal()
   }
 }
 
