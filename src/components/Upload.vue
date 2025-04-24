@@ -40,9 +40,15 @@
 
       <div
         v-if="loading"
-        class="absolute inset-0 bg-white rounded shadow-xl bg-opacity-80 flex items-center justify-center z-10"
+        class="absolute inset-0 bg-white rounded-lg shadow-2xl bg-opacity-90 flex flex-col items-center justify-center z-50 p-8 space-y-6"
       >
-        <v-progress-circular indeterminate color="blue" class="mx-auto my-4" />
+       
+
+        <img src="/src/assets/relax.png" class="w-35 h-50 mb-4" alt="">
+        <p class="text-md font-semibold text-center">
+          🧘Please sit and relax while we process your file…
+        </p>
+        <v-progress-circular indeterminate color="blue" size="48" />
       </div>
 
       <p class="text-gray-600 text-sm font-semibold mb-2">Select a Statement Type</p>
@@ -88,7 +94,7 @@
 </template>
 
 <script setup>
-import { ElLoading, ElNotification  } from 'element-plus'
+import { ElLoading, ElNotification } from 'element-plus'
 import { ref, computed, defineProps } from 'vue'
 import axios from 'axios'
 import Swal from 'sweetalert2'
@@ -102,6 +108,8 @@ const emit = defineEmits(['close'])
 const props = defineProps({
   onSuccess: Function
 })
+
+const uploadContainer = ref(null)
 
 const selectedFile = ref(null)
 const filePassword = ref('')
@@ -167,15 +175,8 @@ const uploadFile = async () => {
     console.log(`   📌 ${key}:`, value instanceof Blob ? value.name : value)
   }
 
-  let loadingInstance = null
-
   try {
-    closeForm()
-    loadingInstance = ElLoading.service({
-      lock: true,
-      text: 'Uploading...',
-      background: 'rgba(0, 0, 0, 0.2)',
-    })
+    loading.value = true
 
     // Axios upload with progress
     const response = await axios.post(API_URL, formData, {
@@ -193,15 +194,14 @@ const uploadFile = async () => {
     })
 
     console.log('✅ Success:', response)
-   
-    ElNotification({
-  title: 'Success',
-  message: 'File uploaded!',
-  type: 'success',
-  position: 'top-right',
-  showClose: true
-})
 
+    ElNotification({
+      title: 'Success',
+      message: 'File uploaded!',
+      type: 'success',
+      position: 'top-right',
+      showClose: true
+    })
 
     if (props.onSuccess) props.onSuccess()
 
@@ -217,12 +217,11 @@ const uploadFile = async () => {
       title: 'Upload Failed',
       message: error.response?.data?.message || 'An error occurred during upload.',
       type: 'error',
-      duration: 5000,
+      duration: 5000
     })
     closeForm()
-   
   } finally {
-    if (loadingInstance) loadingInstance.close()
+    loading.value = false
   }
 }
 </script>

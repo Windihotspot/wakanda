@@ -1,6 +1,6 @@
 <template>
   <MainLayout>
-    <div class="p-2 bg-[#f0f8ff]">
+    <div class="p-2">
       <h2 class="text-xl font-bold mt-2 ml-6">Statement Analysis Result</h2>
       <template v-if="loading">
         <div class="flex items-center justify-center h-96">
@@ -714,11 +714,7 @@ const resetFilters = () => {
 
 }
 
-const applyFilters = () => {
-  // Apply your filtering logic here
-  console.log('Filters applied:', filters.value)
-  showFilter.value = false
-}
+
 
 const activeTab = ref('Summary')
 
@@ -811,6 +807,8 @@ const selfTableData = ref([])
 const monthlyBalance = ref([])
 
 const transactions = ref([])
+const allTransactions = ref([])
+
 
 // Function to format the balance range (e.g., "1000 - 100000")
 const formatBalanceRange = () => {
@@ -1153,10 +1151,31 @@ const fetchTransactions = async () => {
     })
 
     console.log('fetch transactions response:', response)
-    transactions.value = response.data.data.transactions
+    allTransactions.value = response.data.data.transactions
+transactions.value = [...allTransactions.value]
+
   } catch (error) {
     console.error(error)
   }
+}
+
+const applyFilters = () => {
+  transactions.value = allTransactions.value.filter(txn => {
+    const matchesDescription =
+      !filters.description || txn.description.toLowerCase().includes(filters.description.toLowerCase())
+
+    const txnDate = new Date(txn.date)
+    const fromDate = filters.dateRange[0] ? new Date(filters.dateRange[0]) : null
+    const toDate = filters.dateRange[1] ? new Date(filters.dateRange[1]) : null
+
+    const inDateRange =
+      (!fromDate || txnDate >= fromDate) &&
+      (!toDate || txnDate <= toDate)
+
+    return matchesDescription && inDateRange
+  })
+
+  showFilter.value = false
 }
 
 onMounted(() => {

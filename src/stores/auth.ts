@@ -46,3 +46,6 @@ export const useAuthStore = defineStore('auth', {
 
   persist: true // Ensure data persists across reloads (optional)
 })
+
+
+
