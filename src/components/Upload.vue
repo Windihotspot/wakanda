@@ -7,7 +7,7 @@
       </div>
     </div>
 
-    <form submit.prevent="">
+    <form @submit.prevent="uploadFile">
       <!-- Drag and Drop Area -->
       <div
         class="border-dashed border-2 border-blue-400 p-8 text-center rounded-lg mb-4 cursor-pointer"
