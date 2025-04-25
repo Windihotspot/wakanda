@@ -6,15 +6,26 @@
         <div class="flex items-center justify-between">
           <div>
             <h2 class="text-xl font-bold tracking-wide">Current Wallet Balance</h2>
-            <p class="mt-2 text-xl font-extrabold tracking-tight">{{ formatCurrency(balance) }}</p>
+            <div class="flex gap-4">
+              <p class="mt-3 text-xl font-extrabold tracking-tight">{{ formatCurrency(balance) }}</p>
+            <button
+              @click="fetchWallet"
+              class="text-white hover:text-gray-200 m-3"
+              title="Refresh Balance"
+            >
+              <i :class="['fas fa-rotate-right text-lg', isLoading && 'fa-spin']"></i>
+            </button>
+            </div>
+            
           </div>
-          <div class="flex flex-col">
+          <div class="flex flex-col items-end space-y-2">
             <button
               @click="openFundWallet"
-              class="mb-2 bg-white text-blue-600 font-semibold py-2 px-6 rounded-lg shadow-md hover:bg-gray-300 transition-colors"
+              class="bg-white text-blue-600 font-semibold py-2 px-6 rounded-lg shadow-md hover:bg-gray-300 transition-colors"
             >
               Fund Wallet
             </button>
+           
           </div>
         </div>
       </div>
@@ -95,7 +106,7 @@
             </v-text-field>
           </v-card-text>
           <v-card-actions>
-            <v-btn text @click="fundWalletDialog = false">Cancel</v-btn>
+            <v-btn text @click="closeFundWallet">Cancel</v-btn>
             <v-btn color="primary" @click="fundWallet">Fund</v-btn>
           </v-card-actions>
         </v-card>
@@ -172,6 +183,11 @@ const balance = ref('')
 // Open Modal
 const openFundWallet = () => {
   fundWalletDialog.value = true
+}
+
+const closeFundWallet = () => {
+  fetchWallet()
+  fundWalletDialog.value = false
 }
 
 const fetchWallet = async () => {
