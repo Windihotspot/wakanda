@@ -7,16 +7,17 @@
           <div>
             <h2 class="text-xl font-bold tracking-wide">Current Wallet Balance</h2>
             <div class="flex gap-4">
-              <p class="mt-3 text-xl font-extrabold tracking-tight">{{ formatCurrency(balance) }}</p>
-            <button
-              @click="fetchWallet"
-              class="text-white hover:text-gray-200 m-3"
-              title="Refresh Balance"
-            >
-              <i :class="['fas fa-rotate-right text-lg', isLoading && 'fa-spin']"></i>
-            </button>
+              <p class="mt-3 text-3xl font-extrabold tracking-tight">
+                {{ formatCurrency(balance) }}
+              </p>
+              <button
+                @click="fetchWallet"
+                class="text-white hover:text-gray-200 m-5"
+                title="Refresh Balance"
+              >
+                <i :class="['fas fa-rotate-right text-2xl', isLoading && 'fa-spin']"></i>
+              </button>
             </div>
-            
           </div>
           <div class="flex flex-col items-end space-y-2">
             <button
@@ -25,60 +26,90 @@
             >
               Fund Wallet
             </button>
-           
           </div>
         </div>
       </div>
 
-      <!-- Credit History Table -->
+      <!-- Tabs -->
       <v-card class="mt-6 pa-4 rounded-lg">
-        <h3 class="mb-4 font-semibold">Credit History</h3>
-        <div v-if="isLoading" class="flex flex-col items-center justify-center min-h-[200px]">
-          <v-progress-circular indeterminate color="blue" size="40" width="4" />
-          <span class="mt-2 text-gray-600 text-sm">Loading wallet history...</span>
-        </div>
+        <v-tabs class="mb-6" v-model="activeTab" background-color="blue" color="primary" align-tabs="center">
+          <v-tab value="credit">Credit History</v-tab>
+          <v-tab value="debit">Debit History</v-tab>
+        </v-tabs>
 
-        <div class="overflow-x-auto" v-else-if="creditHistory.length > 0">
-          <table class="min-w-full bg-white border border-gray-300 rounded-lg shadow-md">
-            <thead class="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
-              <tr>
-                <th class="py-3 px-6 text-left">Date</th>
-                <th class="py-3 px-6 text-left">Description</th>
-                <th class="py-3 px-6 text-left">Amount</th>
-                <th class="py-3 px-6 text-left">Old Balance</th>
-                <th class="py-3 px-6 text-center">New Balance</th>
-              </tr>
-            </thead>
+        <v-window v-model="activeTab">
+          <!-- Credit History Tab -->
+          <v-window-item value="credit">
+            <div v-if="isLoading" class="flex flex-col items-center justify-center min-h-[200px]">
+              <v-progress-circular indeterminate color="blue" size="40" width="4" />
+              <span class="mt-2 text-gray-600 text-sm">Loading wallet history...</span>
+            </div>
 
-            <tbody class="text-gray-700 text-sm font-light">
-              <tr v-for="(entry, index) in creditHistory" :key="index">
-                <td class="py-3 px-6 text-left">{{ entry.date }}</td>
-                <td class="py-3 px-6 text-left">{{ entry.description }}</td>
-                <td class="py-3 px-6 text-left">{{ formatCurrency(entry.amount) }}</td>
-                <td class="py-3 px-6 text-left">{{ formatCurrency(entry.old_balance) }}</td>
-                <td class="py-3 px-6 text-center">{{ formatCurrency(entry.new_balance) }}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+            <div v-else-if="creditHistory.length > 0" class="overflow-x-auto">
+              <table class="min-w-full bg-white border border-gray-300 rounded-lg shadow-md">
+                <thead class="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
+                  <tr>
+                    <th class="py-3 px-6 text-left">Date</th>
+                    <th class="py-3 px-6 text-left">Description</th>
+                    <th class="py-3 px-6 text-left">Amount</th>
+                    <th class="py-3 px-6 text-left">Old Balance</th>
+                    <th class="py-3 px-6 text-center">New Balance</th>
+                  </tr>
+                </thead>
 
-        <!-- Empty state -->
-        <div v-else class="fill-height align-center justify-center">
-          <table class="min-w-full bg-white border border-gray-300 rounded-lg shadow-md">
-            <thead class="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
-              <tr>
-                <th class="py-3 px-6 text-left">Date</th>
-                <th class="py-3 px-6 text-left">Description</th>
-                <th class="py-3 px-6 text-left">Amount</th>
-                <th class="py-3 px-6 text-left">Old Balance</th>
-                <th class="py-3 px-6 text-center">New Balance</th>
-              </tr>
-            </thead>
-          </table>
-          <div class="mx-auto mt-4 text-center align-center w-[200px] h-[200px]">
-            <div class="empty-text text-red-800 font-normal mt-8">No credit history</div>
-          </div>
-        </div>
+                <tbody class="text-gray-700 text-sm font-light">
+                  <tr v-for="(entry, index) in creditHistory" :key="index">
+                    <td class="py-3 px-6 text-left">{{ entry.date }}</td>
+                    <td class="py-3 px-6 text-left">{{ entry.description }}</td>
+                    <td class="py-3 px-6 text-left">{{ formatCurrency(entry.amount) }}</td>
+                    <td class="py-3 px-6 text-left">{{ formatCurrency(entry.old_balance) }}</td>
+                    <td class="py-3 px-6 text-center">{{ formatCurrency(entry.new_balance) }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div v-else class="text-center py-10">
+              <p class="text-gray-500">No credit history</p>
+            </div>
+          </v-window-item>
+
+          <!-- Debit History Tab -->
+          <v-window-item value="debit">
+            <div v-if="isLoading" class="flex flex-col items-center justify-center min-h-[200px]">
+              <v-progress-circular indeterminate color="blue" size="40" width="4" />
+              <span class="mt-2 text-gray-600 text-sm">Loading wallet history...</span>
+            </div>
+
+            <div v-else-if="debitHistory.length > 0" class="overflow-x-auto">
+              <table class="min-w-full bg-white border border-gray-300 rounded-lg shadow-md">
+                <thead class="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
+                  <tr>
+                    <th class="py-3 px-6 text-left">Date</th>
+                    <th class="py-3 px-6 text-left">Description</th>
+                    <th class="py-3 px-6 text-left">Amount</th>
+                    <th class="py-3 px-6 text-left">Old Balance</th>
+                    <th class="py-3 px-6 text-center">New Balance</th>
+                  </tr>
+                </thead>
+
+                <tbody class="text-gray-700 text-sm font-light">
+                  <tr v-for="(entry, index) in debitHistory" :key="index">
+                    <td class="py-3 px-6 text-left">{{ entry.date }}</td>
+                    <td class="py-3 px-6 text-left">{{ entry.description }}</td>
+                    <td class="py-3 px-6 text-left">{{ formatCurrency(entry.amount) }}</td>
+                    <td class="py-3 px-6 text-left">{{ formatCurrency(entry.old_balance) }}</td>
+                    <td class="py-3 px-6 text-center">{{ formatCurrency(entry.new_balance) }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div v-else class="text-center py-10">
+              <p class="text-red-500">No debit history</p>
+            </div>
+          </v-window-item>
+        </v-window>
       </v-card>
 
       <div
@@ -153,6 +184,9 @@ import axios from 'axios'
 import Swal from 'sweetalert2'
 const loading = ref(false)
 const creditHistory = ref([])
+const activeTab = ref('credit') // Default tab to "Credit"
+const debitHistory = ref([])    // For debit transactions
+
 import Cleave from 'cleave.js'
 function formatCurrency(number) {
   return new Intl.NumberFormat('en-NG', {
