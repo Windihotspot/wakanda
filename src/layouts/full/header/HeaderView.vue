@@ -84,13 +84,7 @@ onMounted(() => {
             <i class="fa-regular fa-bell font-light fa-2xl text-blue-400"></i>
           </v-btn>
         </template>
-        <v-list>
-          <v-list-item link class="text-gray-700 text-sm hover:text-blue-500 flex">
-            <div class="flex items-center gap-2">
-              <v-list-item-title>You analysed a statement 3 hours ago</v-list-item-title>
-            </div>
-          </v-list-item>
-        </v-list>
+       
       </v-menu>
 
       <v-chip variant="text" class="rounded-full px-2 py-4 items-center" size="large">

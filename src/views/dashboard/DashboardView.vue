@@ -9,7 +9,7 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 const authStore = useAuthStore()
 
-const statuses = ['All', 'Pending', 'Completed', 'Failed']
+const statuses = ['All', 'Processed', 'Altered', 'Failed']
 const selectedStatus = ref('All')
 const searchQuery = ref('')
 
@@ -65,6 +65,23 @@ const fetchStatements = async () => {
 const sortedStatements = computed(() => {
   return [...statements.value].sort((a, b) => new Date(b.created_date) - new Date(a.created_date))
 })
+
+const filteredStatements = computed(() => {
+  return sortedStatements.value.filter((doc) => {
+    const matchesStatus =
+      selectedStatus.value === 'All' || doc.status.toLowerCase() === selectedStatus.value.toLowerCase()
+
+    const query = searchQuery.value.toLowerCase()
+    const matchesSearch =
+      doc.file_name.toLowerCase().includes(query) ||
+      moment(doc.created_date).format('MMMM Do, YYYY').toLowerCase().includes(query) ||
+      doc.name.toLowerCase().includes(query) ||
+      doc.status.toLowerCase().includes(query)
+
+    return matchesStatus && matchesSearch
+  })
+})
+
 
 const fetchAnalysisResult = async (analysisId) => {
   const apiUrl = `https://dev02201.getjupita.com/api/${tenantId.value}/get-analysis-result?analysis_id=${analysisId};`
@@ -152,6 +169,7 @@ const getStatusColor = (status) => {
         </div>
 
         <v-text-field
+          rounded
           v-model="searchQuery"
           placeholder="Search by File Name"
           density="compact"
@@ -189,11 +207,9 @@ const getStatusColor = (status) => {
               <th class="py-3 px-6 text-center">Action</th>
             </tr>
           </thead>
-          <tbody
-            class="text-gray-700 text-sm font-light bg-white rounded-xl shadow-lg"
-          >
+          <tbody class="text-gray-700 text-sm font-light bg-white rounded-xl shadow-lg">
             <tr
-              v-for="(doc, index) in sortedStatements"
+              v-for="(doc, index) in filteredStatements"
               :key="doc.id"
               class="border-b border-gray-200 font-normal"
             >
@@ -204,14 +220,15 @@ const getStatusColor = (status) => {
               <td class="py-3 px-6">{{ doc.name }}</td>
               <td class="py-3 px-6">
                 <span
-                  :class="
-                    doc.status === 'PROCESSED'
-                      ? 'text-green-600 py-1 text-xs font-semibold'
-                      : 'text-red-600 py-1 text-xs font-semibold'
-                  "
-                >
-                  {{ doc.status }}
-                </span>
+  :class="
+    doc.status === 'PROCESSED'
+      ? 'text-green-600 py-1 px-2 text-xs font-semibold rounded-full bg-green-100'
+      : 'text-red-600 py-1 px-2 text-xs font-semibold rounded-full bg-red-100'
+  "
+>
+  {{ doc.status }}
+</span>
+
               </td>
               <td class="py-3 px-6 text-center">
                 <span
@@ -227,20 +244,9 @@ const getStatusColor = (status) => {
       </div>
 
       <div v-else class="fill-height align-center justify-center">
-        <table class="min-w-full bg-white border border-gray-300 rounded-lg shadow-md">
-          <thead class="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
-            <tr>
-              <th class="py-3 px-6 text-left">Uploaded by</th>
-              <th class="py-3 px-6 text-left">File Name</th>
-              <th class="py-3 px-6 text-left">Created Date</th>
-              <th class="py-3 px-6 text-left">Status</th>
-              <th class="py-3 px-6 text-center">Action</th>
-            </tr>
-          </thead>
-        </table>
-        <div class="mx-auto mt-4 text-center align-center w-[200px] h-[200px]">
+        <div class="mx-auto text-center align-center w-[200px] h-[200px]">
           <img src="/src/assets/images/no-data.png" alt="No Data" />
-          <div class="empty-text font-normal mt-8">No Statements</div>
+          <div class="empty-text font-semibold mt-8">No Statements</div>
         </div>
       </div>
     </div>
