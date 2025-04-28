@@ -3,8 +3,6 @@ import { computed, ref } from 'vue'
 import axios from 'axios'
 import { useAuthStore } from '@/stores/auth'
 const authStore = useAuthStore()
-const token = computed(() => authStore.token)
-const tenantId = computed(() => authStore.tenant_id)
 import { useRouter } from 'vue-router'
 const router = useRouter()
 
@@ -35,7 +33,7 @@ const logout = async () => {
     console.log('Logged out successfully:', response.data)
 
     // Redirect to login page or any other page
-    router.push('/') 
+    router.push('/')
   } catch (error) {
     // Handle errors
     errorMessage.value = error.response?.data?.message || error.message
@@ -47,14 +45,14 @@ const logout = async () => {
 </script>
 
 <template>
-  <div class="header items-center px-4 py-2 shadow-md bg-white">
+  <div class="header items-center px-4 py-4 shadow-md bg-white">
     <!-- Icons (Right) -->
     <div class="space-x-4">
       <!-- Notifications Icon -->
       <v-menu anchor="bottom end" origin="auto" min-width="300">
         <template v-slot:activator="{ props }">
-          <v-btn v-bind="props" icon>
-            <i class="fa-regular fa-bell fa-xl"></i>
+          <v-btn class="min-w-0 w-4 h-4" v-bind="props" icon>
+            <i class="fa-regular fa-bell font-light fa-2xl text-blue-400"></i>
           </v-btn>
         </template>
         <v-list>
@@ -66,15 +64,34 @@ const logout = async () => {
         </v-list>
       </v-menu>
 
+      <v-chip variant="text" class="rounded-full px-2 py-4 items-center" size="large">
+        <v-avatar left size="32">
+          <v-img
+            src="https://avatars0.githubusercontent.com/u/9064066?v=4&s=460"
+            alt="Avatar"
+          ></v-img>
+        </v-avatar>
+        <div class="ml-2 text-left">
+          <div class="font-semibold text-sm">John Doe</div>
+          <div class="text-xs text-gray-500">Super Admin</div>
+        </div>
+      </v-chip>
+
       <!-- User Profile -->
-      <v-menu anchor="bottom end" origin="auto" min-width="300">
+      <!-- <v-menu anchor="bottom end" origin="auto" min-width="300">
         <template v-slot:activator="{ props }">
-          <v-btn v-bind="props" class="p-0" elevation="0" color="transparent" plain :ripple="false">
-            <v-avatar size="32">
+          <v-btn v-bind="props" class="user-btn p-0" elevation="0" variant="text" :ripple="false">
+            <v-avatar size="40" class="mr-2">
               <img src="@/assets/images/users/black-user.jpg" alt="User Avatar" />
             </v-avatar>
+
+            <div class="d-flex flex-column">
+              <span class="font-normal text-sm">John Doe</span>
+              <span class="font-light text-xs">Super admin</span>
+            </div>
           </v-btn>
         </template>
+
         <v-list>
           <v-list-item @click="logout" link class="text-gray-700 hover:text-red-500">
             <div class="flex items-center gap-2">
@@ -83,12 +100,15 @@ const logout = async () => {
             </div>
           </v-list-item>
         </v-list>
-      </v-menu>
+      </v-menu> -->
     </div>
   </div>
 </template>
 
 <style scoped>
+v-btn {
+  text-transform: none;
+}
 .header {
   display: flex;
   justify-content: space-between;

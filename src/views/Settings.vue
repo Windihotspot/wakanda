@@ -6,7 +6,6 @@
         <v-tabs v-model="activeTab" color="blue" align-tabs="center">
           <v-tab value="profile">Profile</v-tab>
           <v-tab value="team">Team</v-tab>
-          <v-tab value="api">API Settings</v-tab>
         </v-tabs>
 
         <v-window v-model="activeTab">
@@ -58,7 +57,14 @@
                   variant="outlined"
                   type="password"
                   color="blue"
-                />
+                >
+                  <template #append-inner>
+                    <i
+                      class="fas fa-sync-alt text-blue-500 cursor-pointer"
+                      @click="updatePassword"
+                    ></i>
+                  </template>
+                </v-text-field>
               </div>
               <div class="flex justify-end mt-auto pt-6">
                 <v-btn class="custom-btn text-white" @click="saveProfile">Save changes</v-btn>
@@ -128,34 +134,6 @@
               </div>
             </div>
           </v-window-item>
-
-          <!-- API Settings Section -->
-          <v-window-item value="api">
-            <div class="p-6">
-              <h2 class="text-xl font-bold mb-4">API Credentials</h2>
-              <div class="grid grid-cols-2 gap-4">
-                <v-text-field
-                  v-model="api.clientId"
-                  label="API Client ID"
-                  variant="outlined"
-                  color="blue"
-                  readonly
-                >
-                </v-text-field>
-                <v-text-field
-                  v-model="api.secretKey"
-                  label="API Secret Key"
-                  type="password"
-                  readonly
-                  variant="outlined"
-                  color="blue"
-                >
-                </v-text-field>
-              </div>
-
-              <v-btn variant="plain" class="mt-4" color="primary">View API Documentation</v-btn>
-            </div>
-          </v-window-item>
         </v-window>
       </v-card>
 
@@ -215,14 +193,12 @@
                 color="blue"
               />
 
-               <!-- Footer -->
-          <div class="pb-6">
-            <v-btn type="submit" class="w-full text-white mt-4 custom-btn"> Invite User </v-btn>
-          </div>
+              <!-- Footer -->
+              <div class="pb-6">
+                <v-btn type="submit" class="w-full text-white mt-4 custom-btn"> Invite User </v-btn>
+              </div>
             </form>
           </div>
-
-         
         </v-card>
       </v-dialog>
     </v-container>
@@ -429,12 +405,23 @@ const inviteUser = async () => {
 }
 
 const updatePassword = async () => {
+  const savedAuth = JSON.parse(localStorage.getItem('data') || '{}')
+  const token = savedAuth?.token || authStore.token
+  const tenantId = savedAuth?.user?.tenant_id || authStore.tenant_id
   if (!profile.value.password) return
 
+  ElNotification({
+    title: 'Updating',
+    message: 'Updating password...',
+    type: 'info',
+    duration: 3000
+  })
+
   try {
+    console.log('new password:', profile.value.password)
     const response = await axios.put(
       `https://dev02201.getjupita.com/api/${tenantId}/update-password`,
-      { password: profile.value.password },
+      { new_password: profile.value.password },
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -443,10 +430,20 @@ const updatePassword = async () => {
       }
     )
     console.log('Password update success:', response.data)
-    Swal.fire('Success', 'Password updated successfully.', 'success')
+    ElNotification({
+      title: 'Success',
+      message: 'Password successfully updated.',
+      type: 'success',
+      duration: 3000
+    })
   } catch (error) {
     console.error('Error updating password:', error)
-    Swal.fire('Error', 'Failed to update password.', 'error')
+    ElNotification({
+      title: 'Password update failed',
+      message: error.response?.data?.message || 'There was a problem updating the password.',
+      type: 'error',
+      duration: 5000
+    })
   }
 }
 
@@ -456,33 +453,61 @@ const api = ref({
 })
 
 const saveProfile = async () => {
-  try {
-    const payload = {
-      user_id: profile.value.user_id,
-      firstname: profile.value.firstname,
-      lastname: profile.value.lastname,
-      email: profile.value.email,
-      phone_number: profile.value.phone_number
-    }
-    console.log('payload save profile:', payload)
-    const response = await axios.put(
-      `https://dev02201.getjupita.com/api/${tenantId}/update-user-data`,
-      payload,
+  ElNotification({
+    title: 'Updating',
+    message: 'Updating profile...',
+    type: 'info',
+    duration: 3000
+  });
 
-      {
-        headers: {
-          Authorization: `Bearer ${token}`
+  try {
+    // 1. If there is valid profile info, update profile
+    if (profile.value.firstname || profile.value.lastname || profile.value.email ) {
+      const payload = {
+        user_id: profile.value.user_id,
+        firstname: profile.value.firstname,
+        lastname: profile.value.lastname,
+        email: profile.value.email,
+        phone_number: profile.value.phone_number
+      };
+      
+      console.log('payload save profile:', payload);
+
+      const response = await axios.put(
+        `https://dev02201.getjupita.com/api/${tenantId}/update-user-data`,
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
         }
-      }
-    )
-    await updatePassword()
-    Swal.fire('Success', 'Profile uploaded successfully!', 'success')
-    console.log('Response:', response.data)
+      );
+      console.log('Profile update Response:', response.data);
+    }
+
+    // 2. If there is a password, update password
+    if (profile.value.password) {
+      await updatePassword();
+    }
+
+    ElNotification({
+      title: 'Updated',
+      message: 'Profile uploaded successfully!',
+      type: 'success',
+      duration: 3000
+    });
+
   } catch (err) {
-    console.error('Update failed:', err)
-    alert('Something went wrong while updating your profile.')
+    console.error('Update failed:', err);
+    ElNotification({
+      title: 'Profile update failed',
+      message: err.response?.data?.message || 'There was a problem updating the profile.',
+      type: 'error',
+      duration: 5000
+    });
   }
-}
+};
+
 
 const copyToClipboard = (text) => {
   navigator.clipboard.writeText(text)

@@ -1,20 +1,33 @@
 <script setup>
-import { ref, onMounted } from 'vue';
-import SidebarView from './sidebar/SidebarView.vue';
-import HeaderView from './header/HeaderView.vue';
+import { ref, onMounted } from 'vue'
+import SidebarView from './sidebar/SidebarView.vue'
+import HeaderView from './header/HeaderView.vue'
 
-const drawer = ref();
-const innerW = window.innerWidth;
+const drawer = ref()
+const innerW = window.innerWidth
 
 onMounted(() => {
   if (innerW < 950) {
-    drawer.value = !drawer.value;
+    drawer.value = !drawer.value
   }
-});
+})
 </script>
 
 <template>
   <v-app>
+    <!--- Header -->
+    <!-- ---------------------------------------------- -->
+    <v-app-bar app elevation="4" class="pa-2">
+      <div class="logo pa-4">
+        <p class="font-semibold">Jupita</p>
+        <!-- <img src="/src/assets/images/white.png" class="" /> -->
+      </div>
+      <v-btn class="hidden-md-and-up" icon @click="drawer = !drawer">
+        <v-icon>fa-solid fa-bars</v-icon>
+      </v-btn>
+      <v-spacer></v-spacer>
+      <HeaderView />
+    </v-app-bar>
     <!-- ---------------------------------------------- -->
     <!--- Sidebar -->
     <!-- ---------------------------------------------- -->
@@ -32,32 +45,21 @@ onMounted(() => {
     </v-navigation-drawer>
 
     <!-- ---------------------------------------------- -->
-    <!--- Header -->
-    <!-- ---------------------------------------------- -->
-    <v-app-bar app elevation="4">
-      <v-btn class="hidden-md-and-up" icon @click="drawer = !drawer">
-        <v-icon>fa-solid fa-bars</v-icon>
-      </v-btn>
-      <v-spacer></v-spacer>
-      <HeaderView />
-    </v-app-bar>
 
     <!-- ---------------------------------------------- -->
     <!--- Page Wrapper -->
     <!-- ---------------------------------------------- -->
-    <v-main class="">
+    <v-main class="mt-4">
       <v-container fluid class="">
         <slot />
       </v-container>
     </v-main>
   </v-app>
-
-  
 </template>
 
 <style scoped>
 .page-wrapper {
-  background-color: #F4F6FA;
+  background-color: #f4f6fa;
 }
 
 .settings-icon {

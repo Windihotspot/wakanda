@@ -1,5 +1,5 @@
 <script setup>
-import { ref , computed} from 'vue'
+import { ref, computed } from 'vue'
 import sidebarItems from './sidebarItem'
 import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
@@ -19,7 +19,6 @@ const logout = async () => {
   const savedAuth = JSON.parse(localStorage.getItem('data') || '{}')
   const token = savedAuth?.token || authStore.token
   const tenantId = savedAuth?.user?.tenant_id || authStore.tenant_id
-  
 
   try {
     const response = await axios.post(
@@ -36,7 +35,7 @@ const logout = async () => {
     console.log('Logged out successfully:', response.data)
 
     // Redirect to login page or any other page
-    router.push('/') 
+    router.push('/')
   } catch (error) {
     // Handle errors
     errorMessage.value = error.response?.data?.message || error.message
@@ -48,11 +47,11 @@ const logout = async () => {
 </script>
 
 <template>
-  <div class="side-bar d-flex flex-column h-full justify-between">
+  <div class="side-bar mt-4 d-flex flex-column h-full justify-between">
     <!-- Logo part -->
-    <div class="logo pa-4">
+    <!-- <div class="logo pa-4">
       <img src="/src/assets/images/white.png" class="" />
-    </div>
+    </div> -->
 
     <!-- Navigation -->
     <div class="scrollnavbar flex-grow">
@@ -60,15 +59,20 @@ const logout = async () => {
         <template v-for="(item, i) in sidebarMenu" :key="i">
           <v-list-item
             @click="router.push(item.path)"
-            class="mb-4 pr-4 custom-btn no-uppercase"
+            class="mb-4 pr-4 custom-btn no-uppercase relative"
             size="small"
             rounded="lg"
             block
             :class="{ 'custom-active': isActive(item.path) }"
           >
-            <v-icon left>{{ item.icon }}</v-icon>
-            <span class="menu-item ml-4" v-text="item.title"></span>
+            <div class="flex items-center w-full">
+              <v-icon left>{{ item.icon }}</v-icon>
+              <span class="menu-item ml-4" v-text="item.title"></span>
+            </div>
+
+            <!-- Active bar INSIDE the v-list-item -->
           </v-list-item>
+          <!-- <div v-if="isActive(item.path)" class="active-bar"></div> -->
         </template>
       </v-list>
     </div>
@@ -89,7 +93,6 @@ const logout = async () => {
 .logout-btn:hover {
   background-color: #ffecec;
 }
-
 
 .logo {
   width: 50%;
@@ -136,6 +139,8 @@ const logout = async () => {
 .custom-active {
   color: #1f5aa3 !important; /* Active state color */
   background-color: rgba(0, 0, 255, 0.1); /* Light blue background */
+
+  border-radius: 12px;
 }
 
 .custom-active .menu-item {
@@ -144,5 +149,15 @@ const logout = async () => {
 
 .custom-active .v-icon {
   color: #1f5aa3 !important;
+}
+.active-bar {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 40px; /* Adjust to match your button height */
+  background-color: #1f5aa3;
+  border-radius: 8px;
 }
 </style>
