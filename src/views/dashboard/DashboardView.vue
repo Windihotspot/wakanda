@@ -9,6 +9,10 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 const authStore = useAuthStore()
 
+const statuses = ['All', 'Pending', 'Completed', 'Failed']
+const selectedStatus = ref('All')
+const searchQuery = ref('')
+
 const statements = ref([])
 const isLoading = ref(true)
 const showModal = ref(false)
@@ -44,13 +48,12 @@ const fetchStatements = async () => {
     const rawAnalyses = response.data?.data?.analyses || []
 
     statements.value = rawAnalyses.map((item) => ({
-  id: item.id,
-  name: `${item.firstname} ${item.lastname}`,
-  file_name: item.file_name,
-  created_date: item.created_at, // raw date
-  status: item.status
-}))
-
+      id: item.id,
+      name: `${item.firstname} ${item.lastname}`,
+      file_name: item.file_name,
+      created_date: item.created_at, // raw date
+      status: item.status
+    }))
   } catch (error) {
     console.error('Error fetching statements:', error)
     statements.value = []
@@ -60,9 +63,7 @@ const fetchStatements = async () => {
 }
 
 const sortedStatements = computed(() => {
-  return [...statements.value].sort(
-    (a, b) => new Date(b.created_date) - new Date(a.created_date)
-  )
+  return [...statements.value].sort((a, b) => new Date(b.created_date) - new Date(a.created_date))
 })
 
 const fetchAnalysisResult = async (analysisId) => {
@@ -110,71 +111,117 @@ const getStatusColor = (status) => {
 
 <template>
   <MainLayout>
-    <div class="p-6">
+    <div class="p-4 rounded shadow-sm bg-white m-4">
       <!-- Header with Title and Add Statement Button -->
-      <div class="flex justify-between items-center mb-4">
-        <h1 class="text-2xl font-semibold text-blue-800">Statements</h1>
+      <div class="bg-white flex justify-between items-center border-b p-2">
+        <div class="mb-2">
+          <h1 class="text-2xl font-bold text-gray-900">Statement Analysis</h1>
+          <p class="text-gray-500 text-sm mt-1">View and Manage your bank statement analysis</p>
+        </div>
 
         <v-btn
           @click="openModal"
-          no-uppercase
           size="large"
-          class="normal-case ml-auto p-4 bg-blue-600 hover:bg-blue-700 text-white text-none mr-2 custom-btn"
+          class="normal-case custom-btn hover:bg-blue-700 text-white text-sm font-semibold px-6 py-3 rounded-md shadow-md"
         >
-          <i class="fa-solid fa-plus mr-2"></i>
-
-          Add Statement
+          <span
+            class="bg-white text-blue-600 rounded-full p-1 flex items-center justify-center w-6 h-6 mr-2"
+          >
+            <i class="fa-solid fa-plus text-sm text-[#1f5aa3]"></i>
+          </span>
+          Add New
         </v-btn>
+      </div>
+
+      <div class="flex items-center justify-between p-2">
+        <!-- Filter (Vuetify Select) -->
+        <div class="flex items-center space-x-2 pt-2">
+          <!-- Filter Icon -->
+          <i class="fa-solid fa-filter"></i>
+
+          <v-select
+            color="blue"
+            v-model="selectedStatus"
+            :items="statuses"
+            label="Status"
+            density="compact"
+            hide-details
+            variant="outlined"
+            class="w-32"
+          ></v-select>
+        </div>
+
+        <v-text-field
+          v-model="searchQuery"
+          placeholder="Search by File Name"
+          density="compact"
+          hide-details
+          variant="outlined"
+          class="max-w-xs rounded-md"
+          label="Search"
+          color="blue"
+          append-inner-icon=""
+        >
+          <!-- FontAwesome Search Icon inside append-inner slot -->
+          <template #append-inner>
+            <i class="fas fa-search text-gray-500"></i>
+          </template>
+        </v-text-field>
       </div>
     </div>
 
-    <div class="p-6">
+    <div class="p-4">
       <div v-if="isLoading" class="flex flex-col items-center justify-center min-h-[200px]">
         <v-progress-circular indeterminate color="blue" size="40" width="4" />
         <span class="mt-2 text-gray-600 text-sm">Loading statements...</span>
       </div>
 
       <div v-else-if="statements.length > 0" class="overflow-x-auto">
-        <table class="min-w-full bg-white border border-gray-300 rounded-lg shadow-md">
-          <thead class="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
+        <table class="min-w-full">
+          <thead class="font-semibold uppercase text-sm leading-normal">
             <tr>
               <th class="py-3 px-6 text-left">S/N</th>
-              <th class="py-3 px-6 text-left">Uploaded by</th>
+
               <th class="py-3 px-6 text-left">File Name</th>
               <th class="py-3 px-6 text-left">Created Date</th>
+              <th class="py-3 px-6 text-left">Uploaded by</th>
               <th class="py-3 px-6 text-left">Status</th>
               <th class="py-3 px-6 text-center">Action</th>
             </tr>
           </thead>
-          <tbody class="text-gray-700 text-sm font-light">
+          <tbody
+            class="text-gray-700 text-sm font-light bg-white rounded-xl shadow-lg"
+          >
             <tr
-  v-for="(doc, index) in sortedStatements"
-  :key="doc.id"
-  class="border-b border-gray-200 "
->
-  <td class="py-3 px-6 text-left">{{ index + 1 }}</td>
-  <td class="py-3 px-6">{{ doc.name }}</td>
-  <td class="py-3 px-6">{{ doc.file_name }}</td>
-  <td class="py-3 px-6">{{ moment(doc.created_date).format('MMMM Do, YYYY') }}</td>
-  <td class="py-3 px-6">
-    <span
-      :class="doc.status === 'PROCESSED'
-        ? 'text-green-600 py-1 text-xs font-semibold'
-        : 'text-red-600 py-1 text-xs font-semibold'"
-    >
-      {{ doc.status }}
-    </span>
-  </td>
-  <td class="py-3 px-6 text-center">
-    <span
-      @click="goToAnalysis(doc.id)"
-      class="bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-600 cursor-pointer"
-    >
-      View
-    </span>
-  </td>
-</tr>
+              v-for="(doc, index) in sortedStatements"
+              :key="doc.id"
+              class="border-b border-gray-200 font-normal"
+            >
+              <td class="py-3 px-6 text-left">{{ index + 1 }}</td>
 
+              <td class="py-3 px-6">{{ doc.file_name }}</td>
+              <td class="py-3 px-6">{{ moment(doc.created_date).format('MMMM Do, YYYY') }}</td>
+              <td class="py-3 px-6">{{ doc.name }}</td>
+              <td class="py-3 px-6">
+                <span
+                  :class="
+                    doc.status === 'PROCESSED'
+                      ? 'text-green-600 py-1 text-xs font-semibold'
+                      : 'text-red-600 py-1 text-xs font-semibold'
+                  "
+                >
+                  {{ doc.status }}
+                </span>
+              </td>
+              <td class="py-3 px-6 text-center">
+                <span
+                  @click="goToAnalysis(doc.id)"
+                  class="bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-600 cursor-pointer"
+                >
+                  View
+                </span>
+              </td>
+            </tr>
           </tbody>
         </table>
       </div>
@@ -214,5 +261,8 @@ const getStatusColor = (status) => {
 }
 .custom-btn {
   background-color: #1f5aa3;
+}
+v-btn {
+  text-transform: none;
 }
 </style>

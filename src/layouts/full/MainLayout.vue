@@ -18,13 +18,14 @@ onMounted(() => {
     <!--- Header -->
     <!-- ---------------------------------------------- -->
     <v-app-bar app elevation="4" class="pa-2">
-      <div class="logo pa-4">
-        <p class="font-semibold">Jupita</p>
-        <!-- <img src="/src/assets/images/white.png" class="" /> -->
-      </div>
+     
       <v-btn class="hidden-md-and-up" icon @click="drawer = !drawer">
         <v-icon>fa-solid fa-bars</v-icon>
       </v-btn>
+      <div class="logo pa-4">
+        <p class="font-semibold text-lg">Jupita</p>
+        <!-- <img src="/src/assets/images/white.png" class="" /> -->
+      </div>
       <v-spacer></v-spacer>
       <HeaderView />
     </v-app-bar>
@@ -49,7 +50,7 @@ onMounted(() => {
     <!-- ---------------------------------------------- -->
     <!--- Page Wrapper -->
     <!-- ---------------------------------------------- -->
-    <v-main class="mt-4">
+    <v-main class="mt-4 page-wrapper">
       <v-container fluid class="">
         <slot />
       </v-container>
@@ -58,8 +59,9 @@ onMounted(() => {
 </template>
 
 <style scoped>
+
 .page-wrapper {
-  background-color: #f4f6fa;
+  background-color: #f5f7f9;
 }
 
 .settings-icon {
