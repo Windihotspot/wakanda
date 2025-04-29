@@ -267,6 +267,7 @@ const getStatusColor = (status) => {
 }
 .custom-btn {
   background-color: #1f5aa3;
+  text-transform: none;
 }
 v-btn {
   text-transform: none;
