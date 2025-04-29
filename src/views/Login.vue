@@ -88,103 +88,106 @@ onUnmounted(() => {
 </script>
 
 <template>
- <div class="flex flex-col md:flex-row h-auto md:h-screen bg-white">
-  <!-- Logo -->
- 
-  <!-- Image Section -->
- <!-- Image Section -->
-<div class="w-full sm:w-full md:w-1/2 p-4 flex justify-center items-center">
-  <img
-    src="/src/assets/image.jpg"
-    alt="Onboarding Image"
-    class="w-full sm:w-3/4 md:w-full sm:h-64 md:h-full object-cover rounded-b-lg md:rounded-none md:rounded-l-lg shadow-2xl"
-  />
+  <div class="flex flex-col md:flex-row h-auto md:h-screen bg-white">
+    <!-- Logo -->
+
+    <!-- Image Section -->
+    <!-- Image Section -->
+    <div class="w-full sm:w-full md:w-1/2 p-4 flex justify-center items-center">
+      <img
+        src="/src/assets/login-image.png"
+        alt="Onboarding Image"
+        class="w-full sm:w-3/4 md:w-full sm:h-64 md:h-full object-cover rounded-b-lg md:rounded-none md:rounded-l-lg shadow-2xl"
+      />
+    </div>
+
+    <!-- Login Form Section -->
+    <div class="w-full md:w-1/2 pt-8 flex items-center justify-center bg-white h-full">
+      <div class="max-w-md w-full px-4 sm:px-6 lg:px-8 py-8 md:py-0">
+        <!-- Heading -->
+        <h1 class="text-3xl font-bold text-gray-800 text-center">Welcome back!</h1>
+        <p class="text-gray-600 mt-2 text-center">
+          Provide your login credentials to access your account
+        </p>
+
+        <!-- Login Form -->
+        <form @submit.prevent="submitForm" class="mt-6 space-y-4">
+          <!-- Email Error -->
+          <p v-if="loginForm.errors.email" class="text-red-500 text-sm">
+            {{ loginForm.errors.email }}
+          </p>
+
+          <!-- Email Input -->
+          <v-text-field
+            type="email"
+            label="Email address"
+            v-model="loginForm.email"
+            variant="outlined"
+            color="blue"
+          />
+
+          <!-- Password Error -->
+          <p v-if="loginForm.errors.password" class="text-red-500 text-sm">
+            {{ loginForm.errors.password }}
+          </p>
+
+          <!-- Password Input -->
+          <v-text-field
+            :type="showPassword ? 'text' : 'password'"
+            v-model="loginForm.password"
+            label="Password"
+            variant="outlined"
+            color="blue"
+          >
+            <template #append-inner>
+              <i
+                :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"
+                @click="togglePasswordVisibility"
+                class="cursor-pointer text-black"
+              ></i>
+            </template>
+          </v-text-field>
+
+          <!-- Remember me + Reset -->
+          <div class="flex items-center justify-between">
+            <label class="flex items-center space-x-2">
+              <el-checkbox v-model="loginForm.remember" size="large" />
+              <span class="text-sm text-gray-700">Remember me</span>
+            </label>
+
+            <RouterLink to="/resetpassword">
+              <v-btn
+                no-uppercase
+                variant="text"
+                size="small"
+                color="#1f5aa3"
+                class="normal-case text-none"
+              >
+                Forgot password?
+              </v-btn>
+            </RouterLink>
+          </div>
+
+          <div class="bg-red-100 text-red-800 text-sm p-3 rounded">
+  <span class="font-bold mr-1">Warning:</span>
+  Don’t tick this box if you are using a public or shared device
 </div>
 
 
-  <!-- Login Form Section -->
-  <div class="w-full md:w-1/2 pt-8 flex items-center justify-center bg-white h-full">
-
-    <div class="max-w-md w-full px-4 sm:px-6 lg:px-8 py-8 md:py-0">
-      <!-- Heading -->
-      <h1 class="text-3xl font-bold text-gray-800 text-center">Welcome back!</h1>
-      <p class="text-gray-600 mt-2 text-center">
-        Provide your login credentials to access your account
-      </p>
-
-      <!-- Login Form -->
-      <form @submit.prevent="submitForm" class="mt-6 space-y-4">
-        <!-- Email Error -->
-        <p v-if="loginForm.errors.email" class="text-red-500 text-sm">
-          {{ loginForm.errors.email }}
-        </p>
-
-        <!-- Email Input -->
-        <v-text-field
-          type="email"
-          label="Email address"
-          v-model="loginForm.email"
-          variant="outlined"
-          color="blue"
-        />
-
-        <!-- Password Error -->
-        <p v-if="loginForm.errors.password" class="text-red-500 text-sm">
-          {{ loginForm.errors.password }}
-        </p>
-
-        <!-- Password Input -->
-        <v-text-field
-          :type="showPassword ? 'text' : 'password'"
-          v-model="loginForm.password"
-          label="Password"
-          variant="outlined"
-          color="blue"
-        >
-          <template #append-inner>
-            <i
-              :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"
-              @click="togglePasswordVisibility"
-              class="cursor-pointer text-black"
-            ></i>
-          </template>
-        </v-text-field>
-
-        <!-- Remember me + Reset -->
-        <div class="flex items-center justify-between">
-          <label class="flex items-center space-x-2">
-            <el-checkbox v-model="loginForm.remember" size="large" />
-            <span class="text-sm text-gray-700">Remember me</span>
-          </label>
-
-          <RouterLink to="/resetpassword">
-            <v-btn
-              no-uppercase
-              variant="text"
-              size="small"
-              color="#1f5aa3"
-              class="normal-case text-none"
-            >
-              Reset password
-            </v-btn>
-          </RouterLink>
-        </div>
-
-        <!-- Submit Button -->
-        <v-btn
-          type="submit"
-          :loading="loginForm.processing"
-          :disabled="loginForm.processing"
-          class="w-full text-white font-semibold text-sm custom-btn"
-          height="40"
-        >
-          {{ loginForm.processing ? 'Signing in...' : 'Sign in' }}
-        </v-btn>
-      </form>
+          <!-- Submit Button -->
+          <v-btn
+            type="submit"
+            :loading="loginForm.processing"
+           
+            class="w-full text-white font-semibold text-sm custom-btn"
+            height="40"
+          >
+            {{ loginForm.processing ? 'Signing in...' : 'Sign in' }}
+          </v-btn>
+        </form>
+      </div>
     </div>
   </div>
-</div>
-
 </template>
 
 <style scoped>
@@ -222,7 +225,7 @@ onUnmounted(() => {
 .custom-btn {
   background-color: #1f5aa3;
 }
-.v-btn{
+.v-btn {
   text-transform: none;
 }
 </style>
