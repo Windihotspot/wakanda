@@ -14,30 +14,53 @@
             <div class="p-6">
               <h2 class="text-xl font-semibold mb-6">Personal Information</h2>
               <div class="grid grid-cols-2 gap-4">
-                <v-text-field
-                  v-model="profile.firstname"
-                  label="First Name"
-                  variant="outlined"
-                  color="blue"
-                />
-                <v-text-field
-                  v-model="profile.lastname"
-                  label="Last Name"
-                  variant="outlined"
-                  color="blue"
-                />
-                <v-text-field
-                  v-model="profile.phone_number"
-                  label="Phone Number"
-                  variant="outlined"
-                  color="blue"
-                />
-                <v-text-field
-                  v-model="email"
-                  label="Email Address"
-                  variant="outlined"
-                  color="blue"
-                />
+                <template v-if="isBusiness">
+                  <v-text-field
+                    v-model="profile.firstname"
+                    label="Business Name"
+                    variant="outlined"
+                    color="blue"
+                  />
+                  <v-text-field
+                    v-model="profile.phone_number"
+                    label="Phone Number"
+                    variant="outlined"
+                    color="blue"
+                  />
+                  <v-text-field
+                    v-model="email"
+                    label="Business Email"
+                    variant="outlined"
+                    color="blue"
+                  />
+                </template>
+
+                <template v-else>
+                  <v-text-field
+                    v-model="profile.firstname"
+                    label="First Name"
+                    variant="outlined"
+                    color="blue"
+                  />
+                  <v-text-field
+                    v-model="profile.lastname"
+                    label="Last Name"
+                    variant="outlined"
+                    color="blue"
+                  />
+                  <v-text-field
+                    v-model="profile.phone_number"
+                    label="Phone Number"
+                    variant="outlined"
+                    color="blue"
+                  />
+                  <v-text-field
+                    v-model="email"
+                    label="Email Address"
+                    variant="outlined"
+                    color="blue"
+                  />
+                </template>
 
                 <v-select
                   v-model="selectedRole"
@@ -55,17 +78,19 @@
                   v-model="profile.password"
                   label="Password"
                   variant="outlined"
-                  type="password"
+                 :type="showPassword ? 'text' : 'password'"
                   color="blue"
                 >
                   <template #append-inner>
                     <i
-                      class="fas fa-sync-alt text-blue-500 cursor-pointer"
-                      @click="updatePassword"
+                      :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"
+                      @click="togglePasswordVisibility"
+                      class="cursor-pointer text-black"
                     ></i>
                   </template>
                 </v-text-field>
               </div>
+
               <div class="flex justify-end mt-auto pt-6">
                 <v-btn class="custom-btn text-white" @click="saveProfile">Save changes</v-btn>
               </div>
@@ -220,6 +245,16 @@ const token = savedAuth?.token || authStore.token
 const tenantId = savedAuth?.user?.tenant_id || authStore.tenant_id
 const user = savedAuth?.user
 
+const showPassword = ref(false)
+
+const togglePasswordVisibility = () => {
+  showPassword.value = !showPassword.value
+}
+
+const isBusiness = computed(() => {
+  return !!user?.business_name
+})
+
 const profile = ref({
   user_id: '',
   firstname: '',
@@ -251,24 +286,12 @@ const isLoading = ref(true)
 
 const getRoles = async () => {
   try {
-    const response = await axios.get(
-      `https://dev02201.getjupita.com/api/${tenantId.value}/get-roles`,
-      {
-        headers: {
-          Authorization: `Bearer ${token.value}`
-        }
+    const response = await axios.get(`https://dev02201.getjupita.com/api/${tenantId}/get-roles`, {
+      headers: {
+        Authorization: `Bearer ${token.value}`
       }
-    )
+    })
     console.log('roles response:', response)
-    if (response.data && response.data.data && Array.isArray(response.data.data.roles)) {
-      roles.value = response.data.data.roles.map((role) => ({
-        value: role.title, // You can use `role.id` as the value
-        label: role.title // Use `role.title` for the label
-      }))
-      console.log('Mapped roles:', roles.value)
-    } else {
-      roles.value = []
-    }
   } catch (error) {
     console.error('Error fetching roles:', error)
     roles.value = []
@@ -458,20 +481,20 @@ const saveProfile = async () => {
     message: 'Updating profile...',
     type: 'info',
     duration: 3000
-  });
+  })
 
   try {
     // 1. If there is valid profile info, update profile
-    if (profile.value.firstname || profile.value.lastname || profile.value.email ) {
+    if (profile.value.firstname || profile.value.lastname || profile.value.email) {
       const payload = {
         user_id: profile.value.user_id,
         firstname: profile.value.firstname,
         lastname: profile.value.lastname,
         email: profile.value.email,
         phone_number: profile.value.phone_number
-      };
-      
-      console.log('payload save profile:', payload);
+      }
+
+      console.log('payload save profile:', payload)
 
       const response = await axios.put(
         `https://dev02201.getjupita.com/api/${tenantId}/update-user-data`,
@@ -481,13 +504,13 @@ const saveProfile = async () => {
             Authorization: `Bearer ${token}`
           }
         }
-      );
-      console.log('Profile update Response:', response.data);
+      )
+      console.log('Profile update Response:', response.data)
     }
 
     // 2. If there is a password, update password
     if (profile.value.password) {
-      await updatePassword();
+      await updatePassword()
     }
 
     ElNotification({
@@ -495,19 +518,17 @@ const saveProfile = async () => {
       message: 'Profile uploaded successfully!',
       type: 'success',
       duration: 3000
-    });
-
+    })
   } catch (err) {
-    console.error('Update failed:', err);
+    console.error('Update failed:', err)
     ElNotification({
       title: 'Profile update failed',
       message: err.response?.data?.message || 'There was a problem updating the profile.',
       type: 'error',
       duration: 5000
-    });
+    })
   }
-};
-
+}
 
 const copyToClipboard = (text) => {
   navigator.clipboard.writeText(text)
@@ -518,17 +539,33 @@ onMounted(() => {
   getRoleLabel()
   fetchTeam()
   console.log('User data from storage:', user)
-  if (user) {
+  if (isBusiness.value) {
     profile.value = {
-      user_id: user.id || '',
-      firstname: user.firstname || '',
-      lastname: user.lastname || '',
-      phone_number: user.phone_number || '',
-      email: user.email || '',
-      role: ''
+      user_id: user.id,
+      firstname: user.business_name, // use business_name instead of firstname
+      lastname: '', // businesses don't need a lastname
+      phone_number: user.phone_number,
+      email: user.business_email,
+      role: '',
+      password: ''
     }
-    email.value = user.email || ''
+    email.value = user.business_email
+  } else {
+    profile.value = {
+      user_id: user.id,
+      firstname: user.firstname,
+      lastname: user.lastname,
+      phone_number: user.phone_number,
+      email: user.email,
+      role: '',
+      password: ''
+    }
+    email.value = user.email
   }
+
+  // Map role from role_id
+  const role = roles.value[user.role_id - 1] // adjust for 0-based array
+  if (role) selectedRole.value = role
 })
 </script>
 

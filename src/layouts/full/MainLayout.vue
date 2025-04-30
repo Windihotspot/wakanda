@@ -51,7 +51,7 @@ onMounted(() => {
     <!--- Page Wrapper -->
     <!-- ---------------------------------------------- -->
     <v-main class="mt-4 page-wrapper">
-      <v-container fluid class="">
+      <v-container fluid class="page-wrapper">
         <slot />
       </v-container>
     </v-main>

@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, computed } from 'vue'
 import axios from 'axios'
 import { useAuthStore } from '@/stores/auth'
 const authStore = useAuthStore()
@@ -10,6 +10,19 @@ const user = savedAuth?.user
 import { useRouter } from 'vue-router'
 const router = useRouter()
 const buisnessName = ref('')
+
+const getRoleLabelById = (id) => {
+  return roles.value[id - 1]?.label || 'N/A'
+}
+
+const displayName = computed(() => {
+  if (!user) return ''
+  return user.business_name || `${user.firstname} ${user.lastname}`
+})
+
+const displayRole = computed(() => {
+  return getRoleLabelById(user?.role_id)
+})
 
 // Reactive variable to handle loading state
 const isLoading = ref(false)
@@ -67,9 +80,9 @@ onMounted(() => {
   getRoleLabel()
 
   console.log('User data from storage:', user)
- if(user) {
-  buisnessName.value = user.business_name
- }
+  if (user) {
+    buisnessName.value = user.business_name
+  }
 })
 </script>
 
@@ -84,21 +97,39 @@ onMounted(() => {
             <i class="fa-regular fa-bell font-light fa-2xl text-blue-400"></i>
           </v-btn>
         </template>
-       
       </v-menu>
 
-      <v-chip variant="text" class="rounded-full px-2 py-4 items-center" size="large">
-        <v-avatar left size="32">
-          <v-img
-            src="https://images.unsplash.com/photo-1596766861381-6863da285770?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjB8fGJsYWNrJTIwbWFuJTIwcGFzc3BvcnQlMjBwaG90b2dyYXBnaHxlbnwwfHwwfHx8MA%3D%3D"
-            alt="Avatar"
-          ></v-img>
-        </v-avatar>
-        <div class="ml-2 text-left">
-          <div class="font-semibold text-sm">{{ buisnessName }}</div>
-          <div class="text-xs text-gray-500">Super Admin</div>
-        </div>
-      </v-chip>
+      <v-menu offset-y location="bottom left" origin="top left" min-width="200">
+        <template v-slot:activator="{ props }">
+          <v-chip
+            color="transparent"
+            v-bind="props"
+            variant="text"
+            class="bg-transparent shadow-none items-center p-2"
+            size="large"
+          >
+            <v-avatar start size="32">
+              <v-img
+                src="https://images.unsplash.com/photo-1596766861381-6863da285770?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjB8fGJsYWNrJTIwbWFuJTIwcGFzc3BvcnQlMjBwaG90b2dyYXBnaHxlbnwwfHwwfHx8MA%3D%3D"
+                alt="Avatar"
+              />
+            </v-avatar>
+            <div class="ml-2 text-left">
+              <div class="font-semibold text-black text-sm">{{ displayName }}</div>
+              <div class="text-xs text-gray-500">{{ displayRole }}</div>
+            </div>
+          </v-chip>
+        </template>
+
+        <v-list>
+          <v-list-item @click="logout" link class="text-gray-700 hover:text-red-500">
+            <div class="flex items-center gap-2">
+              <i class="fas fa-sign-out-alt text-gray-500 hover:text-red-500"></i>
+              <v-list-item-title>Logout</v-list-item-title>
+            </div>
+          </v-list-item>
+        </v-list>
+      </v-menu>
 
       <!-- User Profile -->
       <!-- <v-menu anchor="bottom end" origin="auto" min-width="300">

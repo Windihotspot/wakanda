@@ -69,7 +69,8 @@ const sortedStatements = computed(() => {
 const filteredStatements = computed(() => {
   return sortedStatements.value.filter((doc) => {
     const matchesStatus =
-      selectedStatus.value === 'All' || doc.status.toLowerCase() === selectedStatus.value.toLowerCase()
+      selectedStatus.value === 'All' ||
+      doc.status.toLowerCase() === selectedStatus.value.toLowerCase()
 
     const query = searchQuery.value.toLowerCase()
     const matchesSearch =
@@ -81,7 +82,6 @@ const filteredStatements = computed(() => {
     return matchesStatus && matchesSearch
   })
 })
-
 
 const fetchAnalysisResult = async (analysisId) => {
   const apiUrl = `https://dev02201.getjupita.com/api/${tenantId.value}/get-analysis-result?analysis_id=${analysisId};`
@@ -220,15 +220,14 @@ const getStatusColor = (status) => {
               <td class="py-3 px-6">{{ doc.name }}</td>
               <td class="py-3 px-6">
                 <span
-  :class="
-    doc.status === 'PROCESSED'
-      ? 'text-green-600 py-1 px-2 text-xs font-semibold rounded-full bg-green-100'
-      : 'text-red-600 py-1 px-2 text-xs font-semibold rounded-full bg-red-100'
-  "
->
-  {{ doc.status }}
-</span>
-
+                  :class="
+                    doc.status === 'PROCESSED'
+                      ? 'text-green-600 py-1 px-2 text-xs font-semibold rounded-full bg-green-100'
+                      : 'text-red-600 py-1 px-2 text-xs font-semibold rounded-full bg-red-100'
+                  "
+                >
+                  {{ doc.status }}
+                </span>
               </td>
               <td class="py-3 px-6 text-center">
                 <span
@@ -267,6 +266,7 @@ const getStatusColor = (status) => {
 }
 .custom-btn {
   background-color: #1f5aa3;
+  text-transform: none;
   text-transform: none;
 }
 v-btn {

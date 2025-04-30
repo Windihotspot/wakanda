@@ -78,14 +78,14 @@ const logout = async () => {
     </div>
 
     <!-- Footer Logout -->
-    <div class="pa-4">
+    <!-- <div class="pa-4">
       <v-list-item @click="logout" class="custom-btn logout-btn" rounded="lg" block>
         <v-icon class="text-lg" left>
           <i class="fas fa-sign-out-alt"></i>
         </v-icon>
         <span class="menu-item ml-4">Logout</span>
       </v-list-item>
-    </div>
+    </div> -->
   </div>
 </template>
 

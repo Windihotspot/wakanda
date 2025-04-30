@@ -31,8 +31,8 @@
       </div>
 
       <!-- Tabs -->
-      <v-card class="mt-6 pa-4 rounded-lg">
-        <v-tabs class="mb-6" v-model="activeTab" background-color="blue" color="primary" align-tabs="center">
+      <div class="mt-6 pa-4">
+        <v-tabs class="mb-6" v-model="activeTab" background-color="blue" color="primary">
           <v-tab value="credit">Credit History</v-tab>
           <v-tab value="debit">Debit History</v-tab>
         </v-tabs>
@@ -46,31 +46,33 @@
             </div>
 
             <div v-else-if="creditHistory.length > 0" class="overflow-x-auto">
-              <table class="min-w-full bg-white border border-gray-300 rounded-lg shadow-md">
-                <thead class="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
+              <table class="min-w-full">
+                <thead class="font-semibold uppercase text-sm leading-normal">
                   <tr>
                     <th class="py-3 px-6 text-left">Date</th>
                     <th class="py-3 px-6 text-left">Description</th>
                     <th class="py-3 px-6 text-left">Amount</th>
-                    <th class="py-3 px-6 text-left">Old Balance</th>
-                    <th class="py-3 px-6 text-center">New Balance</th>
                   </tr>
                 </thead>
 
-                <tbody class="text-gray-700 text-sm font-light">
-                  <tr v-for="(entry, index) in creditHistory" :key="index">
-                    <td class="py-3 px-6 text-left">{{ entry.date }}</td>
-                    <td class="py-3 px-6 text-left">{{ entry.description }}</td>
-                    <td class="py-3 px-6 text-left">{{ formatCurrency(entry.amount) }}</td>
-                    <td class="py-3 px-6 text-left">{{ formatCurrency(entry.old_balance) }}</td>
-                    <td class="py-3 px-6 text-center">{{ formatCurrency(entry.new_balance) }}</td>
+                <tbody class="text-gray-700 text-sm font-light bg-white rounded-xl shadow-lg">
+                  <tr
+                    class="border-b border-gray-200 font-normal"
+                    v-for="(credit, index) in creditHistory"
+                    :key="index"
+                  >
+                    <td class="py-3 px-6 text-left">
+                      {{ moment(credit.date).format('MMMM Do, YYYY') }}
+                    </td>
+                    <td class="py-3 px-6 text-left">{{ credit.description }}</td>
+                    <td class="py-3 px-6 text-left">{{ formatCurrency(credit.amount) }}</td>
                   </tr>
                 </tbody>
               </table>
             </div>
 
             <div v-else class="text-center py-10">
-              <p class="text-gray-500">No credit history</p>
+              <p class="text-red-500">No credit history</p>
             </div>
           </v-window-item>
 
@@ -82,24 +84,26 @@
             </div>
 
             <div v-else-if="debitHistory.length > 0" class="overflow-x-auto">
-              <table class="min-w-full bg-white border border-gray-300 rounded-lg shadow-md">
-                <thead class="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
+              <table class="min-w-full">
+                <thead class="font-semibold uppercase text-sm leading-normal">
                   <tr>
                     <th class="py-3 px-6 text-left">Date</th>
                     <th class="py-3 px-6 text-left">Description</th>
                     <th class="py-3 px-6 text-left">Amount</th>
-                    <th class="py-3 px-6 text-left">Old Balance</th>
-                    <th class="py-3 px-6 text-center">New Balance</th>
                   </tr>
                 </thead>
 
-                <tbody class="text-gray-700 text-sm font-light">
-                  <tr v-for="(entry, index) in debitHistory" :key="index">
-                    <td class="py-3 px-6 text-left">{{ entry.date }}</td>
-                    <td class="py-3 px-6 text-left">{{ entry.description }}</td>
-                    <td class="py-3 px-6 text-left">{{ formatCurrency(entry.amount) }}</td>
-                    <td class="py-3 px-6 text-left">{{ formatCurrency(entry.old_balance) }}</td>
-                    <td class="py-3 px-6 text-center">{{ formatCurrency(entry.new_balance) }}</td>
+                <tbody class="text-gray-700 text-sm font-light bg-white rounded-xl shadow-lg">
+                  <tr
+                    class="border-b border-gray-200 font-normal"
+                    v-for="(debit, index) in debitHistory"
+                    :key="index"
+                  >
+                    <td class="py-3 px-6 text-left">
+                      {{ moment(debit.date).format('MMMM Do, YYYY') }}
+                    </td>
+                    <td class="py-3 px-6 text-left">{{ debit.description }}</td>
+                    <td class="py-3 px-6 text-left">{{ formatCurrency(debit.amount) }}</td>
                   </tr>
                 </tbody>
               </table>
@@ -110,7 +114,7 @@
             </div>
           </v-window-item>
         </v-window>
-      </v-card>
+      </div>
 
       <div
         v-if="loading"
@@ -124,17 +128,19 @@
         <v-card>
           <v-card-title class="text-h5">Fund Wallet</v-card-title>
           <v-card-text>
-            <v-text-field
-              label="Amount"
-              v-model="amount"
-              type="number"
-              variant="outlined"
-              color="blue"
-            >
-              <template v-slot:prepend>
-                <span>₦</span>
-              </template>
-            </v-text-field>
+            <div class="mt-2">
+              <v-text-field
+                label="Amount"
+                v-model="amount"
+                ref="cleaveInput"
+                variant="outlined"
+                color="blue"
+              >
+                <template v-slot:prepend>
+                  <span>₦</span>
+                </template>
+              </v-text-field>
+            </div>
           </v-card-text>
           <v-card-actions>
             <v-btn text @click="closeFundWallet">Cancel</v-btn>
@@ -174,7 +180,9 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue'
+import { ElNotification } from 'element-plus'
+import moment from 'moment'
+import { onMounted, ref, nextTick } from 'vue'
 import MainLayout from '@/layouts/full/MainLayout.vue'
 import { useAuthStore } from '@/stores/auth'
 import { useRouter } from 'vue-router'
@@ -185,9 +193,12 @@ import Swal from 'sweetalert2'
 const loading = ref(false)
 const creditHistory = ref([])
 const activeTab = ref('credit') // Default tab to "Credit"
-const debitHistory = ref([])    // For debit transactions
+const debitHistory = ref([]) // For debit transactions
 
 import Cleave from 'cleave.js'
+const cleaveInput = ref(null)
+const amount = ref(0)
+
 function formatCurrency(number) {
   return new Intl.NumberFormat('en-NG', {
     style: 'currency',
@@ -209,7 +220,6 @@ const loadingPayment = ref(true)
 
 // Fund Wallet Modal
 const fundWalletDialog = ref(false)
-const amount = ref('')
 const paymentModal = ref(false)
 const paymentLink = ref('')
 const balance = ref('')
@@ -241,21 +251,56 @@ const fetchWallet = async () => {
       }
     })
     console.log('fetch wallet data:', response)
-    const wallet = response.data.data.wallet
-    balance.value = wallet.balance
 
-    // Populate credit history with wallet details
-    creditHistory.value = [
-      {
-        date: new Date(wallet.updated_at).toLocaleString(),
-        description: 'Wallet Funded',
-        amount: wallet.balance - wallet.previous_balance,
-        old_balance: wallet.previous_balance,
-        new_balance: wallet.balance
-      }
-    ]
+    balance.value = response.data.data.wallet.balance
   } catch (error) {
     console.error('Error fetching wallet:', error)
+  } finally {
+    isLoading.value = false
+  }
+}
+
+const fetchWalletTransactions = async () => {
+  const savedAuth = localStorage.getItem('data') ? JSON.parse(localStorage.getItem('data')) : null
+
+  const token = savedAuth ? savedAuth?.token : computed(() => authStore.token)?.value
+  const tenantId = savedAuth
+    ? savedAuth?.user?.tenant_id
+    : computed(() => authStore.tenant_id)?.value
+
+  const API_URL = `https://dev02201.getjupita.com/api/${tenantId}/get-wallet-transactions`
+  isLoading.value = true
+
+  try {
+    const response = await axios.get(API_URL, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+
+    const transactions = response.data.data.transactions.data
+
+    // Separate into credit and debit histories
+    creditHistory.value = []
+    debitHistory.value = []
+
+    transactions.forEach((tx) => {
+      const data = tx.transaction_data ? JSON.parse(tx.transaction_data) : {}
+
+      const base = {
+        date: tx.created_at,
+        amount: tx.amount,
+        description: data.description || (data.type === 'topup' ? 'Top Up' : 'Wallet Transaction')
+      }
+
+      if (data.transaction_type === 'debit') {
+        debitHistory.value.push(base)
+      } else if (data.type === 'topup') {
+        creditHistory.value.push(base)
+      }
+    })
+  } catch (error) {
+    console.error('Error fetching wallet transactions:', error)
   } finally {
     isLoading.value = false
   }
@@ -267,11 +312,12 @@ const fundWallet = async () => {
   const tenantId = savedAuth?.user?.tenant_id || authStore.tenant_id
   const loading = ref(false)
 
-  if (!amount.value || amount.value <= 0) {
-    Swal.fire({
-      icon: 'warning',
+  if (!amount.value || amount.value < 100000) {
+    ElNotification({
       title: 'Invalid Amount',
-      text: 'Please enter a valid amount to fund your wallet.'
+      message: 'Minimum funding amount is ₦100,000.',
+      type: 'warning',
+      duration: 4000
     })
     return
   }
@@ -281,10 +327,16 @@ const fundWallet = async () => {
   console.log('fund wallet token:', token)
 
   try {
-    loading.value = true
+    fundWalletDialog.value = false
+    ElNotification({
+      title: 'Payment Initialized',
+      message: 'Redirecting to payment link...',
+      type: 'success',
+      duration: 4000
+    })
     const response = await axios.post(
       API_URL,
-      { amount: amount.value }, // POST body
+      { amount: amount.value },
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -292,32 +344,47 @@ const fundWallet = async () => {
         }
       }
     )
+
     console.log(response)
 
     paymentLink.value = response.data.data.link
-    // Open the payment link in the modal
     paymentModal.value = true
-
     fundWalletDialog.value = false
     fetchWallet()
   } catch (error) {
     console.error('Funding error:', error)
     fundWalletDialog.value = false
-    Swal.fire({
-      icon: 'error',
+
+    ElNotification({
       title: 'Payment Failed',
-      text: error?.response?.data?.message || 'Failed to initiate payment. Please try again.'
+      message: error?.response?.data?.message || 'Failed to initiate payment. Please try again.',
+      type: 'error',
+      duration: 5000
     })
   } finally {
     loading.value = false
   }
 }
+
 const onIframeLoad = () => {
   loadingPayment.value = false
 }
 
-onMounted(() => {
+onMounted(async () => {
   fetchWallet()
+  fetchWalletTransactions()
+  await nextTick() // Wait until DOM is fully updated
+  if (cleaveInput.value) {
+    new Cleave(cleaveInput.value.$el.querySelector('input'), {
+      numeral: true,
+      numeralThousandsGroupStyle: 'thousand',
+      prefix: '₦',
+      rawValueTrimPrefix: true,
+      onValueChanged: (e) => {
+        amount.value = parseFloat(e.target.rawValue.replace(/,/g, '')) || 0
+      }
+    })
+  }
 })
 </script>
 

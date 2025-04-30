@@ -1,7 +1,6 @@
 <template>
   <MainLayout>
     <div class="p-2">
-      <h2 class="text-xl font-bold mt-2 ml-6">Statement Analysis Result</h2>
       <template v-if="loading">
         <div class="flex items-center justify-center h-96">
           <v-progress-circular
@@ -14,13 +13,14 @@
       </template>
       <template v-else>
         <div class="p-2 md:p-8">
-          <!-- Back Button -->
-          <div class="flex justify-between">
-            <RouterLink to="/dashboard">
-              <button @click="goBack" class="mb-2 flex items-center text-blue-600 font-semibold">
-                <i class="fas fa-arrow-left mr-2"></i> Back
-              </button>
-            </RouterLink>
+          <RouterLink to="/dashboard">
+            <button @click="goBack" class="mb-2 flex items-center text-black font-semibold">
+              <i class="fas fa-circle-arrow-left mr-2" style="color: #2563eb"></i> Back
+            </button>
+          </RouterLink>
+          <!-- title and download -->
+          <div class="flex justify-between rounded shadow-lg p-4 bg-white">
+            <h2 class="text-md font-semibold mt-2 ml-6">Analysis result</h2>
             <!-- Download Report Button -->
             <div class="text-right">
               <v-btn
@@ -37,11 +37,13 @@
 
           <!-- Document Header -->
 
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-gray-700 mt-4 mb-6">
+          <div
+            class="grid grid-cols-1 md:grid-cols-3 gap-6 text-gray-700 mt-4 mb-6 bg-white rounded shadow-lg p-4"
+          >
             <p>
               <i class="fas fa-calendar mr-2"></i>
               <strong>Statement Period:</strong> <br />
-              {{ statementPeriod }}
+              <span class="mt-3">{{ statementPeriod }}</span>
             </p>
 
             <p>
@@ -267,8 +269,12 @@
                           <tfoot class="font-semibold text-gray-800 bg-gray-50 border-t">
                             <tr>
                               <td class="px-2 py-2">Total</td>
-                              <td class="px-2 text-green-800 py-2">{{ formatCurrency(totalMonthlyCredit) }}</td>
-                              <td class="px-2 text-red-800 py-2">{{ formatCurrency(totalMonthlyDebit) }}</td>
+                              <td class="px-2 text-green-800 py-2">
+                                {{ formatCurrency(totalMonthlyCredit) }}
+                              </td>
+                              <td class="px-2 text-red-800 py-2">
+                                {{ formatCurrency(totalMonthlyDebit) }}
+                              </td>
                             </tr>
                           </tfoot>
                         </table>
@@ -290,15 +296,19 @@
                           <tbody>
                             <tr v-for="(entry, index) in weeklyData" :key="index" class="border-b">
                               <td class="px-2 py-2">{{ entry.week }}</td>
-                              <td class="px-2  py-2">{{ formatCurrency(entry.credit) }}</td>
-                              <td class="px-2  py-2">{{ formatCurrency(entry.debit) }}</td>
+                              <td class="px-2 py-2">{{ formatCurrency(entry.credit) }}</td>
+                              <td class="px-2 py-2">{{ formatCurrency(entry.debit) }}</td>
                             </tr>
                           </tbody>
                           <tfoot class="font-semibold text-gray-800 bg-gray-50 border-t">
                             <tr>
                               <td class="px-2 py-2">Total</td>
-                              <td class="px-2 text-green-800 py-2">{{ formatCurrency(totalWeeklyCredit) }}</td>
-                              <td class="px-2 text-red-800 py-2">{{ formatCurrency(totalWeeklyDebit) }}</td>
+                              <td class="px-2 text-green-800 py-2">
+                                {{ formatCurrency(totalWeeklyCredit) }}
+                              </td>
+                              <td class="px-2 text-red-800 py-2">
+                                {{ formatCurrency(totalWeeklyDebit) }}
+                              </td>
                             </tr>
                           </tfoot>
                         </table>
@@ -336,7 +346,8 @@
                         ><span>{{ formatCurrency(averageMonthlyLoanRepaymentAmount) }}</span>
                       </div>
                       <div class="flex justify-between">
-                        <span>Loan to Inflow Rate</span><span>{{ loanToInflowRate }}%</span>
+                        <span>Loan to Inflow Rate</span>
+                        <span>{{ formatPercent(loanToInflowRate) }}</span>
                       </div>
                       <div class="flex justify-between">
                         <span>Latest Loan Transaction Date</span
@@ -503,7 +514,7 @@
                       <span class="text-2xl font-semibold">Transaction History</span>
 
                       <!-- Font Awesome Filter Icon -->
-                      <v-btn @click="showFilter = true" icon variant="text">
+                      <v-btn  icon variant="text">
                         <i class="fas fa-filter text-black-600 text-lg"></i>
                       </v-btn>
                     </v-card-title>
@@ -582,7 +593,7 @@
             </div>
 
             <div class="space-y-4">
-              <!-- Date Picker -->
+             
               <div>
                 <label class="text-sm font-medium">Date</label>
                 <div class="flex gap-2 mt-1">
@@ -595,7 +606,6 @@
                   >
                     <template #activator="{ props }">
                       <v-text-field
-                        
                         label="From"
                         readonly
                         v-bind="props"
@@ -605,13 +615,13 @@
                       />
                     </template>
                     <v-date-picker
-                    class="vdp-small"
+                      class="vdp-small"
                       v-model="filters.dateRange[0]"
                       @update:modelValue="menuFrom = false"
                     />
                   </v-menu>
 
-                  <!-- To Date -->
+                  
                   <v-menu
                     v-model="menuTo"
                     :close-on-content-click="false"
@@ -620,7 +630,6 @@
                   >
                     <template #activator="{ props }">
                       <v-text-field
-                       
                         label="To"
                         readonly
                         v-bind="props"
@@ -637,7 +646,7 @@
                 </div>
               </div>
 
-              <!-- Description -->
+              
               <div>
                 <v-text-field
                   color="blue"
@@ -649,7 +658,7 @@
                 />
               </div>
 
-              <!-- Type -->
+             
               <div>
                 <label class="text-sm font-medium">Type</label>
                 <v-select
@@ -662,7 +671,7 @@
                 />
               </div>
 
-              <!-- Amount Range -->
+             
               <div class="flex gap-2">
                 <v-text-field
                   color="blue"
@@ -682,7 +691,7 @@
                 />
               </div>
 
-              <!-- Apply & Reset Buttons -->
+             
               <div class="flex justify-end gap-2 mt-4">
                 <v-btn @click="applyFilters" variant="tonal" color="primary">Apply</v-btn>
                 <v-btn @click="resetFilters" variant="text" color="grey">Reset</v-btn>
@@ -705,11 +714,14 @@ import moment from 'moment'
 import { ElMessage, ElNotification } from 'element-plus'
 import { saveAs } from 'file-saver'
 
-
 const activeTab = ref('Summary')
 
 const formatDate = (date) => {
   return moment(date).format('MMMM Do YYYY,')
+}
+function formatPercent(value) {
+  if (typeof value !== 'number') return '0%'
+  return `${(value * 100).toFixed(2)}%` // Adjust decimal places as needed
 }
 
 function formatCurrency(number) {
@@ -853,6 +865,7 @@ const fetchAnalysisResult = async (analysisId) => {
     accountId.value = analysis?.accountId || 'N/A'
 
     const behavior = analysis?.behavioralAnalysis || {}
+    console.log('behavioural:', behavior)
 
     accountSweep.value = behavior.accountSweep || 'No'
     gamblingRate.value = behavior.gamblingRate || 0
@@ -898,7 +911,7 @@ const fetchAnalysisResult = async (analysisId) => {
     console.log('pattern analysis:', pattern)
 
     percentOfDebit.value = (pattern.percentDebitTransactions * 100).toFixed(2) + '%'
-    percentOfCredit.value = (pattern.percentDebitTransactions * 100).toFixed(2) + '%'
+    percentOfCredit.value = (pattern.percentCreditTransactions * 100).toFixed(2) + '%'
     percentOfTransactionsBetween500ThousandToOneMillionNaira.value =
       (pattern.percentOfTransactionsBetween500ThousandToOneMillionNaira * 100).toFixed(2) + '%'
     percentOfTransactionsGreaterThanOneMillionNaira.value =
@@ -1139,7 +1152,7 @@ const fetchAnalysisResult = async (analysisId) => {
   }
 }
 
-const fetchTransactions = async () => {
+const fetchTransactions = async (id) => {
   const savedAuth = JSON.parse(localStorage.getItem('data') || '{}')
   const token = savedAuth?.token || authStore.token
   const tenantId = savedAuth?.user?.tenant_id || authStore.tenant_id
@@ -1184,7 +1197,6 @@ const resetFilters = () => {
   }
 }
 
-
 const applyFilters = () => {
   transactions.value = allTransactions.value.filter((txn) => {
     const matchesDescription =
@@ -1204,10 +1216,11 @@ const applyFilters = () => {
 }
 
 onMounted(() => {
-  fetchTransactions()
+  
   const id = route.params.id
   if (id) {
     fetchAnalysisResult(id)
+    fetchTransactions(id)
   } else {
     error.value = 'Invalid analysis ID.'
     loading.value = false

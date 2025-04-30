@@ -97,7 +97,7 @@ onUnmounted(() => {
       <img
         src="/src/assets/login-image.png"
         alt="Onboarding Image"
-        class="w-full sm:w-3/4 md:w-full sm:h-64 md:h-full object-cover rounded-b-lg md:rounded-none md:rounded-l-lg shadow-2xl"
+        class="w-full sm:w-3/4 md:w-full sm:h-64 md:h-full object-cover"
       />
     </div>
 
