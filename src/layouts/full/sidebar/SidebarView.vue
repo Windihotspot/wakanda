@@ -55,7 +55,7 @@ const logout = async () => {
 
     <!-- Navigation -->
     <div class="scrollnavbar flex-grow mt-4">
-      <v-list class="pa-4" color="transparent">
+      <v-list class="pa-4">
         <template v-for="(item, i) in sidebarMenu" :key="i">
           <v-list-item
             @click="router.push(item.path)"

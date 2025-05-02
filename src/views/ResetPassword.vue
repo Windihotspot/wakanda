@@ -3,7 +3,7 @@
     <div class="w-full max-w-md bg-white shadow-lg rounded-2xl p-8">
       <div class="flex flex-col items-center text-center">
         <h2 class="text-2xl font-semibold mt-4">Forgot password?</h2>
-        <p class="text-gray-500 text-sm mt-1">No worries, we'll send you reset instructions.</p>
+        <p class="text-gray-500 text-sm mt-1">No worries, we'll send you a link to reset your password.</p>
       </div>
 
       <!-- Alert -->
@@ -38,7 +38,7 @@
           type="submit"
           class="w-full custom-btn hover:bg-blue-700 text-white font-medium py-2.5 rounded-md transition"
         >
-          Reset password
+        Send Reset Link
         </v-btn>
       </form>
 
