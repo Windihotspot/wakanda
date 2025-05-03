@@ -64,7 +64,8 @@ import { ref } from 'vue'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
 const router = useRouter()
-
+import { useAuthStore } from '@/stores/auth'
+const authStore = useAuthStore()
 const email = ref('')
 const emailError = ref('')
 const showAlert = ref(false)

@@ -8,222 +8,191 @@
       <!-- Alert -->
       <transition name="fade">
         <!-- Password Strength Message -->
-        <div
-          v-if="showDialog"
-          class="fixed top-4 right-4 p-2 rounded-lg shadow-lg z-50"
-        >
-        <div class="flex items-center gap-2">
-                                            <div class="flex-shrink-0">
-                                                <svg
-                                                    v-if="hasUppercase"
-                                                    class="w-4 h-4 text-green-500"
-                                                    viewBox="0 0 24 24"
-                                                    fill="none"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                >
-                                                    <path
-                                                        d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
-                                                        stroke="currentColor"
-                                                        stroke-width="2"
-                                                    />
-                                                    <path
-                                                        d="M8 12L11 15L16 9"
-                                                        stroke="currentColor"
-                                                        stroke-width="2"
-                                                        stroke-linecap="round"
-                                                        stroke-linejoin="round"
-                                                    />
-                                                </svg>
-                                                <svg
-                                                    v-else
-                                                    class="w-4 h-4 text-red-500"
-                                                    viewBox="0 0 24 24"
-                                                    fill="none"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                >
-                                                    <path
-                                                        d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
-                                                        stroke="currentColor"
-                                                        stroke-width="2"
-                                                    />
-                                                    <path
-                                                        d="M15 9L9 15M9 9L15 15"
-                                                        stroke="currentColor"
-                                                        stroke-width="2"
-                                                        stroke-linecap="round"
-                                                    />
-                                                </svg>
-                                            </div>
-                                            <span
-                                                class="text-sm"
-                                                :class="
-                                                    hasUppercase
-                                                        ? 'text-green-500'
-                                                        : 'text-red-500'
-                                                "
-                                            >
-                                                Uppercase letters
-                                            </span>
-                                        </div>
-                                        <div class="flex items-center gap-2">
-                                            <div class="flex-shrink-0">
-                                                <svg
-                                                    v-if="hasLowercase"
-                                                    class="w-4 h-4 text-green-500"
-                                                    viewBox="0 0 24 24"
-                                                    fill="none"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                >
-                                                    <path
-                                                        d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
-                                                        stroke="currentColor"
-                                                        stroke-width="2"
-                                                    />
-                                                    <path
-                                                        d="M8 12L11 15L16 9"
-                                                        stroke="currentColor"
-                                                        stroke-width="2"
-                                                        stroke-linecap="round"
-                                                        stroke-linejoin="round"
-                                                    />
-                                                </svg>
-                                                <svg
-                                                    v-else
-                                                    class="w-4 h-4 text-red-500"
-                                                    viewBox="0 0 24 24"
-                                                    fill="none"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                >
-                                                    <path
-                                                        d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
-                                                        stroke="currentColor"
-                                                        stroke-width="2"
-                                                    />
-                                                    <path
-                                                        d="M15 9L9 15M9 9L15 15"
-                                                        stroke="currentColor"
-                                                        stroke-width="2"
-                                                        stroke-linecap="round"
-                                                    />
-                                                </svg>
-                                            </div>
-                                            <span
-                                                class="text-sm"
-                                                :class="
-                                                    hasLowercase
-                                                        ? 'text-green-500'
-                                                        : 'text-red-500'
-                                                "
-                                            >
-                                                Lowercase letters
-                                            </span>
-                                        </div>
-                                        <div class="flex items-center gap-2">
-                                            <div class="flex-shrink-0">
-                                                <svg
-                                                    v-if="hasNumber"
-                                                    class="w-4 h-4 text-green-500"
-                                                    viewBox="0 0 24 24"
-                                                    fill="none"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                >
-                                                    <path
-                                                        d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
-                                                        stroke="currentColor"
-                                                        stroke-width="2"
-                                                    />
-                                                    <path
-                                                        d="M8 12L11 15L16 9"
-                                                        stroke="currentColor"
-                                                        stroke-width="2"
-                                                        stroke-linecap="round"
-                                                        stroke-linejoin="round"
-                                                    />
-                                                </svg>
-                                                <svg
-                                                    v-else
-                                                    class="w-4 h-4 text-red-500"
-                                                    viewBox="0 0 24 24"
-                                                    fill="none"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                >
-                                                    <path
-                                                        d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
-                                                        stroke="currentColor"
-                                                        stroke-width="2"
-                                                    />
-                                                    <path
-                                                        d="M15 9L9 15M9 9L15 15"
-                                                        stroke="currentColor"
-                                                        stroke-width="2"
-                                                        stroke-linecap="round"
-                                                    />
-                                                </svg>
-                                            </div>
-                                            <span
-                                                class="text-sm"
-                                                :class="
-                                                    hasNumber
-                                                        ? 'text-green-500'
-                                                        : 'text-red-500'
-                                                "
-                                            >
-                                                Numbers
-                                            </span>
-                                        </div>
-                                        <div class="flex items-center gap-2">
-                                            <div class="flex-shrink-0">
-                                                <svg
-                                                    v-if="hasSpecialChar"
-                                                    class="w-4 h-4 text-green-500"
-                                                    viewBox="0 0 24 24"
-                                                    fill="none"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                >
-                                                    <path
-                                                        d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
-                                                        stroke="currentColor"
-                                                        stroke-width="2"
-                                                    />
-                                                    <path
-                                                        d="M8 12L11 15L16 9"
-                                                        stroke="currentColor"
-                                                        stroke-width="2"
-                                                        stroke-linecap="round"
-                                                        stroke-linejoin="round"
-                                                    />
-                                                </svg>
-                                                <svg
-                                                    v-else
-                                                    class="w-4 h-4 text-red-500"
-                                                    viewBox="0 0 24 24"
-                                                    fill="none"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                >
-                                                    <path
-                                                        d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
-                                                        stroke="currentColor"
-                                                        stroke-width="2"
-                                                    />
-                                                    <path
-                                                        d="M15 9L9 15M9 9L15 15"
-                                                        stroke="currentColor"
-                                                        stroke-width="2"
-                                                        stroke-linecap="round"
-                                                    />
-                                                </svg>
-                                            </div>
-                                            <span
-                                                class="text-sm"
-                                                :class="
-                                                    hasSpecialChar
-                                                        ? 'text-green-500'
-                                                        : 'text-red-500'
-                                                "
-                                            >
-                                                Special characters
-                                            </span>
-                                        </div>
+        <div v-if="password" class="fixed top-4 right-4 p-2 rounded-lg shadow-lg z-50">
+          <div class="flex items-center gap-2">
+            <div class="flex-shrink-0">
+              <svg
+                v-if="hasUppercase"
+                class="w-4 h-4 text-green-500"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
+                  stroke="currentColor"
+                  stroke-width="2"
+                />
+                <path
+                  d="M8 12L11 15L16 9"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+              <svg
+                v-else
+                class="w-4 h-4 text-red-500"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
+                  stroke="currentColor"
+                  stroke-width="2"
+                />
+                <path
+                  d="M15 9L9 15M9 9L15 15"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                />
+              </svg>
+            </div>
+            <span class="text-sm" :class="hasUppercase ? 'text-green-500' : 'text-red-500'">
+              Uppercase letters
+            </span>
+          </div>
+          <div class="flex items-center gap-2">
+            <div class="flex-shrink-0">
+              <svg
+                v-if="hasLowercase"
+                class="w-4 h-4 text-green-500"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
+                  stroke="currentColor"
+                  stroke-width="2"
+                />
+                <path
+                  d="M8 12L11 15L16 9"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+              <svg
+                v-else
+                class="w-4 h-4 text-red-500"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
+                  stroke="currentColor"
+                  stroke-width="2"
+                />
+                <path
+                  d="M15 9L9 15M9 9L15 15"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                />
+              </svg>
+            </div>
+            <span class="text-sm" :class="hasLowercase ? 'text-green-500' : 'text-red-500'">
+              Lowercase letters
+            </span>
+          </div>
+          <div class="flex items-center gap-2">
+            <div class="flex-shrink-0">
+              <svg
+                v-if="hasNumber"
+                class="w-4 h-4 text-green-500"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
+                  stroke="currentColor"
+                  stroke-width="2"
+                />
+                <path
+                  d="M8 12L11 15L16 9"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+              <svg
+                v-else
+                class="w-4 h-4 text-red-500"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
+                  stroke="currentColor"
+                  stroke-width="2"
+                />
+                <path
+                  d="M15 9L9 15M9 9L15 15"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                />
+              </svg>
+            </div>
+            <span class="text-sm" :class="hasNumber ? 'text-green-500' : 'text-red-500'">
+              Numbers
+            </span>
+          </div>
+          <div class="flex items-center gap-2">
+            <div class="flex-shrink-0">
+              <svg
+                v-if="hasSpecialChar"
+                class="w-4 h-4 text-green-500"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
+                  stroke="currentColor"
+                  stroke-width="2"
+                />
+                <path
+                  d="M8 12L11 15L16 9"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+              <svg
+                v-else
+                class="w-4 h-4 text-red-500"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
+                  stroke="currentColor"
+                  stroke-width="2"
+                />
+                <path
+                  d="M15 9L9 15M9 9L15 15"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                />
+              </svg>
+            </div>
+            <span class="text-sm" :class="hasSpecialChar ? 'text-green-500' : 'text-red-500'">
+              Special characters
+            </span>
+          </div>
         </div>
       </transition>
 
@@ -298,6 +267,9 @@ import { ref, computed, watch } from 'vue'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
 const router = useRouter()
+import { ElNotification } from 'element-plus'
+import { useAuthStore } from '@/stores/auth'
+const authStore = useAuthStore()
 
 const password = ref('')
 const confirmPassword = ref('')
@@ -309,45 +281,84 @@ const togglePasswordVisibility = () => {
   showPassword.value = !showPassword.value
 }
 
-const showDialog = ref(false)
-const passwordMessage = ref('')
+// Validation checks
+const hasUppercase = computed(() => /[A-Z]/.test(password.value))
+const hasLowercase = computed(() => /[a-z]/.test(password.value))
+const hasNumber = computed(() => /\d/.test(password.value))
+const hasSpecialChar = computed(() => /[!@#$%^&*(),.?":{}|<>]/.test(password.value))
 
-const hasUppercase = computed(() => /[A-Z]/.test(password));
-const hasLowercase = computed(() => /[a-z]/.test(password));
-const hasNumber = computed(() => /[0-9]/.test(password));
-const hasSpecialChar = computed(() =>
-    /[!@#$%^&*(),.?":{}|<>]/.test(password)
-);
+const isPasswordValid = computed(
+  () =>
+    hasUppercase.value &&
+    hasLowercase.value &&
+    hasNumber.value &&
+    hasSpecialChar.value &&
+    password.value.length >= 8
+)
 
+const validateForm = () => {
+  let valid = true
+  passwordError.value = ''
+  confirmPasswordError.value = ''
 
-const validateEmail = () => {
-  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-  if (!email.value) {
-    emailError.value = 'Email is required'
-    return false
-  } else if (!emailPattern.test(email.value)) {
-    emailError.value = 'Please enter a valid email address'
-    return false
+  if (!password.value) {
+    passwordError.value = 'Password is required'
+    valid = false
+  } else if (!isPasswordValid.value) {
+    passwordError.value =
+      'Password must include uppercase, lowercase, number, special character, and be at least 8 characters long'
+    valid = false
   }
-  emailError.value = ''
-  return true
+
+  if (confirmPassword.value !== password.value) {
+    confirmPasswordError.value = 'Passwords do not match'
+    valid = false
+  }
+
+  return valid
 }
 
 const onSubmit = async () => {
-  if (!validateEmail()) return
+  const savedAuth = localStorage.getItem('data') ? JSON.parse(localStorage.getItem('data')) : null
+  console.log(JSON.parse(localStorage.getItem('data')))
+  const token = savedAuth ? savedAuth?.token : computed(() => authStore.token)?.value
+  const tenantId = savedAuth
+    ? savedAuth?.user?.tenant_id
+    : computed(() => authStore.tenant_id)?.value
+  const API_URL = `https://dev02201.getjupita.com/api/reset-password`
+  if (!validateForm()) {
+    return
+  }
 
   try {
-    const response = await axios.post('https://dev02201.getjupita.com/api/forgot-password', {})
-    console.log('reset password response:', response)
-
-    // ⏳ Wait a moment, then navigate
-    setTimeout(() => {
-      router.push('/')
-    }, 3000)
-  } catch (error) {}
-
-  // Hide alert after 5 seconds
-  setTimeout(() => {}, 5000)
+    const response = await axios.post(
+      API_URL,
+      {
+        password: password.value,
+        password_confirmation: confirmPassword.value
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    )
+    password.value = '',
+    confirmPassword.value = ''
+    ElNotification({
+      title: 'Success',
+      message: response.data.message || 'Password reset successfully!',
+      type: 'success',
+      duration: 4000
+    })
+    router.push('/')
+  } catch (error) {
+    ElNotification({
+      title: 'Error',
+      message: error.response?.data?.message || 'Failed to reset password.',
+      type: 'error'
+    })
+  }
 }
 </script>
 
