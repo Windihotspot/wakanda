@@ -1,7 +1,7 @@
 export default [
   {
-    title: 'Dashboard',
-    icon: 'fa-solid fa-house', 
+    title: 'Analyze',
+    icon: 'fa-solid fa-chart-area', 
     path: '/dashboard'
   },
   

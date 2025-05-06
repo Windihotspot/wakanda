@@ -171,7 +171,7 @@ const getStatusColor = (status) => {
         <v-text-field
           rounded
           v-model="searchQuery"
-          placeholder="Search by File Name"
+          placeholder="Search for a statement"
           density="compact"
           hide-details
           variant="outlined"

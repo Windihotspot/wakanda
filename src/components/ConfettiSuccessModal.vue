@@ -1,49 +1,25 @@
 <!-- ConfettiSuccessModal.vue -->
 <template>
-  <Teleport to="body">
-    <div
-      v-if="visible"
-      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-    >
-      <div class="bg-white rounded-lg shadow-lg p-8 text-center max-w-md w-full">
-        <i class="fas fa-check-circle text-green-500 text-6xl mb-4"></i>
-        <h2 class="text-xl font-bold text-gray-800">Upload Successful!</h2>
-        <p class="text-gray-600 mt-2">Your file has been uploaded successfully.</p>
-        <button
-          @click="close"
-          class="mt-6 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-        >
-          Close
-        </button>
-      </div>
+  <div v-if="visible" class="fixed inset-0 z-50 flex items-center justify-center">
+    <div class="bg-white p-8 rounded-lg shadow-xl text-center">
+      <i class="fas fa-check-circle text-green-500 text-6xl mb-4"></i>
+      <h2 class="text-xl font-bold mb-2">Success!</h2>
+      <p class="text-gray-600">Your bank statement has been added successfully.</p>
+
+      <v-btn color="#1f5aa3" @click="$emit('close')" class="custom-btn text-white w-full m-4">
+        Analyze Statement
+      </v-btn>
     </div>
-  </Teleport>
+  </div>
 </template>
 
 <script setup>
-import { watch } from 'vue'
-import confetti from 'canvas-confetti'
-
-const props = defineProps({
-  visible: Boolean
-})
-const emit = defineEmits(['close'])
-
-const close = () => emit('close')
-
-// 🧨 Watch for when visible becomes true
-watch(
-  () => props.visible,
-  (newVal) => {
-    if (newVal) {
-      const duration = 3 * 1000
-      const end = Date.now() + duration
-
-      ;(function frame() {
-        confetti({ particleCount: 5, spread: 100, origin: { y: 0.6 } })
-        if (Date.now() < end) requestAnimationFrame(frame)
-      })()
-    }
-  }
-)
+defineProps({ visible: Boolean })
 </script>
+
+<style scoped>
+.custom-btn {
+  background-color: #1f5aa3;
+  text-transform: none;
+}
+</style>

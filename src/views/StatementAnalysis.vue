@@ -14,8 +14,8 @@
       <template v-else>
         <div class="p-2 md:p-8">
           <RouterLink to="/dashboard">
-            <button @click="goBack" class="mb-2 flex items-center text-black font-semibold">
-              <i class="fas fa-circle-arrow-left mr-2" style="color: #2563eb"></i> Back
+            <button @click="goBack" class="mb-4 flex items-center text-black text-lg font-normal">
+              <i class="fas fa-circle-arrow-left mr-2 text-xl" style="color: #2563eb"></i> Back
             </button>
           </RouterLink>
           <!-- title and download -->
@@ -30,7 +30,7 @@
                 class="normal-case p-4 bg-blue-600 hover:bg-blue-700 text-white text-none mr-2 custom-btn"
               >
                 <i class="fas fa-download mr-2"></i>
-                Download Analysis
+                Export PDF
               </v-btn>
             </div>
           </div>
@@ -61,7 +61,13 @@
 
           <!-- Vuetify Tabs -->
           <div class="mt-6">
-            <v-tabs align-tabs="center" class="mb-6" v-model="activeTab" color="primary">
+            <v-tabs
+              v-model="activeTab"
+              align-tabs="start"
+              class="custom-tabs mb-4"
+              color="primary"
+              grow
+            >
               <v-tab value="summary">Summary</v-tab>
               <v-tab value="cash flow">Cash Flow</v-tab>
               <v-tab value="behavioral">Behavioral</v-tab>
@@ -73,7 +79,7 @@
               <!-- Summary Tab -->
               <v-tabs-window-item value="summary">
                 <div
-                  class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 px-4"
+                  class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 px-4 bg-white rounded shdawo-lg p-4"
                 >
                   <div
                     class="bg-blue-50 text-center shadow rounded-2xl p-4 flex flex-col items-center justify-center"
@@ -113,41 +119,42 @@
                   </div>
                 </div>
 
-                <div class="flex flex-col md:flex-row gap-4 p-4">
+                <div class="flex flex-col md:flex-row gap-4 mt-4">
                   <!-- Most Frequent Expense -->
-                  <div class="bg-white rounded-2xl shadow-md p-4 w-full md:w-1/3">
-                    <p class="text-sm text-gray-500 mb-1">Most Frequent Expense</p>
+                  <div class="bg-white rounded shadow-md p-4 w-full md:w-1/3">
+                    <p class="text-sm mb-1">Most Frequent Expense</p>
                     <p class="font-semibold text-gray-800 leading-tight">
                       {{ mostFrequentExpense }}<br />
                     </p>
                   </div>
 
                   <!-- Highest Spend -->
-                  <div class="bg-white rounded-2xl shadow-md p-4 w-full md:w-1/3">
-                    <p class="text-sm text-gray-500 mb-1">Highest Spend</p>
-                    <p class="font-semibold text-gray-800 text-lg">
-                      {{ formatCurrency(highestSpend) }}
+                  <div class="bg-white rounded shadow-md p-4 w-full md:w-1/3">
+                    <p class="text-sm mb-1">
+                      Highest Spend:
+                      <span class="font-semibold">{{ formatCurrency(highestSpend) }}</span>
                     </p>
-                    <p class="text-sm font-semibold text-gray-600 mt-1">
-                      Transaction Date: {{ monthWithHighestSpend }}
+                    <p class="text-sm mt-1">
+                      Transaction Date:
+                      <span class="font-semibold">{{ monthWithHighestSpend }}</span>
                     </p>
                   </div>
 
                   <!-- Most Frequent Expense Amount -->
-                  <div class="bg-white rounded-2xl shadow-md p-4 w-full md:w-1/3">
-                    <p class="text-sm text-gray-500 mb-1">Most Frequent Expense Amount</p>
-                    <p class="font-semibold text-gray-800 text-lg">
+                  <div class="bg-white rounded shadow-md p-4 w-full md:w-1/3">
+                    <p class="text-sm mb-1">Most Frequent Expense Amount</p>
+                    <p class="font-semibold">
                       {{ formatCurrency(mostFrequentExpenseAmount) }}
                     </p>
                   </div>
                 </div>
 
-                <div class="bg-white p-6 rounded-2xl shadow-md overflow-x-auto">
-                  <h2 class="text-lg font-semibold text-gray-800 m-4">Expenses</h2>
+                <div class="bg-white p-6 rounded shadow-md overflow-x-auto mt-4">
+                  <h2 class="text-lg font-semibold m-4">Expenses</h2>
                   <table class="min-w-full table-auto border-collapse">
                     <thead>
                       <tr
-                        class="text-left text-sm font-semibold text-gray-600 border-b border-gray-200"
+                        class="text-left text-sm font-normal border-b border-gray-200 bg-gray-100"
                       >
                         <th class="py-3 px-4">Expenses</th>
                         <th class="py-3 px-4">Average Monthly Expenditure</th>
@@ -171,45 +178,59 @@
 
               <!-- Cash flow-->
               <v-tabs-window-item value="cash flow">
-                <div class="flex flex-col md:flex-row gap-4 text-center text-gray-500 py-10">
+                <div class="flex flex-col md:flex-row gap-4 text-gray-500 py-10">
                   <!-- Inflow Summary -->
-                  <div class="flex-1 bg-white border p-6 rounded-xl shadow">
-                    <h2 class="text-lg font-semibold text-blue-800 mb-4">Inflow Summary</h2>
-                    <div class="space-y-2">
-                      <div class="flex justify-between">
-                        <span>Total Inflow</span>
+                  <div class="flex-1 bg-white border p-6 rounded shadow">
+                    <h2 class="text-lg font-semibold text-black-800 mb-4">
+                      Inflow Summary
+                      <i class="fas fa-arrow-down text-black-600 ml-2"></i>
+                    </h2>
+                    <div class="space-y-4">
+                      <div class="mt-6">
+                        <p>Total Inflow</p>
                         <span class="text-green-600 font-bold">{{
                           formatCurrency(totalInflow)
                         }}</span>
                       </div>
-                      <div class="flex justify-between">
-                        <span>Average Monthly Inflow</span>
-                        <span class="font-medium">{{ formatCurrency(averageMonthlyCredits) }}</span>
-                      </div>
-                      <div class="flex justify-between">
-                        <span>Average Weekly Inflow</span>
-                        <span class="font-medium">{{ formatCurrency(averageWeeklyInflow) }}</span>
+                      <div class="flex justify-between mt-6">
+                        <div class="">
+                          <p>Average Monthly Inflow</p>
+                          <span class="font-medium">{{
+                            formatCurrency(averageMonthlyCredits)
+                          }}</span>
+                        </div>
+                        <div class="">
+                          <p>Average Weekly Inflow</p>
+                          <span class="font-medium">{{ formatCurrency(averageWeeklyInflow) }}</span>
+                        </div>
                       </div>
                     </div>
                   </div>
-
-                  <!-- Outflow Summary -->
-                  <div class="flex-1 bg-white border p-6 rounded-xl shadow">
-                    <h2 class="text-lg font-semibold text-blue-800 mb-4">Outflow Summary</h2>
-                    <div class="space-y-2">
-                      <div class="flex justify-between">
-                        <span>Total Outflow</span>
+                  <div class="flex-1 bg-white border p-6 rounded shadow">
+                    <h2 class="text-lg font-semibold text-black-800 mb-4">
+                      Outflow Summary
+                      <i class="fas fa-arrow-up text-black-600 ml-2"></i>
+                    </h2>
+                    <div class="space-y-4">
+                      <div class="mt-6">
+                        <p>Total Outflow</p>
                         <span class="text-red-600 font-bold">{{
                           formatCurrency(totalOutflow)
                         }}</span>
                       </div>
-                      <div class="flex justify-between">
-                        <span>Average Monthly Outflow</span>
-                        <span class="font-medium">{{ formatCurrency(averageMonthlyDebits) }}</span>
-                      </div>
-                      <div class="flex justify-between">
-                        <span>Average Weekly Outflow</span>
-                        <span class="font-medium">{{ formatCurrency(averageWeeklyOutflow) }}</span>
+                      <div class="flex justify-between mt-6">
+                        <div class="">
+                          <p>Average Monthly Outflow</p>
+                          <span class="font-medium">{{
+                            formatCurrency(averageMonthlyDebits)
+                          }}</span>
+                        </div>
+                        <div class="">
+                          <p>Average Weekly Outflow</p>
+                          <span class="font-medium">{{
+                            formatCurrency(averageWeeklyOutflow)
+                          }}</span>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -217,42 +238,47 @@
 
                 <div class="flex gap-4 justify-between p-2">
                   <!-- Card 1 -->
-                  <div class="flex justify-between bg-[#1f4e99] text-white rounded-2xl p-6 w-full">
-                    <div class="flex-1 text-md font-semibold">
-                      {{ formatCurrency(averageMonthlyBalance) }}
-                      <div class="text-sm mt-2">Average Monthly Balance</div>
+                  <div class="flex justify-between bg-[#1f4e99] text-white rounded p-6 w-full">
+                    <div class="flex-1 text-sm">
+                      Average Monthly Balance
+
+                      <div class="text-sm mt-2 font-semibold">
+                        {{ formatCurrency(averageMonthlyBalance) }}
+                      </div>
                     </div>
 
-                    <div class="flex-1 text- text-md font-semibold">
-                      {{ formatCurrency(averageWeeklyBalance) }}
-                      <div class="text-sm mt-2">Average Weekly Balance</div>
+                    <div class="flex-1 text- text-sm">
+                      Average Weekly Balance
+
+                      <div class="text-sm mt-2 font-semibold">
+                        {{ formatCurrency(averageWeeklyBalance) }}
+                      </div>
                     </div>
                   </div>
 
                   <!-- cash flow-->
-                  <div class="flex justify-between bg-[#1f4e99] text-white rounded-2xl p-6 w-full">
+                  <div class="flex justify-between bg-[#1f4e99] text-white rounded p-6 w-full">
                     <div class="flex-1">
-                      <div class="text-md font-semibold">Negative Cash Flow</div>
                       <div class="text-sm mt-2">Inflow to Outflow Rate</div>
+                      <div class="text-md font-semibold">{{ inflowOutflowStatus }}</div>
                     </div>
                     <div class="flex-1">
-                      <div class="text-md font-semibold">Negative Cash Flow</div>
                       <div class="text-sm mt-2">Overall Inflow to Outflow</div>
+                      <div class="text-md font-semibold">
+                        {{ formatPercent(inflowOutflowRate) }}
+                      </div>
                     </div>
                   </div>
                 </div>
 
-                <div class="p-2 rounded-lg shadow-md">
-                  <h2 class="text-lg font-semibold text-gray-800 mb-2 mt-2">
-                    Credit & Debit Summary
-                  </h2>
+                <div class="p-2 rounded shadow-md">
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Monthly Section -->
-                    <div class="bg-white p-4 rounded-lg shadow">
-                      <h3 class="text-lg font-bold text-gray-700 mb-3">Monthly Credit & Debit</h3>
+                    <div class="bg-white p-4 rounded shadow">
+                      <h3 class="text-lg font-bold mb-6">Monthly Credit & Debit</h3>
                       <div class="overflow-y-auto max-h-96">
                         <table class="min-w-full table-auto text-sm text-left text-gray-600">
-                          <thead class="bg-gray-100 font-medium text-gray-700">
+                          <thead class="bg-gray-100 font-medium bg-gray-100">
                             <tr>
                               <th class="px-2 py-2">Month</th>
                               <th class="px-2 py-2">Total Credit</th>
@@ -283,10 +309,10 @@
 
                     <!-- Weekly Section -->
                     <div class="bg-white p-4 rounded-lg shadow">
-                      <h3 class="text-lg font-bold text-gray-700 mb-3">Weekly Credit & Debit</h3>
+                      <h3 class="text-lg font-bold mb-6">Weekly Credit & Debit</h3>
                       <div class="overflow-y-auto max-h-96">
                         <table class="min-w-full table-auto text-sm text-left text-gray-600">
-                          <thead class="bg-gray-100 font-medium text-gray-700">
+                          <thead class="bg-gray-100 font-medium">
                             <tr>
                               <th class="px-2 py-2">Week</th>
                               <th class="px-2 py-2">Total Credit</th>
@@ -320,126 +346,144 @@
 
               <!-- Behavioral -->
               <v-tabs-window-item value="behavioral">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
+                <div class="">
                   <!-- Loan Analysis Card -->
-                  <div class="bg-white p-6 rounded-2xl shadow-md">
-                    <h2 class="text-lg font-semibold text-blue-700 mb-4">Loan Analysis</h2>
-                    <div class="space-y-2">
-                      <div class="flex justify-between">
-                        <span>Number of Loan Transactions</span
-                        ><span>{{ numberLoanTransactions }}</span>
+                  <div class="bg-white p-6 rounded shadow-md mb-6">
+                    <h2 class="text-lg font-semibold mb-6 flex items-center gap-2">
+                      Loan Analysis
+                      <i class="fas fa-info-circle text-blue-700 text-base"></i>
+                    </h2>
+
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 text-sm">
+                      <div>
+                        <p class="text-gray-600">Number of Loan Transactions</p>
+                        <p class="font-bold text-black">{{ numberLoanTransactions }}</p>
                       </div>
-                      <div class="flex justify-between">
-                        <span>Total Loan Amount</span
-                        ><span>{{ formatCurrency(totalLoanAmount) }}</span>
+                      <div>
+                        <p class="text-gray-600">Total Loan Amount</p>
+                        <p class="text-red-600 font-bold">{{ formatCurrency(totalLoanAmount) }}</p>
                       </div>
-                      <div class="flex justify-between">
-                        <span>Average Monthly Loan Amount</span
-                        ><span>{{ formatCurrency(averageMonthlyLoanAmount) }}</span>
+                      <div>
+                        <p class="text-gray-600">Average Monthly Loan Amount</p>
+                        <p class="text-blue-700 font-bold">
+                          {{ formatCurrency(averageMonthlyLoanAmount) }}
+                        </p>
                       </div>
-                      <div class="flex justify-between">
-                        <span>Total Loan Repayment Amount</span
-                        ><span>{{ formatCurrency(totalLoanRepaymentAmount) }}</span>
+                      <div>
+                        <p class="text-gray-600">Total Loan Repayment Amount</p>
+                        <p class="text-green-600 font-bold">
+                          {{ formatCurrency(totalLoanRepaymentAmount) }}
+                        </p>
                       </div>
-                      <div class="flex justify-between">
-                        <span>Average Monthly Loan Repayment Amount</span
-                        ><span>{{ formatCurrency(averageMonthlyLoanRepaymentAmount) }}</span>
+
+                      <div>
+                        <p class="text-gray-600">Avg. Monthly Loan Repayment Amt</p>
+                        <p class="text-black font-bold">
+                          {{ formatCurrency(averageMonthlyLoanRepaymentAmount) }}
+                        </p>
                       </div>
-                      <div class="flex justify-between">
-                        <span>Loan to Inflow Rate</span>
-                        <span>{{ formatPercent(loanToInflowRate) }}</span>
+                      <div>
+                        <p class="text-gray-600">Loan to Inflow Rate</p>
+                        <p class="text-black font-bold">{{ formatCurrency(loanToInflowRate) }}</p>
                       </div>
-                      <div class="flex justify-between">
-                        <span>Latest Loan Transaction Date</span
-                        ><span>{{ latestLoanTransaction }}</span>
+                      <div>
+                        <p class="text-gray-600">Latest Loan Transaction Date</p>
+                        <p class="text-black font-bold">{{ latestLoanTransaction }}</p>
                       </div>
-                      <div class="flex justify-between">
-                        <span>Latest Loan Repayment Transaction Date</span
-                        ><span>{{ loanRepaymentDate }}</span>
+                      <div>
+                        <p class="text-gray-600">Latest Loan Repayment Transaction Date</p>
+                        <p class="text-black font-bold">{{ loanRepaymentDate }}</p>
                       </div>
                     </div>
                   </div>
 
                   <!-- Patterns Card -->
-                  <div class="bg-white p-6 rounded-2xl shadow-md">
-                    <h2 class="text-lg font-semibold text-blue-700 mb-4">Patterns</h2>
-                    <div class="space-y-2">
-                      <div class="flex justify-between">
-                        <span>Account Sweep</span
-                        ><span
-                          class="font-semibold"
-                          :class="accountSweep === 'YES' ? 'text-green-600' : 'text-gray-600'"
-                          >{{ accountSweep }}</span
+                  <div class="bg-blue-700 p-6 rounded shadow-md mb-6">
+                    <h2 class="text-lg font-semibold text-white mb-6 flex items-center gap-2">
+                      Patterns
+                      <i class="fas fa-chart-line text-white text-xs"></i>
+                    </h2>
+
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 text-sm text-white">
+                      <div>
+                        <p>Account Sweep</p>
+                        <p
+                          :class="accountSweep === 'YES' ? 'font-bold text-white' : 'text-gray-300'"
                         >
+                          {{ accountSweep }}
+                        </p>
                       </div>
-                      <div class="flex justify-between">
-                        <span>Number of Betting Transactions</span><span>{{ gamblingStatus }}</span>
+                      <div>
+                        <p>Number of Betting Transactions</p>
+                        <p class="font-bold">{{ gamblingStatus }}</p>
                       </div>
-                      <div class="flex justify-between">
-                        <span>Gambling Rate</span><span>{{ gamblingRate }}</span>
+                      <div>
+                        <p>Gambling Rate</p>
+                        <p class="font-bold">{{ gamblingRate }}</p>
                       </div>
-                      <div class="flex justify-between">
-                        <span>Percentage of Debit Transactions</span
-                        ><span>{{ percentOfDebit }}</span>
+                      <div>
+                        <p>Transactions between 500k - 1M</p>
+                        <p class="font-bold">
+                          {{ percentOfTransactionsBetween500ThousandToOneMillionNaira }}
+                        </p>
                       </div>
-                      <div class="flex justify-between">
-                        <span>Percentage of Credit Transactions</span
-                        ><span>{{ percentOfCredit }}</span>
+                      <div>
+                        <p>Percentage of Credit Transactions</p>
+                        <p class="font-bold">{{ percentOfCredit }}</p>
                       </div>
-                      <div class="flex justify-between">
-                        <span>Percentage of Transactions between 500k - 1M</span
-                        ><span>{{ percentOfTransactionsBetween500ThousandToOneMillionNaira }}</span>
+                      <div>
+                        <p>Percentage of Debit Transactions</p>
+                        <p class="font-bold">{{ percentOfDebit }}</p>
                       </div>
-                      <div class="flex justify-between">
-                        <span>Percentage of Transactions Greater Than 1M</span
-                        ><span>{{ percentOfTransactionsGreaterThanOneMillionNaira }}</span>
+                      <div>
+                        <p>Most Frequent</p>
+                        <p class="font-bold">{{ mostFrequentBalanceRange }}</p>
                       </div>
-                      <div class="flex justify-between">
-                        <span>Most Frequent Balance Range</span
-                        ><span>{{ mostFrequentBalanceRange }}</span>
+                      <div>
+                        <p>Transactions Greater than 1M</p>
+                        <p class="font-bold">
+                          {{ percentOfTransactionsGreaterThanOneMillionNaira }}
+                        </p>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <!-- Transfers -->
-                <div class="flex flex-wrap gap-4 justify-between mt-4">
-                  <!-- Self Transfers Card -->
-                  <div class="bg-[#2059a5] text-white p-6 rounded-2xl w-full md:w-[48%] shadow">
-                    <div class="grid grid-cols-3 gap-4 text-sm md:text-base">
-                      <div></div>
-                      <div class="text-center font-medium">Outflow</div>
-                      <div class="text-center font-medium">Inflow</div>
+                <!-- Self Transfer Summary Section -->
+                <div class="bg-white p-6 rounded-lg shadow text-sm text-gray-800">
+                  <h2 class="text-base font-semibold mb-4">Self Transfer Summary</h2>
 
-                      <div class="text-left">Number of Self Transfers</div>
-                      <div class="text-center font-semibold">
-                        {{ numberOfSelfTransfersOutflows }}
-                      </div>
-                      <div class="text-center font-semibold">
-                        {{ numberOfSelfTransfersInflows }}
-                      </div>
-
-                      <div class="text-left">Value of Self Transfers</div>
-                      <div class="text-center font-semibold">
-                        {{ formatCurrency(selfTransferOutflowAmount) }}
-                      </div>
-                      <div class="text-center font-semibold">
+                  <div class="grid grid-cols-3 gap-4 mb-6">
+                    <!-- Inflow -->
+                    <div>
+                      <div>Number of Self Transfer (Inflow)</div>
+                      <div class="font-bold mt-1">{{ numberOfSelfTransfersInflows }}</div>
+                    </div>
+                    <div>
+                      <div>Value of Self Transfer (Inflow)</div>
+                      <div class="text-green-600 font-bold mt-1">
                         {{ formatCurrency(selfTransferInflowAmount) }}
                       </div>
                     </div>
-                  </div>
+                    <div>
+                      <div>Total Number of Transactions</div>
+                      <div class="font-bold mt-1">{{ totalNumberOfTransactions }}</div>
+                    </div>
 
-                  <!-- Total Transactions and Returned Cheque Card -->
-                  <div class="bg-[#2059a5] text-white p-6 rounded-2xl w-full md:w-[48%] shadow">
-                    <div class="grid grid-cols-2 gap-4 text-center">
-                      <div>
-                        <div class="text-2xl font-bold">{{ totalNumberOfTransactions }}</div>
-                        <div class="text-sm">Total Transactions</div>
+                    <!-- Outflow -->
+                    <div>
+                      <div>Number of Self Transfer (Outflow)</div>
+                      <div class="font-bold mt-1">{{ numberOfSelfTransfersOutflows }}</div>
+                    </div>
+                    <div>
+                      <div>Value of Self Transfer (Outflow)</div>
+                      <div class="text-red-600 font-bold mt-1">
+                        {{ formatCurrency(selfTransferOutflowAmount) }}
                       </div>
-                      <div>
-                        <div class="text-2xl font-bold">{{ returnCheque }}</div>
-                        <div class="text-sm">Returned Cheque</div>
-                      </div>
+                    </div>
+                    <div>
+                      <div>Returned Cheque</div>
+                      <div class="font-bold mt-1">{{ formatCurrency(returnCheque) }}</div>
                     </div>
                   </div>
                 </div>
@@ -447,12 +491,12 @@
                 <div class="flex flex-col md:flex-row gap-6 justify-between mt-4">
                   <!-- Self Transfer Transactions Table -->
                   <div class="w-full md:w-1/2">
-                    <h3 class="font-semibold text-sm md:text-base mb-2">
-                      Self Transfer Transactions
-                    </h3>
-                    <div class="bg-white rounded-xl border shadow p-4 max-h-96 overflow-y-auto">
+                    <div class="bg-white rounded border shadow p-4 max-h-96 overflow-y-auto">
+                      <h3 class="font-semibold text-sm md:text-base mb-4">
+                        Self Transfer Transactions
+                      </h3>
                       <table class="w-full text-sm text-left">
-                        <thead class="text-gray-600">
+                        <thead class="font-semibold bg-gray-100">
                           <tr>
                             <th class="py-2 px-4">Month</th>
                             <th class="py-2 px-4">Inflow</th>
@@ -483,12 +527,12 @@
 
                   <!-- Account Balance Analysis Table -->
                   <div class="w-full md:w-1/2">
-                    <h3 class="font-semibold text-sm md:text-base mb-2">
-                      Account Balance Analysis
-                    </h3>
-                    <div class="bg-white border rounded-xl shadow p-4 max-h-96 overflow-y-auto">
+                    <div class="bg-white border rounded shadow p-4 max-h-96 overflow-y-auto">
+                      <h3 class="font-semibold text-sm md:text-base mb-4">
+                        Account Balance Analysis
+                      </h3>
                       <table class="w-full text-sm text-left">
-                        <thead class="text-gray-600">
+                        <thead class="font-semibold bg-gray-100">
                           <tr>
                             <th class="py-2 px-4">Month</th>
                             <th class="py-2 px-4">Highest Balance</th>
@@ -509,48 +553,93 @@
               </v-tabs-window-item>
               <v-tabs-window-item value="transactions">
                 <div class="py-4">
-                  <v-card class="rounded-lg shadow-md">
-                    <v-card-title class="d-flex justify-between items-center px-6 py-4">
-                      <span class="text-2xl font-semibold">Transaction History</span>
+                  <v-card class="rounded-lg shadow-md pa-4">
+                    <span class="text-md font-semibold mt-6 ml-2">Transaction History</span>
+                    <div class="flex items-center justify-between p-2">
+                      <!-- Filter (Vuetify Select) -->
+                      <div class="flex items-center space-x-4 pt-2">
+                        <!-- Filter Icon -->
+                        <i class="fa-solid fa-filter"></i>
 
-                      <!-- Font Awesome Filter Icon -->
-                      <v-btn  icon variant="text">
-                        <i class="fas fa-filter text-black-600 text-lg"></i>
-                      </v-btn>
-                    </v-card-title>
+                        <v-select
+                          v-model="selectedStatus"
+                          :items="['CREDIT', 'DEBIT']"
+                          color="blue"
+                          label="Status"
+                          density="compact"
+                          hide-details
+                          variant="outlined"
+                          class="w-32"
+                        ></v-select>
+                      </div>
 
-                    <v-table class="min-w-full text-sm pa-4">
-                      <thead class="font-semibold text-gray-600">
-                        <tr>
-                          <th class="px-2 py-3 font-semibold">S/N</th>
-                          <th class="px-2 py-3 font-semibold">Date</th>
-                          <th class="px-2 py-3 font-semibold">Description</th>
-                          <th class="px-2 py-3 font-semibold">Type</th>
-                          <th class="px-2 py-3 font-semibold">Amount</th>
-                          <th class="px-2 py-3 font-semibold">Balance</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr
-                          v-for="(txn, index) in transactions"
-                          :key="index"
-                          class="border-t border-gray-200 hover:bg-gray-50 transition-colors"
-                        >
-                          <td class="px-2 py-4">{{ index + 1 }}</td>
-                          <td class="px-2 py-4">{{ formatDate(txn.date) }}</td>
-                          <td class="px-2 py-4">{{ txn.description }}</td>
-                          <td
-                            class="px-6 py-4 font-semibold"
-                            :class="txn.type === 'CREDIT' ? 'text-green-600' : 'text-red-600'"
+                      <v-text-field
+                        v-model="searchQuery"
+                        rounded
+                        placeholder="Search for a transaction"
+                        density="compact"
+                        hide-details
+                        variant="outlined"
+                        class="max-w-xs rounded-md"
+                        label="Search"
+                        color="blue"
+                        append-inner-icon=""
+                      >
+                        <!-- FontAwesome Search Icon inside append-inner slot -->
+                        <template #append-inner>
+                          <i class="fas fa-search text-gray-500"></i>
+                        </template>
+                      </v-text-field>
+                    </div>
+
+                    <el-date-picker
+                      v-model="dateRange"
+                      type="daterange"
+                      range-separator="to"
+                      start-placeholder="Start date"
+                      end-placeholder="End date"
+                      class="w-20 m-2"
+                      size="small"
+                    ></el-date-picker>
+
+                    <div v-loading="transactionLoading" class="relative min-h-[200px]">
+                      <v-table class="min-w-full text-sm pa-2">
+                        <thead class="font-semibold bg-gray-100">
+                          <tr>
+                            <th class="px-2 py-3 font-semibold">S/N</th>
+                            <th class="px-2 py-3 font-semibold">Date</th>
+                            <th class="px-2 py-3 font-semibold">Description</th>
+                            <th class="px-2 py-3 font-semibold">Type</th>
+                            <th class="px-2 py-3 font-semibold">Amount</th>
+                            <th class="px-2 py-3 font-semibold">Balance</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr
+                            v-for="(txn, index) in transactions"
+                            :key="index"
+                            class="border-t border-gray-200 hover:bg-gray-50 transition-colors"
                           >
-                            {{ txn.type }}
-                          </td>
-
-                          <td class="px-2 py-4">{{ formatCurrency(txn.amount) }}</td>
-                          <td class="px-2 py-4">{{ formatCurrency(txn.balance) }}</td>
-                        </tr>
-                      </tbody>
-                    </v-table>
+                            <td class="px-2 py-4">{{ index + 1 }}</td>
+                            <td class="px-2 py-4">{{ formatDate(txn.date) }}</td>
+                            <td class="px-2 py-4">{{ txn.description }}</td>
+                            <td class="px-6 py-4 font-semibold">
+                              <span
+                                :class="
+                                  txn.type === 'CREDIT'
+                                    ? 'text-green-600 py-1 px-2 text-xs font-semibold rounded-full bg-green-100'
+                                    : 'text-red-600 py-1 px-2 text-xs font-semibold rounded-full bg-red-100'
+                                "
+                              >
+                                {{ txn.type }}
+                              </span>
+                            </td>
+                            <td class="px-2 py-4">{{ formatCurrency(txn.amount) }}</td>
+                            <td class="px-2 py-4">{{ formatCurrency(txn.balance) }}</td>
+                          </tr>
+                        </tbody>
+                      </v-table>
+                    </div>
 
                     <v-card-actions class="justify-between px-6 py-4 text-sm text-gray-500">
                       <span>1–12 of 12</span>
@@ -578,126 +667,6 @@
             </v-tabs-window>
           </div>
           <!-- Filter Drawer -->
-          <v-navigation-drawer
-            v-model="showFilter"
-            location="right"
-            temporary
-            width="500"
-            class="px-4 pt-6"
-          >
-            <div class="flex justify-between items-center mb-4">
-              <h2 class="text-lg font-semibold">Filter Transactions</h2>
-              <div icon @click="showFilter = false">
-                <i class="fas fa-sign-out-alt"></i>
-              </div>
-            </div>
-
-            <div class="space-y-4">
-             
-              <div>
-                <label class="text-sm font-medium">Date</label>
-                <div class="flex gap-2 mt-1">
-                  <!-- From Date -->
-                  <v-menu
-                    v-model="menuFrom"
-                    :close-on-content-click="false"
-                    transition="scale-transition"
-                    offset-y
-                  >
-                    <template #activator="{ props }">
-                      <v-text-field
-                        label="From"
-                        readonly
-                        v-bind="props"
-                        density="compact"
-                        variant="outlined"
-                        prepend-inner-icon="mdi-calendar"
-                      />
-                    </template>
-                    <v-date-picker
-                      class="vdp-small"
-                      v-model="filters.dateRange[0]"
-                      @update:modelValue="menuFrom = false"
-                    />
-                  </v-menu>
-
-                  
-                  <v-menu
-                    v-model="menuTo"
-                    :close-on-content-click="false"
-                    transition="scale-transition"
-                    offset-y
-                  >
-                    <template #activator="{ props }">
-                      <v-text-field
-                        label="To"
-                        readonly
-                        v-bind="props"
-                        density="compact"
-                        variant="outlined"
-                        prepend-inner-icon="mdi-calendar"
-                      />
-                    </template>
-                    <v-date-picker
-                      v-model="filters.dateRange[1]"
-                      @update:modelValue="menuTo = false"
-                    />
-                  </v-menu>
-                </div>
-              </div>
-
-              
-              <div>
-                <v-text-field
-                  color="blue"
-                  label="Description"
-                  v-model="filters.description"
-                  density="compact"
-                  variant="outlined"
-                  placeholder="Enter description"
-                />
-              </div>
-
-             
-              <div>
-                <label class="text-sm font-medium">Type</label>
-                <v-select
-                  color="blue"
-                  v-model="filters.type"
-                  :items="['CREDIT', 'DEBIT']"
-                  density="compact"
-                  variant="outlined"
-                  placeholder="Select type"
-                />
-              </div>
-
-             
-              <div class="flex gap-2">
-                <v-text-field
-                  color="blue"
-                  v-model="filters.minAmount"
-                  label="Min Amount"
-                  density="compact"
-                  variant="outlined"
-                  type="number"
-                />
-                <v-text-field
-                  color="blue"
-                  v-model="filters.maxAmount"
-                  label="Max Amount"
-                  density="compact"
-                  variant="outlined"
-                  type="number"
-                />
-              </div>
-
-             
-              <div class="flex justify-end gap-2 mt-4">
-                <v-btn @click="applyFilters" variant="tonal" color="primary">Apply</v-btn>
-                <v-btn @click="resetFilters" variant="text" color="grey">Reset</v-btn>
-              </div>
-            </div>
-          </v-navigation-drawer>
         </div>
       </template>
     </div>
@@ -705,7 +674,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed, reactive } from 'vue'
+import { ref, onMounted, computed, reactive, watch, nextTick } from 'vue'
 import { useRoute } from 'vue-router'
 import Axios from 'axios'
 import { useAuthStore } from '@/stores/auth'
@@ -815,6 +784,7 @@ const numberOfSelfTransfersOutflows = ref(0)
 
 const selfTransferInflowAmount = ref(0)
 const selfTransferOutflowAmount = ref(0)
+const inflowOutflowRate = ref(0)
 
 const totalNumberOfTransactions = ref(0)
 const returnCheque = ref(0)
@@ -1033,6 +1003,10 @@ const fetchAnalysisResult = async (analysisId) => {
     // set monthly balance
     const highest = cashFlow?.monthlyHighestBalance || []
     const lowest = cashFlow?.monthlyLowestBalance || []
+    inflowOutflowRate.value =
+      totalOutflow.value !== 0
+        ? +(((totalInflow.value - totalOutflow.value) / totalOutflow.value) * 100).toFixed(2)
+        : 0
 
     const monthlyBalanceMap = new Map()
 
@@ -1151,6 +1125,12 @@ const fetchAnalysisResult = async (analysisId) => {
     loading.value = false
   }
 }
+const inflowOutflowStatus = computed(() => {
+  const rate = inflowOutflowRate.value
+  if (rate > 0) return 'Positive cash flow'
+  if (rate < 0) return 'Negative cash flow'
+  return 'neutral'
+})
 
 const fetchTransactions = async (id) => {
   const savedAuth = JSON.parse(localStorage.getItem('data') || '{}')
@@ -1175,16 +1155,44 @@ const fetchTransactions = async (id) => {
   }
 }
 
-const menuFrom = ref(false)
-const menuTo = ref(false)
+const searchQuery = ref('')
+const selectedStatus = ref(null)
+const dateRange = ref([])
 
-const filters = reactive({
-  dateRange: [null, null] // [From, To]
+const transactionLoading = ref(false)
+
+watch([searchQuery, selectedStatus, dateRange, allTransactions], async () => {
+  transactionLoading.value = true
+  await nextTick()
+
+  let filtered = allTransactions.value
+  const query = searchQuery.value?.toLowerCase().trim()
+
+  if (query) {
+    filtered = filtered.filter((txn) =>
+      Object.values(txn).some((value) => value?.toString().toLowerCase().includes(query))
+    )
+  }
+
+  if (selectedStatus.value) {
+    filtered = filtered.filter((txn) => txn.type === selectedStatus.value)
+  }
+
+  if (dateRange.value && dateRange.value.length === 2) {
+    const [start, end] = dateRange.value.map((d) => new Date(d).getTime())
+    filtered = filtered.filter((txn) => {
+      const txnDate = new Date(txn.date).getTime()
+      return txnDate >= start && txnDate <= end
+    })
+  }
+
+  transactions.value = filtered
+
+  // Optional: Simulate loading delay for better UX
+  await new Promise((r) => setTimeout(r, 300))
+
+  transactionLoading.value = false
 })
-
-const formattedDateFrom = computed(() => formatDate(filters.dateRange[0]))
-const formattedDateTo = computed(() => formatDate(filters.dateRange[1]))
-const showFilter = ref(false)
 
 const resetFilters = () => {
   filters.value = {
@@ -1216,7 +1224,6 @@ const applyFilters = () => {
 }
 
 onMounted(() => {
-  
   const id = route.params.id
   if (id) {
     fetchAnalysisResult(id)
@@ -1290,6 +1297,39 @@ const downloadAnalysis = async () => {
 </script>
 
 <style scoped>
+.custom-tabs {
+  border-bottom: 2px solid #e0e0e0; /* Light grey underline */
+  padding-bottom: 0;
+  min-height: 32px;
+}
+
+.custom-tabs .v-tab {
+  min-width: unset;
+  text-transform: none;
+  font-weight: 500;
+  font-size: 14px;
+  padding: 0 16px;
+}
+
+.custom-tabs .v-tab.v-tab--selected {
+  font-weight: 600;
+  color: #000;
+}
+
+.custom-tabs .v-tabs-bar {
+  border-bottom: none;
+}
+
+.custom-tabs .v-tab--selected::after {
+  content: '';
+  display: block;
+  height: 6px;
+  background-color: #1a4cd8; /* Blue indicator */
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+}
 .vdp-small {
   font-size: 0.8rem;
   max-width: 400px; /* adjust as needed */
@@ -1308,18 +1348,6 @@ const downloadAnalysis = async () => {
   margin: auto;
 }
 
-.custom-tabs .v-tab {
-  border-radius: 10000px;
-  min-width: 120px;
-  text-transform: none;
-  font-weight: 500;
-  color: #555;
-}
-
-.custom-tabs .v-tab--selected {
-  background-color: #1e5db3; /* Active tab color */
-  color: white !important;
-}
 .v-tab {
   text-transform: none !important;
 }

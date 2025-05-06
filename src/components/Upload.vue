@@ -102,6 +102,7 @@
 
     <!-- ConfettiSuccessModal.vue -->
     <ConfettiSuccessModal :visible="showConfettiModal" @close="showConfettiModal = false" />
+
   </div>
 </template>
 
@@ -172,6 +173,9 @@ const removeFile = () => {
 const progress = ref(0) // Track progress
 
 const uploadFile = async () => {
+  const savedAuth = JSON.parse(localStorage.getItem('data') || '{}')
+  const token = savedAuth?.token || authStore.token
+  const tenantId = savedAuth?.user?.tenant_id || authStore.tenant_id
   if (!selectedFile.value || !statementType.value) {
     Swal.fire('Missing Information', 'Select a statement type and file.', 'warning')
     return
@@ -184,7 +188,7 @@ const uploadFile = async () => {
     formData.append('password', filePassword.value)
   }
 
-  const API_URL = `https://dev02201.getjupita.com/api/${tenantId.value}/bank-statement-analyze`
+  const API_URL = `https://dev02201.getjupita.com/api/${tenantId}/bank-statement-analyze`
 
   console.log('➡️ Uploading file...')
   for (const [key, value] of formData.entries()) {
@@ -197,7 +201,7 @@ const uploadFile = async () => {
     // Axios upload with progress
     const response = await axios.post(API_URL, formData, {
       headers: {
-        Authorization: `Bearer ${token.value}`,
+        Authorization: `Bearer ${token}`,
         'Content-Type': 'multipart/form-data',
         Accept: 'application/json'
       },
@@ -218,9 +222,23 @@ const uploadFile = async () => {
       position: 'top-right',
       showClose: true
     })
+    // Inside uploadFile after success response
+showConfettiModal.value = true // Show the modal
 
-    if (props.onSuccess) props.onSuccess()
-    showConfettiModal.value = true 
+// Trigger confetti animation
+const duration = 3 * 1000
+const end = Date.now() + duration
+
+;(function frame() {
+  confetti({
+    particleCount: 5,
+    spread: 500,
+    origin: { y: 0.6 }
+  })
+  if (Date.now() < end) requestAnimationFrame(frame)
+})()
+
+ 
 
     // Reset input values
     selectedFile.value = null
