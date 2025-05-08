@@ -69,6 +69,7 @@
               grow
             >
               <v-tab value="summary">Summary</v-tab>
+              <v-tab value="income">Income</v-tab>
               <v-tab value="cash flow">Cash Flow</v-tab>
               <v-tab value="behavioral">Behavioral</v-tab>
               <v-tab value="transactions">Transactions</v-tab>
@@ -175,6 +176,98 @@
                   </table>
                 </div>
               </v-tabs-window-item>
+              <v-tabs-window-item value="income">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                  <!-- Income Analysis -->
+                  <div class="bg-white p-6 rounded shadow-sm">
+                    <h2 class="font-semibold text-lg mb-4">Income Analysis</h2>
+                    <div class="grid grid-cols-2 gap-4 text-sm">
+                      <div>
+                        <p>Average Predicted Salary</p>
+                        <p class="font-semibold text-green-600">
+                          {{ formatCurrency(income.averagePredictedSalary) }}
+                        </p>
+                      </div>
+                      <div>
+                        <p>Average Other Income</p>
+                        <p class="font-semibold">{{ formatCurrency(income.averageOtherIncome) }}</p>
+                      </div>
+                      <div>
+                        <p>Lowest Salary</p>
+                        <p class="font-semibold">{{ formatCurrency(income.lowestSalary) }}</p>
+                      </div>
+                      <div>
+                        <p>Most Recent Salary</p>
+                        <p class="font-semibold">{{ formatCurrency(income.mostRecentSalary) }}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Pay Date Management -->
+                  <div class="bg-white p-6 rounded shadow-sm">
+                    <h2 class="font-semibold text-lg mb-4">Pay Date Management</h2>
+                    <div class="grid grid-cols-2 gap-4 text-sm">
+                      <div>
+                        <p>Expected Salary Payment Day</p>
+                        <p class="font-semibold text-green-600">
+                          {{ income.expectedSalaryPaymentDay || 0 }}
+                        </p>
+                      </div>
+                      <div>
+                        <p>No. of Salary Payments</p>
+                        <p class="font-semibold">{{ income.numberOfSalaryPayments || 0 }}</p>
+                      </div>
+                      <div>
+                        <p>Latest Salary Date</p>
+                        <p class="font-semibold">
+                          {{ formatDate(income.lastDateOfSalaryPayment) }}
+                        </p>
+                      </div>
+                      <div>
+                        <p>Lowest Salary Date</p>
+                        <p class="font-semibold">{{ formatDate(income.lowestSalaryDate) }}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="p-6 bg-white rounded shadow">
+                  <h2 class="text-md font-semibold mb-4">Salary Transactions</h2>
+
+                  <div v-if="salary.length" class="overflow-x-auto">
+                    <table class="min-w-full text-sm text-left border">
+                      <thead class="bg-gray-100 text-gray-700 font-semibold">
+                        <tr>
+                          <th class="px-4 py-2 border">Transaction Date</th>
+                          <th class="px-4 py-2 border">Description</th>
+                          <th class="px-4 py-2 border">Amount</th>
+                          <th class="px-4 py-2 border">Balance</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr
+                          v-for="(transaction, index) in salary"
+                          :key="index"
+                          class="hover:bg-gray-50"
+                        >
+                          <td class="px-4 py-2 border">{{ transaction.date }}</td>
+                          <td class="px-4 py-2 border whitespace-pre-line">
+                            {{ transaction.description }}
+                          </td>
+                          <td class="px-4 py-2 border font-medium text-green-600">
+                            {{ transaction.amount }}
+                          </td>
+                          <td class="px-4 py-2 border">{{ transaction.balance }}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <div v-else class="text-center py-12 text-gray-500">
+                    <p class="text-lg">No salary transactions available.</p>
+                  </div>
+                </div>
+              </v-tabs-window-item>
 
               <!-- Cash flow-->
               <v-tabs-window-item value="cash flow">
@@ -238,7 +331,7 @@
 
                 <div class="flex gap-4 justify-between p-2">
                   <!-- Card 1 -->
-                  <div class="flex justify-between bg-[#1f4e99] text-white rounded p-6 w-full">
+                  <div class="flex justify-between bg-[#1f5aa3] text-white rounded p-6 w-full">
                     <div class="flex-1 text-sm">
                       Average Monthly Balance
 
@@ -257,7 +350,7 @@
                   </div>
 
                   <!-- cash flow-->
-                  <div class="flex justify-between bg-[#1f4e99] text-white rounded p-6 w-full">
+                  <div class="flex justify-between bg-[#1f5aa3] text-white rounded p-6 w-full">
                     <div class="flex-1">
                       <div class="text-sm mt-2">Inflow to Outflow Rate</div>
                       <div class="text-md font-semibold">{{ inflowOutflowStatus }}</div>
@@ -398,7 +491,7 @@
                   </div>
 
                   <!-- Patterns Card -->
-                  <div class="bg-blue-700 p-6 rounded shadow-md mb-6">
+                  <div class="bg-[#1f5aa3] p-6 rounded shadow-md mb-6">
                     <h2 class="text-lg font-semibold text-white mb-6 flex items-center gap-2">
                       Patterns
                       <i class="fas fa-chart-line text-white text-xs"></i>
@@ -564,7 +657,7 @@
                         <v-select
                           v-model="selectedStatus"
                           :items="['CREDIT', 'DEBIT']"
-                          color="blue"
+                          color="[#1f5aa3]"
                           label="Status"
                           density="compact"
                           hide-details
@@ -582,12 +675,12 @@
                         variant="outlined"
                         class="max-w-xs rounded-md"
                         label="Search"
-                        color="blue"
+                        color="[#1f5aa3]"
                         append-inner-icon=""
                       >
                         <!-- FontAwesome Search Icon inside append-inner slot -->
                         <template #append-inner>
-                          <i class="fas fa-search text-gray-500"></i>
+                          <i class="fas fa-search text-[#1f5aa3]"></i>
                         </template>
                       </v-text-field>
                     </div>
@@ -686,8 +779,10 @@ import { saveAs } from 'file-saver'
 const activeTab = ref('Summary')
 
 const formatDate = (date) => {
-  return moment(date).format('MMMM Do YYYY,')
+  if (!date) return 'N/A' // or any placeholder you prefer
+  return moment(date).format('MMMM Do YYYY')
 }
+
 function formatPercent(value) {
   if (typeof value !== 'number') return '0%'
   return `${(value * 100).toFixed(2)}%` // Adjust decimal places as needed
@@ -700,6 +795,10 @@ function formatCurrency(number) {
     minimumFractionDigits: 2
   }).format(number || 0)
 }
+
+const salary = [
+  // Repeat for as many rows as needed...
+]
 const rowsPerPage = ref(15)
 const route = useRoute()
 const authStore = useAuthStore()
@@ -795,6 +894,7 @@ const monthlyBalance = ref([])
 
 const transactions = ref([])
 const allTransactions = ref([])
+const income = ref({})
 
 // Function to format the balance range (e.g., "1000 - 100000")
 const formatBalanceRange = () => {
@@ -815,7 +915,7 @@ const fetchAnalysisResult = async (analysisId) => {
   const savedAuth = JSON.parse(localStorage.getItem('data') || '{}')
   const token = savedAuth?.token || authStore.token
   const tenantId = savedAuth?.user?.tenant_id || authStore.tenant_id
-  const apiUrl = `https://dev02201.getjupita.com/api/${tenantId}/get-analysis-result?analysis_id=${analysisId}`
+  const apiUrl = `https://staging.getjupita.com/api/${tenantId}/get-analysis-result?analysis_id=${analysisId}`
   loading.value = true
 
   try {
@@ -836,6 +936,9 @@ const fetchAnalysisResult = async (analysisId) => {
 
     const behavior = analysis?.behavioralAnalysis || {}
     console.log('behavioural:', behavior)
+
+    income.value = analysis?.incomeAnalysis || {}
+    console.log('income:', income.value)
 
     accountSweep.value = behavior.accountSweep || 'No'
     gamblingRate.value = behavior.gamblingRate || 0
@@ -940,11 +1043,7 @@ const fetchAnalysisResult = async (analysisId) => {
     monthWithHighestSpend.value = moment(spend.monthWithHighestSpend, 'M/YYYY').format('MMMM YYYY')
 
     expenseItems.value = [
-      {
-        label: 'Others',
-        monthly: spend.averageMonthlySpendOnOthers ?? 0,
-        total: 12 * (spend.averageMonthlySpendOnOthers ?? 0)
-      },
+     
       {
         label: 'Rent',
         monthly: spend.averageMonthlySpendOnRent ?? 0,
@@ -979,7 +1078,88 @@ const fetchAnalysisResult = async (analysisId) => {
         label: 'ATM Withdrawals and POS',
         monthly: spend.averageMonthlySpendOnAtmAndPOS ?? 0,
         total: 12 * (spend.averageMonthlySpendOnAtmAndPOS ?? 0)
+      },
+      {
+        label: 'Airtime and Data',
+        monthly: spend.averageMonthlySpendOnAirtimeAndData ?? 0,
+        total: 12 * (spend.averageMonthlySpendOnAirtimeAndData ?? 0)
+      },
+      {
+        label: 'Crypto',
+        monthly: spend.averageMonthlySpendOnCrypto ?? 0,
+        total: 12 * (spend.averageMonthlySpendOnCrypto ?? 0)
       }
+      ,
+      {
+        label: 'Entertainment',
+        monthly: spend.averageMonthlySpendOnEntertainment ?? 0,
+        total: 12 * (spend.averageMonthlySpendOnEntertainment ?? 0)
+      }
+      ,
+      {
+        label: 'Health',
+        monthly: spend.averageMonthlySpendOnHealth ?? 0,
+        total: 12 * (spend.averageMonthlySpendOnHealth ?? 0)
+      }
+      ,
+      {
+        label: 'Gambling',
+        monthly: spend.averageMonthlySpendOnGambling ?? 0,
+        total: 12 * (spend.averageMonthlySpendOnGambling ?? 0)
+      }
+      ,
+      {
+        label: 'Insurance',
+        monthly: spend.averageMonthlySpendOnInsurance ?? 0,
+        total: 12 * (spend.averageMonthlySpendOnInsurance ?? 0)
+      }
+      ,
+      {
+        label: 'International Transactions',
+        monthly: spend.averageMonthlySpendOnInternationalTransactions ?? 0,
+        total: 12 * (spend.averageMonthlySpendOnInternationalTransactions ?? 0)
+      }
+      ,
+      {
+        label: 'Online and Web',
+        monthly: spend.averageMonthlySpendOnOnlineAndWeb ?? 0,
+        total: 12 * (spend.averageMonthlySpendOnOnlineAndWeb ?? 0)
+      }
+      ,
+      {
+        label: 'Savings and Investments',
+        monthly: spend.averageMonthlySpendOnSavingsAndInvestments ?? 0,
+        total: 12 * (spend.averageMonthlySpendOnSavingsAndInvestments ?? 0)
+      }
+      ,
+      {
+        label: 'Travel',
+        monthly: spend.averageMonthlySpendOnTravel ?? 0,
+        total: 12 * (spend.averageMonthlySpendOnTravel ?? 0)
+      }
+      ,
+      {
+        label: 'USSD',
+        monthly: spend.averageMonthlySpendOnUSSD ?? 0,
+        total: 12 * (spend.averageMonthlySpendOnUSSD ?? 0)
+      }
+      ,
+      {
+        label: 'Total Expenses',
+        monthly: spend.averageMonthlyTotalExpenses ?? 0,
+        total: 12 * (spend.averageMonthlyTotalExpenses ?? 0)
+      }
+      ,
+      {
+        label: 'Transfer Via Agents',
+        monthly: spend.averageMonthlyTransactionsViaAgents ?? 0,
+        total: 12 * (spend.averageMonthlyTransactionsViaAgents ?? 0)
+      },
+      {
+        label: 'Others',
+        monthly: spend.averageMonthlySpendOnOthers ?? 0,
+        total: 12 * (spend.averageMonthlySpendOnOthers ?? 0)
+      },
     ]
 
     // Use turnover values directly
@@ -1138,7 +1318,7 @@ const fetchTransactions = async (id) => {
   const tenantId = savedAuth?.user?.tenant_id || authStore.tenant_id
   const analysisId = route.params.id
 
-  const apiUrl = `https://dev02201.getjupita.com/api/${tenantId}/get-statement-transactions?analysis_id=${analysisId}`
+  const apiUrl = `https://staging.getjupita.com/api/${tenantId}/get-statement-transactions?analysis_id=${analysisId}`
 
   try {
     const response = await Axios.get(apiUrl, {

@@ -7,7 +7,7 @@
       <p class="text-gray-600">Your bank statement has been added successfully.</p>
 
       <v-btn color="#1f5aa3" @click="$emit('close')" class="custom-btn text-white w-full m-4">
-        Analyze Statement
+        Return Home
       </v-btn>
     </div>
   </div>

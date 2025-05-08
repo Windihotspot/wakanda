@@ -38,7 +38,7 @@ const logout = async () => {
 
   try {
     const response = await axios.post(
-      `https://dev02201.getjupita.com/api/${tenantId}/logout`,
+      `https://staging.getjupita.com/api/${tenantId}/logout`,
       {},
       {
         headers: {
@@ -87,14 +87,14 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="header items-center px-4 py-4 shadow-md bg-white">
+  <div class="header items-center px-4 py-4 bg-white">
     <!-- Icons (Right) -->
     <div class="space-x-4">
       <!-- Notifications Icon -->
       <v-menu anchor="bottom end" origin="auto" min-width="300">
         <template v-slot:activator="{ props }">
           <v-btn class="min-w-0 w-4 h-4" v-bind="props" icon>
-            <i class="fa-regular fa-bell font-light fa-2xl text-blue-400"></i>
+            <i class="fa-regular fa-bell font-light fa-2xl" style="color: #1f5aa3"></i>
           </v-btn>
         </template>
       </v-menu>
@@ -108,7 +108,7 @@ onMounted(() => {
             class="bg-transparent shadow-none items-center p-2"
             size="large"
           >
-            <v-avatar start size="32">
+            <v-avatar start size="30">
               <v-img
                 src="https://images.unsplash.com/photo-1596766861381-6863da285770?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjB8fGJsYWNrJTIwbWFuJTIwcGFzc3BvcnQlMjBwaG90b2dyYXBnaHxlbnwwfHwwfHx8MA%3D%3D"
                 alt="Avatar"

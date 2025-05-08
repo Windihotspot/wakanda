@@ -35,7 +35,7 @@ const fetchStatements = async () => {
   const tenantId = savedAuth
     ? savedAuth?.user?.tenant_id
     : computed(() => authStore.tenant_id)?.value
-  const API_URL = `https://dev02201.getjupita.com/api/${tenantId}/fetch-tenant-analyses`
+  const API_URL = `https://staging.getjupita.com/api/${tenantId}/fetch-tenant-analyses`
   isLoading.value = true
 
   try {
@@ -157,7 +157,7 @@ const getStatusColor = (status) => {
           <i class="fa-solid fa-filter"></i>
 
           <v-select
-            color="blue"
+            color="#1f5aa3"
             v-model="selectedStatus"
             :items="statuses"
             label="Status"
@@ -177,12 +177,12 @@ const getStatusColor = (status) => {
           variant="outlined"
           class="max-w-xs rounded-md"
           label="Search"
-          color="blue"
+          color="#1f5aa3"
           append-inner-icon=""
         >
           <!-- FontAwesome Search Icon inside append-inner slot -->
           <template #append-inner>
-            <i class="fas fa-search text-gray-500"></i>
+            <i class="fas fa-search text-[#1f5aa3]"></i>
           </template>
         </v-text-field>
       </div>
@@ -190,7 +190,7 @@ const getStatusColor = (status) => {
 
     <div class="p-4">
       <div v-if="isLoading" class="flex flex-col items-center justify-center min-h-[200px]">
-        <v-progress-circular indeterminate color="blue" size="40" width="4" />
+        <v-progress-circular indeterminate color="#1f5aa3" size="80" width="8" />
         <span class="mt-2 text-gray-600 text-sm">Loading statements...</span>
       </div>
 
@@ -232,7 +232,7 @@ const getStatusColor = (status) => {
               <td class="py-3 px-6 text-center">
                 <span
                   @click="goToAnalysis(doc.id)"
-                  class="bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-600 cursor-pointer"
+                  class="bg-[#1f5aa3] text-white px-4 py-1 rounded hover:bg-blue-600 cursor-pointer"
                 >
                   View
                 </span>

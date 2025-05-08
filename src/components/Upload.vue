@@ -141,7 +141,7 @@ const closeForm = () => {
 const statementType = ref('')
 
 const statementTypes = [
-  { label: 'Individual', value: 'individual' },
+  { label: 'Individual', value: 'consumer' },
   { label: 'Business', value: 'business' }
 ]
 
@@ -188,7 +188,7 @@ const uploadFile = async () => {
     formData.append('password', filePassword.value)
   }
 
-  const API_URL = `https://dev02201.getjupita.com/api/${tenantId}/bank-statement-analyze`
+  const API_URL = `https://staging.getjupita.com/api/${tenantId}/bank-statement-analyze`
 
   console.log('➡️ Uploading file...')
   for (const [key, value] of formData.entries()) {
@@ -214,7 +214,9 @@ const uploadFile = async () => {
     })
 
     console.log('✅ Success:', response)
-
+    if(props.onSuccess){
+      props.onSuccess()
+    }
     ElNotification({
       title: 'Success',
       message: 'File uploaded!',
@@ -222,6 +224,7 @@ const uploadFile = async () => {
       position: 'top-right',
       showClose: true
     })
+   
     // Inside uploadFile after success response
 showConfettiModal.value = true // Show the modal
 
@@ -239,7 +242,7 @@ const end = Date.now() + duration
 })()
 
  
-
+closeForm()
     // Reset input values
     selectedFile.value = null
     filePassword.value = ''

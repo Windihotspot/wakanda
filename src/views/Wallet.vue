@@ -2,7 +2,7 @@
   <MainLayout>
     <v-container>
       <!-- Wallet Balance Card -->
-      <div class="bg-gradient-to-r from-blue-600 to-blue-600 text-white rounded-md p-6 shadow-xl">
+      <div class="bg-[#1f5aa3] text-white rounded-md p-6 shadow-xl">
         <div class="flex items-center justify-between">
           <div>
             <h2 class="text-xl font-bold tracking-wide">Current Wallet Balance</h2>
@@ -241,7 +241,7 @@ const fetchWallet = async () => {
   const tenantId = savedAuth
     ? savedAuth?.user?.tenant_id
     : computed(() => authStore.tenant_id)?.value
-  const API_URL = `https://dev02201.getjupita.com/api/${tenantId}/get-tenant-wallet`
+  const API_URL = `https://staging.getjupita.com/api/${tenantId}/get-tenant-wallet`
   isLoading.value = true
   try {
     const response = await axios.get(API_URL, {
@@ -267,7 +267,7 @@ const fetchWalletTransactions = async () => {
     ? savedAuth?.user?.tenant_id
     : computed(() => authStore.tenant_id)?.value
 
-  const API_URL = `https://dev02201.getjupita.com/api/${tenantId}/get-wallet-transactions`
+  const API_URL = `https://staging.getjupita.com/api/${tenantId}/get-wallet-transactions`
   isLoading.value = true
 
   try {
@@ -321,7 +321,7 @@ const fundWallet = async () => {
     return
   }
 
-  const API_URL = `https://dev02201.getjupita.com/api/${tenantId}/initialize-payment`
+  const API_URL = `https://staging.getjupita.com/api/${tenantId}/initialize-payment`
   console.log('fund wallet amount:', amount.value)
   console.log('fund wallet token:', token)
 

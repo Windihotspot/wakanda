@@ -1,7 +1,7 @@
 <template>
   <MainLayout>
     <v-container class="p-6 min-h-screen">
-      <h1 class="text-2xl font-semibold text-blue-800 mb-6">Settings</h1>
+      <h1 class="text-2xl font-semibold mb-6">Settings</h1>
       <v-card class="pa-4">
         <v-tabs v-model="activeTab" color="blue" align-tabs="center">
           <v-tab value="profile">Profile</v-tab>
@@ -286,7 +286,7 @@ const isLoading = ref(true)
 
 const getRoles = async () => {
   try {
-    const response = await axios.get(`https://dev02201.getjupita.com/api/${tenantId}/get-roles`, {
+    const response = await axios.get(`https://staging.getjupita.com/api/${tenantId}/get-roles`, {
       headers: {
         Authorization: `Bearer ${token.value}`
       }
@@ -326,7 +326,7 @@ const fetchTeam = async () => {
   const tenantId = savedAuth
     ? savedAuth?.user?.tenant_id
     : computed(() => authStore.tenant_id)?.value
-  const API_URL = `https://dev02201.getjupita.com/api/${tenantId}/get-team`
+  const API_URL = `https://staging.getjupita.com/api/${tenantId}/get-team`
 
   try {
     const response = await axios.get(API_URL, {
@@ -386,7 +386,7 @@ const inviteUser = async () => {
     console.log('invite user request payload:', payload)
 
     const response = await axios.post(
-      `https://dev02201.getjupita.com/api/${tenantId}/add-member`,
+      `https://staging.getjupita.com/api/${tenantId}/add-member`,
       payload,
       {
         headers: {
@@ -443,7 +443,7 @@ const updatePassword = async () => {
   try {
     console.log('new password:', profile.value.password)
     const response = await axios.put(
-      `https://dev02201.getjupita.com/api/${tenantId}/update-password`,
+      `https://staging.getjupita.com/api/${tenantId}/update-password`,
       { new_password: profile.value.password },
       {
         headers: {
@@ -497,7 +497,7 @@ const saveProfile = async () => {
       console.log('payload save profile:', payload)
 
       const response = await axios.put(
-        `https://dev02201.getjupita.com/api/${tenantId}/update-user-data`,
+        `https://staging.getjupita.com/api/${tenantId}/update-user-data`,
         payload,
         {
           headers: {
