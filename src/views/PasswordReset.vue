@@ -265,12 +265,13 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
 import axios from 'axios'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 const router = useRouter()
 import { ElNotification } from 'element-plus'
-import { useAuthStore } from '@/stores/auth'
-const authStore = useAuthStore()
 
+const route = useRoute()
+const token = route.query.token
+console.log('Reset token from URL:', token)
 const password = ref('')
 const confirmPassword = ref('')
 const passwordError = ref('')
@@ -319,13 +320,7 @@ const validateForm = () => {
 }
 
 const onSubmit = async () => {
-  const savedAuth = localStorage.getItem('data') ? JSON.parse(localStorage.getItem('data')) : null
-  console.log(JSON.parse(localStorage.getItem('data')))
-  const token = savedAuth ? savedAuth?.token : computed(() => authStore.token)?.value
-  const tenantId = savedAuth
-    ? savedAuth?.user?.tenant_id
-    : computed(() => authStore.tenant_id)?.value
-  const API_URL = `https://dev02201.getjupita.com/api/reset-password`
+  const API_URL = `https://staging.getjupita.com/api/reset-password`
   if (!validateForm()) {
     return
   }
@@ -343,8 +338,7 @@ const onSubmit = async () => {
         }
       }
     )
-    password.value = '',
-    confirmPassword.value = ''
+    ;(password.value = ''), (confirmPassword.value = '')
     ElNotification({
       title: 'Success',
       message: response.data.message || 'Password reset successfully!',

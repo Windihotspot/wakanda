@@ -34,36 +34,25 @@ let vuetify = createVuetify({
 
 const app = createApp(App)
 
+
+
 app.use(createPinia())
 app.use(router)
 app.use(vuetify)
 app.use(VueApexCharts)
 app.use(ElementPlus);
 
-// 👇 Insert this before mount
-if (window.location.search.startsWith('?redirect=')) {
-  const url = new URLSearchParams(window.location.search);
-  const redirectTo = url.get('redirect');
-  if (redirectTo) {
-    history.replaceState(null, '', decodeURIComponent(redirectTo));
-  }
+const urlParams = new URLSearchParams(window.location.search)
+const redirectPath = urlParams.get('redirect')
+
+if (redirectPath) {
+  router.push(redirectPath).catch(() => {})
 }
 
 app.mount('#app')
 
 AOS.init()
 
-let isVuetifyLoaded = false
 
 
-router.beforeEach(async (to, from, next) => {
-  if (to.name === 'Dashboard' && !isVuetifyLoaded) {
-    const vuetifyModule = await import('./plugins/vuetify')
-    vuetify = vuetifyModule.default
-    app.use(vuetify)
-    isVuetifyLoaded = true
-    next()
-  } else {
-    next()
-  }
-})
+
