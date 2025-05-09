@@ -54,7 +54,7 @@ const logout = async () => {
     </div> -->
 
     <!-- Navigation -->
-    <div class="scrollnavbar flex-grow mt-4">
+    <div class="flex-grow mt-4">
       <v-list class="pa-4">
         <template v-for="(item, i) in sidebarMenu" :key="i">
           <v-list-item
@@ -90,6 +90,10 @@ const logout = async () => {
 </template>
 
 <style scoped>
+.side-bar {
+  overflow: hidden !important;
+}
+
 .logout-btn:hover {
   background-color: #ffecec;
 }

@@ -142,7 +142,7 @@ const getStatusColor = (status) => {
           class="normal-case custom-btn hover:bg-blue-700 text-white text-sm font-semibold px-6 py-3 rounded-md shadow-md"
         >
           <span
-            class="bg-white text-blue-600 rounded-full p-1 flex items-center justify-center w-6 h-6 mr-2"
+            class="bg-white text-blue-600 rounded-full p-1 flex items-center justify-center w-4 h-4 mr-2"
           >
             <i class="fa-solid fa-plus text-sm text-[#1f5aa3]"></i>
           </span>

@@ -19,7 +19,7 @@
             </button>
           </RouterLink>
           <!-- title and download -->
-          <div class="flex justify-between rounded shadow-lg p-4 bg-white">
+          <div class="flex justify-between rounded  p-4 bg-white">
             <h2 class="text-md font-semibold mt-2 ml-6">Analysis result</h2>
             <!-- Download Report Button -->
             <div class="text-right">
@@ -38,7 +38,7 @@
           <!-- Document Header -->
 
           <div
-            class="grid grid-cols-1 md:grid-cols-3 gap-6 text-gray-700 mt-4 mb-6 bg-white rounded shadow-lg p-4"
+            class="grid grid-cols-1 md:grid-cols-3 gap-6 text-gray-700 mt-4 mb-6 bg-white rounded p-4"
           >
             <p>
               <i class="fas fa-calendar mr-2"></i>
@@ -180,23 +180,23 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                   <!-- Income Analysis -->
                   <div class="bg-white p-6 rounded shadow-sm">
-                    <h2 class="font-semibold text-lg mb-4">Income Analysis</h2>
+                    <h2 class="font-semibold text-md mb-4">Income Analysis</h2>
                     <div class="grid grid-cols-2 gap-4 text-sm">
-                      <div>
+                      <div class="mb-4">
                         <p>Average Predicted Salary</p>
                         <p class="font-semibold text-green-600">
                           {{ formatCurrency(income.averagePredictedSalary) }}
                         </p>
                       </div>
-                      <div>
+                      <div class="mb-4">
                         <p>Average Other Income</p>
                         <p class="font-semibold">{{ formatCurrency(income.averageOtherIncome) }}</p>
                       </div>
-                      <div>
+                      <div class="mt-4">
                         <p>Lowest Salary</p>
                         <p class="font-semibold">{{ formatCurrency(income.lowestSalary) }}</p>
                       </div>
-                      <div>
+                      <div class="mt-4">
                         <p>Most Recent Salary</p>
                         <p class="font-semibold">{{ formatCurrency(income.mostRecentSalary) }}</p>
                       </div>
@@ -205,25 +205,25 @@
 
                   <!-- Pay Date Management -->
                   <div class="bg-white p-6 rounded shadow-sm">
-                    <h2 class="font-semibold text-lg mb-4">Pay Date Management</h2>
+                    <h2 class="font-semibold text-md mb-4">Pay Date Management</h2>
                     <div class="grid grid-cols-2 gap-4 text-sm">
-                      <div>
+                      <div class="mb-4">
                         <p>Expected Salary Payment Day</p>
                         <p class="font-semibold text-green-600">
                           {{ income.expectedSalaryPaymentDay || 0 }}
                         </p>
                       </div>
-                      <div>
+                      <div class="mb-4">
                         <p>No. of Salary Payments</p>
                         <p class="font-semibold">{{ income.numberOfSalaryPayments || 0 }}</p>
                       </div>
-                      <div>
+                      <div class="mb-4">
                         <p>Latest Salary Date</p>
                         <p class="font-semibold">
                           {{ formatDate(income.lastDateOfSalaryPayment) }}
                         </p>
                       </div>
-                      <div>
+                      <div class="mb-4">
                         <p>Lowest Salary Date</p>
                         <p class="font-semibold">{{ formatDate(income.lowestSalaryDate) }}</p>
                       </div>
@@ -231,42 +231,7 @@
                   </div>
                 </div>
 
-                <div class="p-6 bg-white rounded shadow">
-                  <h2 class="text-md font-semibold mb-4">Salary Transactions</h2>
-
-                  <div v-if="salary.length" class="overflow-x-auto">
-                    <table class="min-w-full text-sm text-left border">
-                      <thead class="bg-gray-100 text-gray-700 font-semibold">
-                        <tr>
-                          <th class="px-4 py-2 border">Transaction Date</th>
-                          <th class="px-4 py-2 border">Description</th>
-                          <th class="px-4 py-2 border">Amount</th>
-                          <th class="px-4 py-2 border">Balance</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr
-                          v-for="(transaction, index) in salary"
-                          :key="index"
-                          class="hover:bg-gray-50"
-                        >
-                          <td class="px-4 py-2 border">{{ transaction.date }}</td>
-                          <td class="px-4 py-2 border whitespace-pre-line">
-                            {{ transaction.description }}
-                          </td>
-                          <td class="px-4 py-2 border font-medium text-green-600">
-                            {{ transaction.amount }}
-                          </td>
-                          <td class="px-4 py-2 border">{{ transaction.balance }}</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-
-                  <div v-else class="text-center py-12 text-gray-500">
-                    <p class="text-lg">No salary transactions available.</p>
-                  </div>
-                </div>
+                
               </v-tabs-window-item>
 
               <!-- Cash flow-->
@@ -1420,7 +1385,7 @@ const downloadAnalysis = async () => {
   const tenantId = savedAuth?.user?.tenant_id || authStore.tenant_id
   const analysisId = route.params.id
 
-  const apiUrl = `https://dev02201.getjupita.com/api/${tenantId}/download-insight-report?analysis_id=${analysisId}`
+  const apiUrl = `https://staging.getjupita.com/api/${tenantId}/download-insight-report?analysis_id=${analysisId}`
 
   try {
     // Show persistent notification

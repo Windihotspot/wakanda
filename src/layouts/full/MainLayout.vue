@@ -59,6 +59,15 @@ onMounted(() => {
 </template>
 
 <style scoped>
+.side-bar {
+  overflow: hidden !important;
+}
+
+
+.side-bar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}
+
 
 .page-wrapper {
   background-color: #f5f7f9;

@@ -88,17 +88,21 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="flex flex-col md:flex-row h-auto md:h-screen bg-white">
-    <!-- Logo -->
-
+  <div class="flex flex-col md:flex-row h-auto h-screen bg-white">
     <!-- Image Section -->
     <!-- Image Section -->
-    <div class="w-full sm:w-full md:w-1/2 p-4 flex justify-center items-center">
+    <div class="w-full sm:w-full md:w-1/2 h-full justify-center items-center p-4">
+      <!-- Logo -->
+      <div class="flex items-center  px-2">
+        <img src="/src/assets/logo.png" alt="Logo" class="w-10 h-10 object-contain" />
+        <span class="text-md font-semibold text-[#1F5AA3]">Jupita</span>
+      </div>
       <img
-        src="/src/assets/login-image.png"
-        alt="Onboarding Image"
-        class="w-full sm:w-3/4 md:w-full sm:h-64 md:h-full object-cover"
-      />
+  src="/src/assets/new-logo.jpg"
+  alt="Onboarding Image"
+  class="w-full h-auto max-h-[500px] object-contain"
+/>
+
     </div>
 
     <!-- Login Form Section -->
@@ -169,16 +173,14 @@ onUnmounted(() => {
           </div>
 
           <div class="bg-red-100 text-red-800 text-sm p-3 rounded">
-  <span class="font-bold mr-1">Warning:</span>
-  Don’t tick this box if you are using a public or shared device
-</div>
-
+            <span class="font-bold mr-1">Warning:</span>
+            Don’t tick this box if you are using a public or shared device
+          </div>
 
           <!-- Submit Button -->
           <v-btn
             type="submit"
             :loading="loginForm.processing"
-           
             class="w-full text-white font-semibold text-sm custom-btn"
             height="40"
           >

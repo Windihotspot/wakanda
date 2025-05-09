@@ -201,7 +201,7 @@
           <v-text-field
             v-model="password"
             :type="showPassword ? 'text' : 'password'"
-            label="Email new password"
+            label="Enter new password"
             placeholder="Enter new password"
             variant="outlined"
             color="blue"
