@@ -47,7 +47,7 @@ const logout = async () => {
 </script>
 
 <template>
-  <div class="side-bar mt-4 d-flex flex-column h-full justify-between">
+  <div class="side-bar mt-4 d-flex flex-column h-full justify-between overflow-hidden">
     <!-- Logo part -->
     <!-- <div class="logo pa-4">
       <img src="/src/assets/images/white.png" class="" />

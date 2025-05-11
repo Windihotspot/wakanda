@@ -69,7 +69,7 @@
               grow
             >
               <v-tab value="summary">Summary</v-tab>
-              <v-tab value="income">Income</v-tab>
+              <v-tab v-if="isConsumer" value="income">Income</v-tab>
               <v-tab value="cash flow">Cash Flow</v-tab>
               <v-tab value="behavioral">Behavioral</v-tab>
               <v-tab value="transactions">Transactions</v-tab>
@@ -316,12 +316,12 @@
                   <div class="flex justify-between bg-[#1f5aa3] text-white rounded p-6 w-full">
                     <div class="flex-1">
                       <div class="text-sm mt-2">Inflow to Outflow Rate</div>
-                      <div class="text-md font-semibold">{{ inflowOutflowStatus }}</div>
+                      <div class="text-md font-semibold">{{ monthToMonthInflowToOutflowRate }}</div>
                     </div>
                     <div class="flex-1">
                       <div class="text-sm mt-2">Overall Inflow to Outflow</div>
                       <div class="text-md font-semibold">
-                        {{ formatPercent(inflowOutflowRate) }}
+                        {{ overallInflowToOutflowRate }}
                       </div>
                     </div>
                   </div>
@@ -858,6 +858,8 @@ const monthlyBalance = ref([])
 const transactions = ref([])
 const allTransactions = ref([])
 const income = ref({})
+const statementType = ref(null)
+
 
 // Function to format the balance range (e.g., "1000 - 100000")
 const formatBalanceRange = () => {
@@ -898,6 +900,8 @@ const fetchAnalysisResult = async (analysisId) => {
     fileName.value = analysis?.name || 'N/A'
     clientName.value = analysis?.clientFullName || 'N/A'
     accountId.value = analysis?.accountId || 'N/A'
+
+    statementType.value = response.data?.data?.analysis_result?.analysis_result.statementType
 
     const behavior = analysis?.behavioralAnalysis || {}
     console.log('behavioural:', behavior)
@@ -1011,109 +1015,109 @@ const fetchAnalysisResult = async (analysisId) => {
       {
         label: 'Rent',
         monthly: spend.averageMonthlySpendOnRent ?? 0,
-        total: 12 * (spend.averageMonthlySpendOnRent ?? 0)
+        total: spend.totalSpendOnRent ?? 0,
       },
       {
         label: 'Hospitality and Food',
         monthly: spend.averageMonthlySpendOnHospitalityAndFood ?? 0,
-        total: 12 * (spend.averageMonthlySpendOnHospitalityAndFood ?? 0)
+        total: spend.totalSpendOnHospitalityAndFood ?? 0,
       },
       {
         label: 'Transportation',
         monthly: spend.averageMonthlySpendOnTransportation ?? 0,
-        total: 12 * (spend.averageMonthlySpendOnTransportation ?? 0)
+        total: spend.totalSpendOnTransportation ?? 0,
       },
       {
         label: 'Utilities',
         monthly: spend.averageMonthlySpendOnUtilities ?? 0,
-        total: 12 * (spend.averageMonthlySpendOnUtilities ?? 0)
+        total: spend.totalSpendOnUtilities ?? 0,
       },
       {
         label: 'Charges and Stamp Duty',
         monthly: spend.averageMonthlySpendOnChargesAndStampDuty ?? 0,
-        total: 12 * (spend.averageMonthlySpendOnChargesAndStampDuty ?? 0)
+        total: spend.totalSpendOnChargesAndStampDuty ?? 0
       },
       {
         label: 'Transfer',
         monthly: spend.averageMonthlySpendOnTransfer ?? 0,
-        total: 12 * (spend.averageMonthlySpendOnTransfer ?? 0)
+        total: spend.totalSpendOnTransfer ?? 0
       },
       {
         label: 'ATM Withdrawals and POS',
         monthly: spend.averageMonthlySpendOnAtmAndPOS ?? 0,
-        total: 12 * (spend.averageMonthlySpendOnAtmAndPOS ?? 0)
+        total: spend.totalSpendOnAtmAndPOS ?? 0
       },
       {
         label: 'Airtime and Data',
         monthly: spend.averageMonthlySpendOnAirtimeAndData ?? 0,
-        total: 12 * (spend.averageMonthlySpendOnAirtimeAndData ?? 0)
+        total: spend.totalSpendOnAirtimeAndData ?? 0
       },
       {
         label: 'Crypto',
         monthly: spend.averageMonthlySpendOnCrypto ?? 0,
-        total: 12 * (spend.averageMonthlySpendOnCrypto ?? 0)
+        total: spend.totalSpendOnCrypto ?? 0
       },
       {
         label: 'Entertainment',
         monthly: spend.averageMonthlySpendOnEntertainment ?? 0,
-        total: 12 * (spend.averageMonthlySpendOnEntertainment ?? 0)
+        total: spend.totalSpendOnEntertainment ?? 0
       },
       {
         label: 'Health',
         monthly: spend.averageMonthlySpendOnHealth ?? 0,
-        total: 12 * (spend.averageMonthlySpendOnHealth ?? 0)
+        total: spend.totalSpendOnHealth ?? 0
       },
       {
         label: 'Gambling',
         monthly: spend.averageMonthlySpendOnGambling ?? 0,
-        total: 12 * (spend.averageMonthlySpendOnGambling ?? 0)
+        total: spend.totalSpendOnGambling ?? 0
       },
       {
         label: 'Insurance',
         monthly: spend.averageMonthlySpendOnInsurance ?? 0,
-        total: 12 * (spend.averageMonthlySpendOnInsurance ?? 0)
+        total: spend.totalSpendOnInsurance ?? 0
       },
       {
         label: 'International Transactions',
         monthly: spend.averageMonthlySpendOnInternationalTransactions ?? 0,
-        total: 12 * (spend.averageMonthlySpendOnInternationalTransactions ?? 0)
+        total: spend.totalSpendOnInternationalTransactions ?? 0
       },
       {
         label: 'Online and Web',
         monthly: spend.averageMonthlySpendOnOnlineAndWeb ?? 0,
-        total: 12 * (spend.averageMonthlySpendOnOnlineAndWeb ?? 0)
+        total: spend.totalSpendOnOnlineAndWeb ?? 0
       },
       {
         label: 'Savings and Investments',
         monthly: spend.averageMonthlySpendOnSavingsAndInvestments ?? 0,
-        total: 12 * (spend.averageMonthlySpendOnSavingsAndInvestments ?? 0)
+        total: spend.totalSpendOnSavingsAndInvestments ?? 0
       },
       {
         label: 'Travel',
         monthly: spend.averageMonthlySpendOnTravel ?? 0,
-        total: 12 * (spend.averageMonthlySpendOnTravel ?? 0)
+        total: spend.totalSpendOnTravel ?? 0
       },
       {
         label: 'USSD',
         monthly: spend.averageMonthlySpendOnUSSD ?? 0,
-        total: 12 * (spend.averageMonthlySpendOnUSSD ?? 0)
+        total: spend.totalSpendOnUSSD ?? 0
       },
       {
         label: 'Transfer Via Agents',
         monthly: spend.averageMonthlyTransactionsViaAgents ?? 0,
-        total: 12 * (spend.averageMonthlyTransactionsViaAgents ?? 0)
+        total: spend.totalTransactionsViaAgents ?? 0
       },
       {
         label: 'Others',
         monthly: spend.averageMonthlySpendOnOthers ?? 0,
-        total: 12 * (spend.averageMonthlySpendOnOthers ?? 0)
+        total: spend.totalSpendOnOthers ?? 0
       },
 
       {
         label: 'Total Expenses',
         monthly: spend.averageMonthlyTotalExpenses ?? 0,
-        total: 12 * (spend.averageMonthlyTotalExpenses ?? 0)
-      },
+        total: spend.totalExpenses ?? 0
+      }
     ]
 
     // Use turnover values directly
@@ -1139,7 +1143,7 @@ const fetchAnalysisResult = async (analysisId) => {
     const lowest = cashFlow?.monthlyLowestBalance || []
     inflowOutflowRate.value =
       totalOutflow.value !== 0
-        ? +(((totalInflow.value - totalOutflow.value) / totalOutflow.value) * 100).toFixed(2)
+        ? +((totalInflow.value - totalOutflow.value) / totalOutflow.value).toFixed(2)
         : 0
 
     const monthlyBalanceMap = new Map()
@@ -1265,6 +1269,9 @@ const inflowOutflowStatus = computed(() => {
   if (rate < 0) return 'Negative cash flow'
   return 'neutral'
 })
+
+
+const isConsumer = computed(() => statementType.value === 'CONSUMER')
 
 const fetchTransactions = async (id) => {
   const savedAuth = localStorage.getItem('data') ? JSON.parse(localStorage.getItem('data')) : null
