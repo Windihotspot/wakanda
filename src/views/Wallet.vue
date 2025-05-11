@@ -180,6 +180,7 @@
 </template>
 
 <script setup>
+
 import { ElNotification } from 'element-plus'
 import moment from 'moment'
 import { onMounted, ref, nextTick } from 'vue'
@@ -193,6 +194,7 @@ const loading = ref(false)
 const creditHistory = ref([])
 const activeTab = ref('credit') // Default tab to "Credit"
 const debitHistory = ref([]) // For debit transactions
+const authStore = useAuthStore()
 
 import Cleave from 'cleave.js'
 const cleaveInput = ref(null)
@@ -238,9 +240,7 @@ const fetchWallet = async () => {
 
   console.log(JSON.parse(localStorage.getItem('data')))
   const token = savedAuth ? savedAuth?.token : computed(() => authStore.token)?.value
-  const tenantId = savedAuth
-    ? savedAuth?.user?.tenant_id
-    : computed(() => authStore.tenant_id)?.value
+  const tenantId = savedAuth ? savedAuth?.user?.id : computed(() => authStore.id)?.value
   const API_URL = `https://staging.getjupita.com/api/${tenantId}/get-tenant-wallet`
   isLoading.value = true
   try {
@@ -262,10 +262,9 @@ const fetchWallet = async () => {
 const fetchWalletTransactions = async () => {
   const savedAuth = localStorage.getItem('data') ? JSON.parse(localStorage.getItem('data')) : null
 
+  console.log(JSON.parse(localStorage.getItem('data')))
   const token = savedAuth ? savedAuth?.token : computed(() => authStore.token)?.value
-  const tenantId = savedAuth
-    ? savedAuth?.user?.tenant_id
-    : computed(() => authStore.tenant_id)?.value
+  const tenantId = savedAuth ? savedAuth?.user?.id : computed(() => authStore.id)?.value
 
   const API_URL = `https://staging.getjupita.com/api/${tenantId}/get-wallet-transactions`
   isLoading.value = true
@@ -306,9 +305,13 @@ const fetchWalletTransactions = async () => {
 }
 
 const fundWallet = async () => {
-  const savedAuth = JSON.parse(localStorage.getItem('data') || '{}')
-  const token = savedAuth?.token || authStore.token
-  const tenantId = savedAuth?.user?.tenant_id || authStore.tenant_id
+  const savedAuth = localStorage.getItem('data') ? JSON.parse(localStorage.getItem('data')) : null
+
+  console.log(JSON.parse(localStorage.getItem('data')))
+  const token = savedAuth ? savedAuth?.token : computed(() => authStore.token)?.value
+  const tenantId = savedAuth
+    ? savedAuth?.user?.id
+    : computed(() => authStore.id)?.value
   const loading = ref(false)
 
   if (!amount.value || amount.value < 100000) {

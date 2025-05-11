@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import axios from 'axios'
 
 interface AuthState {
-  tenant_id: string | null
+  id: string | null
   token: string | null
   verification_status: string | null
   user: any | null
@@ -10,7 +10,7 @@ interface AuthState {
 
 export const useAuthStore = defineStore('auth', {
   state: (): AuthState => ({
-    tenant_id: null,
+    id: null,
     token: null,
     verification_status: null,
     user: null
@@ -23,7 +23,7 @@ export const useAuthStore = defineStore('auth', {
       console.log('Setting Auth Data:', data)
       
 
-      this.tenant_id = data.user?.tenant_id || null
+      this.id = data.user?.id || null
       this.token = data.token || null
       this.verification_status = data.user?.verification_status || null
 

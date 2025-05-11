@@ -102,7 +102,6 @@
 
     <!-- ConfettiSuccessModal.vue -->
     <ConfettiSuccessModal :visible="showConfettiModal" @close="showConfettiModal = false" />
-
   </div>
 </template>
 
@@ -173,9 +172,11 @@ const removeFile = () => {
 const progress = ref(0) // Track progress
 
 const uploadFile = async () => {
-  const savedAuth = JSON.parse(localStorage.getItem('data') || '{}')
-  const token = savedAuth?.token || authStore.token
-  const tenantId = savedAuth?.user?.tenant_id || authStore.tenant_id
+  const savedAuth = localStorage.getItem('data') ? JSON.parse(localStorage.getItem('data')) : null
+
+  console.log(JSON.parse(localStorage.getItem('data')))
+  const token = savedAuth ? savedAuth?.token : computed(() => authStore.token)?.value
+  const tenantId = savedAuth ? savedAuth?.user?.id : computed(() => authStore.id)?.value
   if (!selectedFile.value || !statementType.value) {
     Swal.fire('Missing Information', 'Select a statement type and file.', 'warning')
     return
@@ -214,7 +215,7 @@ const uploadFile = async () => {
     })
 
     console.log('✅ Success:', response)
-    if(props.onSuccess){
+    if (props.onSuccess) {
       props.onSuccess()
     }
     ElNotification({
@@ -224,30 +225,28 @@ const uploadFile = async () => {
       position: 'top-right',
       showClose: true
     })
-   
+
     // Inside uploadFile after success response
-showConfettiModal.value = true // Show the modal
+    showConfettiModal.value = true // Show the modal
 
-// Trigger confetti animation
-const duration = 3 * 1000
-const end = Date.now() + duration
+    // Trigger confetti animation
+    const duration = 3 * 1000
+    const end = Date.now() + duration
 
-;(function frame() {
-  confetti({
-    particleCount: 5,
-    spread: 500,
-    origin: { y: 0.6 }
-  })
-  if (Date.now() < end) requestAnimationFrame(frame)
-})()
+    ;(function frame() {
+      confetti({
+        particleCount: 5,
+        spread: 500,
+        origin: { y: 0.6 }
+      })
+      if (Date.now() < end) requestAnimationFrame(frame)
+    })()
 
- 
-closeForm()
+    closeForm()
     // Reset input values
     selectedFile.value = null
     filePassword.value = ''
     statementType.value = ''
-
   } catch (error) {
     console.error('❌ Upload error:', error)
     ElNotification({

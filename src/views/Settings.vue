@@ -78,7 +78,7 @@
                   v-model="profile.password"
                   label="Password"
                   variant="outlined"
-                 :type="showPassword ? 'text' : 'password'"
+                  :type="showPassword ? 'text' : 'password'"
                   color="blue"
                 >
                   <template #append-inner>
@@ -113,9 +113,10 @@
                 class="flex flex-col items-center justify-center text-center"
               >
                 <v-icon size="64" color="blue">mdi-account-multiple-outline</v-icon>
-                <p class="text-gray-600 mt-4 text-lg">No users found</p>
-                <p class="text-gray-500 mb-4">Start by inviting your first team member.</p>
-                <v-btn color="blue" @click="openModal">Invite User</v-btn>
+                <div class="mx-auto text-center align-center w-[400px] h-[200px]">
+                  <p class="font-semibold mt-4 text-lg">No users found</p>
+                  <p class="font-light mb-4">Start by inviting your first team member.</p>
+                </div>
               </div>
 
               <div v-else class="overflow-x-auto bg-white shadow-md rounded-md mt-6">
@@ -240,9 +241,11 @@ import axios from 'axios'
 import Swal from 'sweetalert2'
 import { useAuthStore } from '@/stores/auth'
 const authStore = useAuthStore()
-const savedAuth = JSON.parse(localStorage.getItem('data') || '{}')
-const token = savedAuth?.token || authStore.token
-const tenantId = savedAuth?.user?.tenant_id || authStore.tenant_id
+const savedAuth = localStorage.getItem('data') ? JSON.parse(localStorage.getItem('data')) : null
+
+console.log(JSON.parse(localStorage.getItem('data')))
+const token = savedAuth ? savedAuth?.token : computed(() => authStore.token)?.value
+const tenantId = savedAuth ? savedAuth?.user?.id : computed(() => authStore.id)?.value
 const user = savedAuth?.user
 
 const showPassword = ref(false)
@@ -319,13 +322,6 @@ const newUser = ref({
 })
 
 const fetchTeam = async () => {
-  const savedAuth = localStorage.getItem('data') ? JSON.parse(localStorage.getItem('data')) : null
-
-  console.log(JSON.parse(localStorage.getItem('data')))
-  const token = savedAuth ? savedAuth?.token : computed(() => authStore.token)?.value
-  const tenantId = savedAuth
-    ? savedAuth?.user?.tenant_id
-    : computed(() => authStore.tenant_id)?.value
   const API_URL = `https://staging.getjupita.com/api/${tenantId}/get-team`
 
   try {
@@ -367,7 +363,7 @@ const inviteUser = async () => {
 
   closeModal()
   ElNotification({
-    title: 'Downloading',
+    title: 'Inviting User',
     message: 'Inviting your new user...',
     type: 'info',
     duration: 3000
@@ -428,9 +424,6 @@ const inviteUser = async () => {
 }
 
 const updatePassword = async () => {
-  const savedAuth = JSON.parse(localStorage.getItem('data') || '{}')
-  const token = savedAuth?.token || authStore.token
-  const tenantId = savedAuth?.user?.tenant_id || authStore.tenant_id
   if (!profile.value.password) return
 
   ElNotification({

@@ -3,9 +3,11 @@ import { onMounted, ref, computed } from 'vue'
 import axios from 'axios'
 import { useAuthStore } from '@/stores/auth'
 const authStore = useAuthStore()
-const savedAuth = JSON.parse(localStorage.getItem('data') || '{}')
-const token = savedAuth?.token || authStore.token
-const tenantId = savedAuth?.user?.tenant_id || authStore.tenant_id
+const savedAuth = localStorage.getItem('data') ? JSON.parse(localStorage.getItem('data')) : null
+
+console.log(JSON.parse(localStorage.getItem('data')))
+const token = savedAuth ? savedAuth?.token : computed(() => authStore.token)?.value
+const tenantId = savedAuth ? savedAuth?.user?.id : computed(() => authStore.id)?.value
 const user = savedAuth?.user
 import { useRouter } from 'vue-router'
 const router = useRouter()
@@ -22,7 +24,7 @@ const displayName = computed(() => {
 
 const userInitials = computed(() => {
   if (!user) return ''
-  
+
   if (user.business_name) {
     return user.business_name.slice(0, 2).toUpperCase()
   }
@@ -31,7 +33,6 @@ const userInitials = computed(() => {
   const last = user.lastname?.charAt(0).toUpperCase() || ''
   return first + last
 })
-
 
 const displayRole = computed(() => {
   return getRoleLabelById(user?.role_id)
@@ -43,9 +44,6 @@ const errorMessage = ref(null)
 
 // Logout function
 const logout = async () => {
-  const savedAuth = JSON.parse(localStorage.getItem('data') || '{}')
-  const token = savedAuth?.token || authStore.token
-  const tenantId = savedAuth?.user?.tenant_id || authStore.tenant_id
   isLoading.value = true
   errorMessage.value = null
 
@@ -113,32 +111,31 @@ onMounted(() => {
       </v-menu> -->
 
       <v-menu offset-y location="bottom left" origin="top left" min-width="200">
-  <template v-slot:activator="{ props }">
-    <div
-      v-bind="props"
-      class="flex items-center cursor-pointer bg-white rounded-md px-2 py-1 hover:bg-gray-100 transition"
-    >
-      <v-avatar start size="30" color="#1F5AA3" class="text-white font-bold p-4 text-sm">
-        {{ userInitials }}
-      </v-avatar>
+        <template v-slot:activator="{ props }">
+          <div
+            v-bind="props"
+            class="flex items-center cursor-pointer bg-white rounded-md px-2 py-1 hover:bg-gray-100 transition"
+          >
+            <v-avatar start size="30" color="#1F5AA3" class="text-white font-bold p-4 text-sm">
+              {{ userInitials }}
+            </v-avatar>
 
-      <div class="ml-2 text-left">
-        <div class="font-semibold text-black text-sm">{{ displayName }}</div>
-        <div class="text-xs text-gray-500">{{ displayRole }}</div>
-      </div>
-    </div>
-  </template>
+            <div class="ml-2 text-left">
+              <div class="font-semibold text-black text-sm">{{ displayName }}</div>
+              <div class="text-xs text-gray-500">{{ displayRole }}</div>
+            </div>
+          </div>
+        </template>
 
-  <v-list>
-    <v-list-item @click="logout" link class="text-gray-700 hover:text-red-500">
-      <div class="flex items-center gap-2">
-        <i class="fas fa-sign-out-alt text-gray-500 hover:text-red-500"></i>
-        <v-list-item-title>Logout</v-list-item-title>
-      </div>
-    </v-list-item>
-  </v-list>
-</v-menu>
-
+        <v-list>
+          <v-list-item @click="logout" link class="text-gray-700 hover:text-red-500">
+            <div class="flex items-center gap-2">
+              <i class="fas fa-sign-out-alt text-gray-500 hover:text-red-500"></i>
+              <v-list-item-title>Logout</v-list-item-title>
+            </div>
+          </v-list-item>
+        </v-list>
+      </v-menu>
 
       <!-- User Profile -->
       <!-- <v-menu anchor="bottom end" origin="auto" min-width="300">

@@ -19,7 +19,7 @@
             </button>
           </RouterLink>
           <!-- title and download -->
-          <div class="flex justify-between rounded  p-4 bg-white">
+          <div class="flex justify-between rounded p-4 bg-white">
             <h2 class="text-md font-semibold mt-2 ml-6">Analysis result</h2>
             <!-- Download Report Button -->
             <div class="text-right">
@@ -230,8 +230,6 @@
                     </div>
                   </div>
                 </div>
-
-                
               </v-tabs-window-item>
 
               <!-- Cash flow-->
@@ -877,9 +875,11 @@ const formatBalanceRange = () => {
 }
 
 const fetchAnalysisResult = async (analysisId) => {
-  const savedAuth = JSON.parse(localStorage.getItem('data') || '{}')
-  const token = savedAuth?.token || authStore.token
-  const tenantId = savedAuth?.user?.tenant_id || authStore.tenant_id
+  const savedAuth = localStorage.getItem('data') ? JSON.parse(localStorage.getItem('data')) : null
+
+  console.log(JSON.parse(localStorage.getItem('data')))
+  const token = savedAuth ? savedAuth?.token : computed(() => authStore.token)?.value
+  const tenantId = savedAuth ? savedAuth?.user?.id : computed(() => authStore.id)?.value
   const apiUrl = `https://staging.getjupita.com/api/${tenantId}/get-analysis-result?analysis_id=${analysisId}`
   loading.value = true
 
@@ -1008,7 +1008,6 @@ const fetchAnalysisResult = async (analysisId) => {
     monthWithHighestSpend.value = moment(spend.monthWithHighestSpend, 'M/YYYY').format('MMMM YYYY')
 
     expenseItems.value = [
-     
       {
         label: 'Rent',
         monthly: spend.averageMonthlySpendOnRent ?? 0,
@@ -1053,68 +1052,52 @@ const fetchAnalysisResult = async (analysisId) => {
         label: 'Crypto',
         monthly: spend.averageMonthlySpendOnCrypto ?? 0,
         total: 12 * (spend.averageMonthlySpendOnCrypto ?? 0)
-      }
-      ,
+      },
       {
         label: 'Entertainment',
         monthly: spend.averageMonthlySpendOnEntertainment ?? 0,
         total: 12 * (spend.averageMonthlySpendOnEntertainment ?? 0)
-      }
-      ,
+      },
       {
         label: 'Health',
         monthly: spend.averageMonthlySpendOnHealth ?? 0,
         total: 12 * (spend.averageMonthlySpendOnHealth ?? 0)
-      }
-      ,
+      },
       {
         label: 'Gambling',
         monthly: spend.averageMonthlySpendOnGambling ?? 0,
         total: 12 * (spend.averageMonthlySpendOnGambling ?? 0)
-      }
-      ,
+      },
       {
         label: 'Insurance',
         monthly: spend.averageMonthlySpendOnInsurance ?? 0,
         total: 12 * (spend.averageMonthlySpendOnInsurance ?? 0)
-      }
-      ,
+      },
       {
         label: 'International Transactions',
         monthly: spend.averageMonthlySpendOnInternationalTransactions ?? 0,
         total: 12 * (spend.averageMonthlySpendOnInternationalTransactions ?? 0)
-      }
-      ,
+      },
       {
         label: 'Online and Web',
         monthly: spend.averageMonthlySpendOnOnlineAndWeb ?? 0,
         total: 12 * (spend.averageMonthlySpendOnOnlineAndWeb ?? 0)
-      }
-      ,
+      },
       {
         label: 'Savings and Investments',
         monthly: spend.averageMonthlySpendOnSavingsAndInvestments ?? 0,
         total: 12 * (spend.averageMonthlySpendOnSavingsAndInvestments ?? 0)
-      }
-      ,
+      },
       {
         label: 'Travel',
         monthly: spend.averageMonthlySpendOnTravel ?? 0,
         total: 12 * (spend.averageMonthlySpendOnTravel ?? 0)
-      }
-      ,
+      },
       {
         label: 'USSD',
         monthly: spend.averageMonthlySpendOnUSSD ?? 0,
         total: 12 * (spend.averageMonthlySpendOnUSSD ?? 0)
-      }
-      ,
-      {
-        label: 'Total Expenses',
-        monthly: spend.averageMonthlyTotalExpenses ?? 0,
-        total: 12 * (spend.averageMonthlyTotalExpenses ?? 0)
-      }
-      ,
+      },
       {
         label: 'Transfer Via Agents',
         monthly: spend.averageMonthlyTransactionsViaAgents ?? 0,
@@ -1124,6 +1107,12 @@ const fetchAnalysisResult = async (analysisId) => {
         label: 'Others',
         monthly: spend.averageMonthlySpendOnOthers ?? 0,
         total: 12 * (spend.averageMonthlySpendOnOthers ?? 0)
+      },
+
+      {
+        label: 'Total Expenses',
+        monthly: spend.averageMonthlyTotalExpenses ?? 0,
+        total: 12 * (spend.averageMonthlyTotalExpenses ?? 0)
       },
     ]
 
@@ -1278,9 +1267,11 @@ const inflowOutflowStatus = computed(() => {
 })
 
 const fetchTransactions = async (id) => {
-  const savedAuth = JSON.parse(localStorage.getItem('data') || '{}')
-  const token = savedAuth?.token || authStore.token
-  const tenantId = savedAuth?.user?.tenant_id || authStore.tenant_id
+  const savedAuth = localStorage.getItem('data') ? JSON.parse(localStorage.getItem('data')) : null
+
+  console.log(JSON.parse(localStorage.getItem('data')))
+  const token = savedAuth ? savedAuth?.token : computed(() => authStore.token)?.value
+  const tenantId = savedAuth ? savedAuth?.user?.id : computed(() => authStore.id)?.value
   const analysisId = route.params.id
 
   const apiUrl = `https://staging.getjupita.com/api/${tenantId}/get-statement-transactions?analysis_id=${analysisId}`
@@ -1380,9 +1371,11 @@ onMounted(() => {
 })
 
 const downloadAnalysis = async () => {
-  const savedAuth = JSON.parse(localStorage.getItem('data') || '{}')
-  const token = savedAuth?.token || authStore.token
-  const tenantId = savedAuth?.user?.tenant_id || authStore.tenant_id
+  const savedAuth = localStorage.getItem('data') ? JSON.parse(localStorage.getItem('data')) : null
+
+  console.log(JSON.parse(localStorage.getItem('data')))
+  const token = savedAuth ? savedAuth?.token : computed(() => authStore.token)?.value
+  const tenantId = savedAuth ? savedAuth?.user?.id : computed(() => authStore.id)?.value
   const analysisId = route.params.id
 
   const apiUrl = `https://staging.getjupita.com/api/${tenantId}/download-insight-report?analysis_id=${analysisId}`

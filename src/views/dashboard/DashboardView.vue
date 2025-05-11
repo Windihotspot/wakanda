@@ -33,8 +33,8 @@ const fetchStatements = async () => {
   console.log(JSON.parse(localStorage.getItem('data')))
   const token = savedAuth ? savedAuth?.token : computed(() => authStore.token)?.value
   const tenantId = savedAuth
-    ? savedAuth?.user?.tenant_id
-    : computed(() => authStore.tenant_id)?.value
+    ? savedAuth?.user?.id
+    : computed(() => authStore.id)?.value
   const API_URL = `https://staging.getjupita.com/api/${tenantId}/fetch-tenant-analyses`
   isLoading.value = true
 
@@ -119,11 +119,6 @@ onMounted(() => {
   fetchStatements()
 })
 
-const getStatusColor = (status) => {
-  if (status === 'PROCESSED') return 'green'
-  if (status === 'Pending') return 'orange'
-  return 'green'
-}
 </script>
 
 <template>
