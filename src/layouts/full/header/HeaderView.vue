@@ -49,7 +49,7 @@ const logout = async () => {
 
   try {
     const response = await axios.post(
-      `https://staging.getjupita.com/api/${tenantId}/logout`,
+      `https://http://dev02201.getjupita.com/api/${tenantId}/logout`,
       {},
       {
         headers: {

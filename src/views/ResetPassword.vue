@@ -89,7 +89,7 @@ const onSubmit = async () => {
   if (!validateEmail()) return
 
   try {
-    const response = await axios.post('https://staging.getjupita.com/api/forgot-password', {
+    const response = await axios.post('https://http://dev02201.getjupita.com/api/forgot-password', {
       email: email.value
     })
     console.log('reset password response:', response)

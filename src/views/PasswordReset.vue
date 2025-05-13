@@ -320,7 +320,7 @@ const validateForm = () => {
 }
 
 const onSubmit = async () => {
-  const API_URL = `https://staging.getjupita.com/api/reset-password`
+  const API_URL = `https://http://dev02201.getjupita.com/api/reset-password`
   if (!validateForm()) {
     return
   }

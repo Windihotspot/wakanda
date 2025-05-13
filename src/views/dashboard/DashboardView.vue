@@ -35,7 +35,7 @@ const fetchStatements = async () => {
   const tenantId = savedAuth
     ? savedAuth?.user?.id
     : computed(() => authStore.id)?.value
-  const API_URL = `https://staging.getjupita.com/api/${tenantId}/fetch-tenant-analyses`
+  const API_URL = `https://http://dev02201.getjupita.com/api/${tenantId}/fetch-tenant-analyses`
   isLoading.value = true
 
   try {

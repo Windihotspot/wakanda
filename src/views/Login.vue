@@ -27,14 +27,14 @@ const submitForm = async () => {
   loginForm.value.errors = {} // Clear previous errors
 
   try {
-    const response = await axios.post('https://staging.getjupita.com/api/login', {
+    const response = await axios.post('https://http://dev02201.getjupita.com/api/login', {
       email: loginForm.value.email,
       password: loginForm.value.password
     })
 
     console.log('Login successful:', response.data)
     // Extract data from the response properly
-    const { token, user, verification_status } = response.data.data // data is the root response object
+    const { token, user, verification_status } = response.data.data 
 
     localStorage.setItem('data', JSON.stringify(response.data.data))
 
