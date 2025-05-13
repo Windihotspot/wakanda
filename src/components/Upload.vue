@@ -174,9 +174,17 @@ const progress = ref(0) // Track progress
 const uploadFile = async () => {
   const savedAuth = localStorage.getItem('data') ? JSON.parse(localStorage.getItem('data')) : null
 
-  console.log(JSON.parse(localStorage.getItem('data')))
+  console.log(savedAuth)
+
   const token = savedAuth ? savedAuth?.token : computed(() => authStore.token)?.value
-  const tenantId = savedAuth ? savedAuth?.user?.id : computed(() => authStore.id)?.value
+
+  const tenantId = savedAuth
+    ? savedAuth.user?.business_name
+      ? savedAuth.user?.id
+      : savedAuth.user?.tenant_id
+    : computed(() => (authStore.user?.business_name ? authStore.user.id : authStore.user.tenant_id))
+        ?.value
+
   if (!selectedFile.value || !statementType.value) {
     Swal.fire('Missing Information', 'Select a statement type and file.', 'warning')
     return

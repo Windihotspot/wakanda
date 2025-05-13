@@ -879,9 +879,20 @@ const formatBalanceRange = () => {
 const fetchAnalysisResult = async (analysisId) => {
   const savedAuth = localStorage.getItem('data') ? JSON.parse(localStorage.getItem('data')) : null
 
-  console.log(JSON.parse(localStorage.getItem('data')))
-  const token = savedAuth ? savedAuth?.token : computed(() => authStore.token)?.value
-  const tenantId = savedAuth ? savedAuth?.user?.id : computed(() => authStore.id)?.value
+console.log(savedAuth);
+
+const token = savedAuth
+  ? savedAuth?.token
+  : computed(() => authStore.token)?.value;
+
+const tenantId = savedAuth
+  ? savedAuth.user?.business_name
+    ? savedAuth.user?.id
+    : savedAuth.user?.tenant_id
+  : computed(() =>
+      authStore.user?.business_name ? authStore.user.id : authStore.user.tenant_id
+    )?.value;
+
   const apiUrl = `https://dev02201.getjupita.com/api/${tenantId}/get-analysis-result?analysis_id=${analysisId}`
   loading.value = true
 
@@ -1276,9 +1287,20 @@ const isConsumer = computed(() => statementType.value === 'CONSUMER')
 const fetchTransactions = async (id) => {
   const savedAuth = localStorage.getItem('data') ? JSON.parse(localStorage.getItem('data')) : null
 
-  console.log(JSON.parse(localStorage.getItem('data')))
-  const token = savedAuth ? savedAuth?.token : computed(() => authStore.token)?.value
-  const tenantId = savedAuth ? savedAuth?.user?.id : computed(() => authStore.id)?.value
+console.log(savedAuth);
+
+const token = savedAuth
+  ? savedAuth?.token
+  : computed(() => authStore.token)?.value;
+
+const tenantId = savedAuth
+  ? savedAuth.user?.business_name
+    ? savedAuth.user?.id
+    : savedAuth.user?.tenant_id
+  : computed(() =>
+      authStore.user?.business_name ? authStore.user.id : authStore.user.tenant_id
+    )?.value;
+
   const analysisId = route.params.id
 
   const apiUrl = `https://dev02201.getjupita.com/api/${tenantId}/get-statement-transactions?analysis_id=${analysisId}`
@@ -1380,9 +1402,20 @@ onMounted(() => {
 const downloadAnalysis = async () => {
   const savedAuth = localStorage.getItem('data') ? JSON.parse(localStorage.getItem('data')) : null
 
-  console.log(JSON.parse(localStorage.getItem('data')))
-  const token = savedAuth ? savedAuth?.token : computed(() => authStore.token)?.value
-  const tenantId = savedAuth ? savedAuth?.user?.id : computed(() => authStore.id)?.value
+console.log(savedAuth);
+
+const token = savedAuth
+  ? savedAuth?.token
+  : computed(() => authStore.token)?.value;
+
+const tenantId = savedAuth
+  ? savedAuth.user?.business_name
+    ? savedAuth.user?.id
+    : savedAuth.user?.tenant_id
+  : computed(() =>
+      authStore.user?.business_name ? authStore.user.id : authStore.user.tenant_id
+    )?.value;
+
   const analysisId = route.params.id
 
   const apiUrl = `https://dev02201.getjupita.com/api/${tenantId}/download-insight-report?analysis_id=${analysisId}`

@@ -30,11 +30,20 @@ const closeModal = () => {
 const fetchStatements = async () => {
   const savedAuth = localStorage.getItem('data') ? JSON.parse(localStorage.getItem('data')) : null
 
-  console.log(JSON.parse(localStorage.getItem('data')))
-  const token = savedAuth ? savedAuth?.token : computed(() => authStore.token)?.value
-  const tenantId = savedAuth
-    ? savedAuth?.user?.id
-    : computed(() => authStore.id)?.value
+console.log(savedAuth);
+
+const token = savedAuth
+  ? savedAuth?.token
+  : computed(() => authStore.token)?.value;
+
+const tenantId = savedAuth
+  ? savedAuth.user?.business_name
+    ? savedAuth.user?.id
+    : savedAuth.user?.tenant_id
+  : computed(() =>
+      authStore.user?.business_name ? authStore.user.id : authStore.user.tenant_id
+    )?.value;
+
   const API_URL = `https://dev02201.getjupita.com/api/${tenantId}/fetch-tenant-analyses`
   isLoading.value = true
 

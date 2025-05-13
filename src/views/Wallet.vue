@@ -238,9 +238,20 @@ const closeFundWallet = () => {
 const fetchWallet = async () => {
   const savedAuth = localStorage.getItem('data') ? JSON.parse(localStorage.getItem('data')) : null
 
-  console.log(JSON.parse(localStorage.getItem('data')))
-  const token = savedAuth ? savedAuth?.token : computed(() => authStore.token)?.value
-  const tenantId = savedAuth ? savedAuth?.user?.id : computed(() => authStore.id)?.value
+console.log(savedAuth);
+
+const token = savedAuth
+  ? savedAuth?.token
+  : computed(() => authStore.token)?.value;
+
+const tenantId = savedAuth
+  ? savedAuth.user?.business_name
+    ? savedAuth.user?.id
+    : savedAuth.user?.tenant_id
+  : computed(() =>
+      authStore.user?.business_name ? authStore.user.id : authStore.user.tenant_id
+    )?.value;
+
   const API_URL = `https://dev02201.getjupita.com/api/${tenantId}/get-tenant-wallet`
   isLoading.value = true
   try {
@@ -262,9 +273,20 @@ const fetchWallet = async () => {
 const fetchWalletTransactions = async () => {
   const savedAuth = localStorage.getItem('data') ? JSON.parse(localStorage.getItem('data')) : null
 
-  console.log(JSON.parse(localStorage.getItem('data')))
-  const token = savedAuth ? savedAuth?.token : computed(() => authStore.token)?.value
-  const tenantId = savedAuth ? savedAuth?.user?.id : computed(() => authStore.id)?.value
+console.log(savedAuth);
+
+const token = savedAuth
+  ? savedAuth?.token
+  : computed(() => authStore.token)?.value;
+
+const tenantId = savedAuth
+  ? savedAuth.user?.business_name
+    ? savedAuth.user?.id
+    : savedAuth.user?.tenant_id
+  : computed(() =>
+      authStore.user?.business_name ? authStore.user.id : authStore.user.tenant_id
+    )?.value;
+
 
   const API_URL = `https://dev02201.getjupita.com/api/${tenantId}/get-wallet-transactions`
   isLoading.value = true
@@ -283,7 +305,7 @@ const fetchWalletTransactions = async () => {
     debitHistory.value = []
 
     transactions.forEach((tx) => {
-      const data = tx.transaction_data ? JSON.parse(tx.transaction_data) : {}
+      const data = tx.transaction_data ? (tx.transaction_data) : {}
 
       const base = {
         date: tx.created_at,
@@ -307,11 +329,20 @@ const fetchWalletTransactions = async () => {
 const fundWallet = async () => {
   const savedAuth = localStorage.getItem('data') ? JSON.parse(localStorage.getItem('data')) : null
 
-  console.log(JSON.parse(localStorage.getItem('data')))
-  const token = savedAuth ? savedAuth?.token : computed(() => authStore.token)?.value
-  const tenantId = savedAuth
-    ? savedAuth?.user?.id
-    : computed(() => authStore.id)?.value
+console.log(savedAuth);
+
+const token = savedAuth
+  ? savedAuth?.token
+  : computed(() => authStore.token)?.value;
+
+const tenantId = savedAuth
+  ? savedAuth.user?.business_name
+    ? savedAuth.user?.id
+    : savedAuth.user?.tenant_id
+  : computed(() =>
+      authStore.user?.business_name ? authStore.user.id : authStore.user.tenant_id
+    )?.value;
+
   const loading = ref(false)
 
   if (!amount.value || amount.value < 100000) {
