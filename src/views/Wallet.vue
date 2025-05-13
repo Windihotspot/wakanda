@@ -241,7 +241,7 @@ const fetchWallet = async () => {
   console.log(JSON.parse(localStorage.getItem('data')))
   const token = savedAuth ? savedAuth?.token : computed(() => authStore.token)?.value
   const tenantId = savedAuth ? savedAuth?.user?.id : computed(() => authStore.id)?.value
-  const API_URL = `https://http://dev02201.getjupita.com/api/${tenantId}/get-tenant-wallet`
+  const API_URL = `https://dev02201.getjupita.com/api/${tenantId}/get-tenant-wallet`
   isLoading.value = true
   try {
     const response = await axios.get(API_URL, {
@@ -266,7 +266,7 @@ const fetchWalletTransactions = async () => {
   const token = savedAuth ? savedAuth?.token : computed(() => authStore.token)?.value
   const tenantId = savedAuth ? savedAuth?.user?.id : computed(() => authStore.id)?.value
 
-  const API_URL = `https://http://dev02201.getjupita.com/api/${tenantId}/get-wallet-transactions`
+  const API_URL = `https://dev02201.getjupita.com/api/${tenantId}/get-wallet-transactions`
   isLoading.value = true
 
   try {
@@ -324,7 +324,7 @@ const fundWallet = async () => {
     return
   }
 
-  const API_URL = `https://http://dev02201.getjupita.com/api/${tenantId}/initialize-payment`
+  const API_URL = `https://dev02201.getjupita.com/api/${tenantId}/initialize-payment`
   console.log('fund wallet amount:', amount.value)
   console.log('fund wallet token:', token)
 

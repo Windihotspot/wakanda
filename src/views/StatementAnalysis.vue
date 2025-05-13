@@ -882,7 +882,7 @@ const fetchAnalysisResult = async (analysisId) => {
   console.log(JSON.parse(localStorage.getItem('data')))
   const token = savedAuth ? savedAuth?.token : computed(() => authStore.token)?.value
   const tenantId = savedAuth ? savedAuth?.user?.id : computed(() => authStore.id)?.value
-  const apiUrl = `https://http://dev02201.getjupita.com/api/${tenantId}/get-analysis-result?analysis_id=${analysisId}`
+  const apiUrl = `https://dev02201.getjupita.com/api/${tenantId}/get-analysis-result?analysis_id=${analysisId}`
   loading.value = true
 
   try {
@@ -1281,7 +1281,7 @@ const fetchTransactions = async (id) => {
   const tenantId = savedAuth ? savedAuth?.user?.id : computed(() => authStore.id)?.value
   const analysisId = route.params.id
 
-  const apiUrl = `https://http://dev02201.getjupita.com/api/${tenantId}/get-statement-transactions?analysis_id=${analysisId}`
+  const apiUrl = `https://dev02201.getjupita.com/api/${tenantId}/get-statement-transactions?analysis_id=${analysisId}`
 
   try {
     const response = await Axios.get(apiUrl, {
@@ -1385,7 +1385,7 @@ const downloadAnalysis = async () => {
   const tenantId = savedAuth ? savedAuth?.user?.id : computed(() => authStore.id)?.value
   const analysisId = route.params.id
 
-  const apiUrl = `https://http://dev02201.getjupita.com/api/${tenantId}/download-insight-report?analysis_id=${analysisId}`
+  const apiUrl = `https://dev02201.getjupita.com/api/${tenantId}/download-insight-report?analysis_id=${analysisId}`
 
   try {
     // Show persistent notification
