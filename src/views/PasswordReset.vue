@@ -324,10 +324,11 @@ const onSubmit = async () => {
     console.log('Password:', password);
     console.log('Confirm Password:', confirmPassword);
     console.log('Token from route:', token);
-     const payload = {
-      password,
-      confirmPassword,
-    };
+       const payload = {
+      token: token,
+      password: password.value,
+      password_confirmation: confirmPassword.value,
+    }
 
     console.log('Payload:', payload);
 
