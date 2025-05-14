@@ -11,7 +11,7 @@
       <div class="flex items-start">
   <i class="fas fa-info-circle text-blue-500 mr-2 mt-1"></i>
   <p>
-    You have successfully accepted to join <strong>tenant name</strong> as <strong>role name</strong>
+    You have successfully accepted to join Jupita
   </p>
 </div>
 
