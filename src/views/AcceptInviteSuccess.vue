@@ -41,7 +41,7 @@ onMounted(() => {
 })
 
 const goToLogin = () => {
-  router.push('/login')
+  router.push('/')
 }
 </script>
 
