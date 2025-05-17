@@ -77,7 +77,7 @@ const acceptInvite = async () => {
    
     ElNotification({
       title: 'Success',
-      message: response.data.message || 'Accept invite successfully!',
+      message: response.data.message || 'Invite accepted successfully!',
       type: 'success',
       duration: 4000
     })

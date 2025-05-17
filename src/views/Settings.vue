@@ -108,8 +108,17 @@
                 >
               </div>
 
+              <!-- Loading Spinner -->
               <div
-                v-if="users.length === 0"
+                v-if="usersLoading"
+                class="flex flex-col items-center justify-center text-center py-20"
+              >
+                <v-progress-circular indeterminate color="primary" size="40" />
+                <p class="mt-4 text-gray-500">Loading users...</p>
+              </div>
+
+              <div
+                v-else-if="users.length === 0"
                 class="flex flex-col items-center justify-center text-center"
               >
                 <v-icon size="64" color="blue">mdi-account-multiple-outline</v-icon>
@@ -242,20 +251,18 @@ import Swal from 'sweetalert2'
 import { useAuthStore } from '@/stores/auth'
 const authStore = useAuthStore()
 const savedAuth = localStorage.getItem('data') ? JSON.parse(localStorage.getItem('data')) : null
+const usersLoading = ref(true)
 
-console.log(savedAuth);
+console.log(savedAuth)
 
-const token = savedAuth
-  ? savedAuth?.token
-  : computed(() => authStore.token)?.value;
+const token = savedAuth ? savedAuth?.token : computed(() => authStore.token)?.value
 
 const tenantId = savedAuth
   ? savedAuth.user?.business_name
     ? savedAuth.user?.id
     : savedAuth.user?.tenant_id
-  : computed(() =>
-      authStore.user?.business_name ? authStore.user.id : authStore.user.tenant_id
-    )?.value;
+  : computed(() => (authStore.user?.business_name ? authStore.user.id : authStore.user.tenant_id))
+      ?.value
 
 const user = savedAuth?.user
 
@@ -335,6 +342,7 @@ const newUser = ref({
 })
 
 const fetchTeam = async () => {
+  usersLoading.value = true
   const API_URL = `https://dev02201.getjupita.com/api/${tenantId}/get-team`
 
   try {
@@ -349,13 +357,12 @@ const fetchTeam = async () => {
     // Normalize the members
     const normalized = members.map((m) => {
       const user = m.me ?? m
-         const roleId = user.role?.id || user.role_id || m.role?.id || null
+      const roleId = user.role?.id || user.role_id || m.role?.id || null
       const hasFullName = user.firstname && user.lastname
-       
+
       const name = hasFullName
         ? `${user.firstname} ${user.lastname}`
         : user.business_name || 'Unknown'
-
 
       return {
         id: user.id,
@@ -373,6 +380,7 @@ const fetchTeam = async () => {
   } catch (error) {
     console.error('Error fetching team data:', error)
   } finally {
+    usersLoading.value = false
   }
 }
 
