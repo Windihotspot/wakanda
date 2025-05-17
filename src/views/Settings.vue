@@ -283,19 +283,21 @@ const email = ref('')
 const selectedRole = ref(null)
 
 const roles = ref([
-  { value: 'tenant', label: 'Tenant' },
-  { value: 'super_admin', label: 'Super Admin' },
-  { value: 'admin', label: 'Admin' },
-  { value: 'editor', label: 'Editor' },
-  { value: 'credit_manager', label: 'Credit Manager' },
-  { value: 'loan_manager', label: 'Loan Manager' },
-  { value: 'analysis_manager', label: 'Analysis Manager' },
-  { value: 'observer', label: 'Observer' }
+  { id: 1, value: 'tenant', label: 'Tenant' },
+  { id: 2, value: 'super_admin', label: 'Super Admin' },
+  { id: 3, value: 'admin', label: 'Admin' },
+  { id: 4, value: 'editor', label: 'Editor' },
+  { id: 5, value: 'credit_manager', label: 'Credit Manager' },
+  { id: 6, value: 'loan_manager', label: 'Loan Manager' },
+  { id: 7, value: 'analysis_manager', label: 'Analysis Manager' },
+  { id: 8, value: 'observer', label: 'Observer' }
 ])
-const getRoleLabel = (roleValue) => {
-  const found = roles.value.find((r) => r.value === roleValue)
+
+const getRoleLabelById = (roleId) => {
+  const found = roles.value.find((r) => r.id === roleId)
   return found ? found.label : 'N/A'
 }
+
 const isLoading = ref(true)
 
 const getRoles = async () => {
@@ -347,16 +349,23 @@ const fetchTeam = async () => {
     // Normalize the members
     const normalized = members.map((m) => {
       const user = m.me ?? m
-      const rawRole = user.role?.title || m.role?.title
+         const roleId = user.role?.id || user.role_id || m.role?.id || null
+      const hasFullName = user.firstname && user.lastname
+       
+      const name = hasFullName
+        ? `${user.firstname} ${user.lastname}`
+        : user.business_name || 'Unknown'
+
 
       return {
         id: user.id,
-        name: `${user.firstname} ${user.lastname}`,
+        name,
         email: user.email,
         phone: user.phone_number || 'N/A',
         status: user.active === 1 ? 'Active' : 'Inactive',
         creationDate: moment(user.created_at).format('MMMM Do YYYY, h:mm a'),
-        role: getRoleLabel(rawRole)
+        role: getRoleLabelById(roleId),
+        roleId
       }
     })
 
@@ -540,7 +549,7 @@ const copyToClipboard = (text) => {
 }
 
 onMounted(() => {
-  getRoleLabel()
+  getRoleLabelById()
   fetchTeam()
   console.log('User data from storage:', user)
   if (isBusiness.value) {
