@@ -2,7 +2,7 @@ import { onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 
-export function useAutoLogout(timeout = 2 * 60 * 60 * 1000) {
+export function useAutoLogout(timeout = 15 * 60 * 1000) {
   const router = useRouter()
   const authStore = useAuthStore()
   let timeoutId: number | undefined
