@@ -73,4 +73,15 @@ const router = createRouter({
   ]
 })
 
+router.beforeEach((to, from, next) => {
+  const isAuthenticated = !!localStorage.getItem('data')
+  const publicPages = ['/', '/signup', '/resetpassword', '/passwordreset', '/acceptinvite']
+
+  if (!isAuthenticated && !publicPages.includes(to.path)) {
+    return next('/')
+  }
+
+  next()
+})
+
 export default router

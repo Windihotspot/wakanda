@@ -17,32 +17,39 @@ export const useAuthStore = defineStore('auth', {
   }),
 
   actions: {
-    
-    setAuthData(data: any) {
-      console.log(localStorage.getItem('token'))
-      console.log('Setting Auth Data:', data)
-      
+  setAuthData(data: any) {
+    console.log(localStorage.getItem('token'))
+    console.log('Setting Auth Data:', data)
 
-      this.id = data.user?.id || null
-      this.token = data.token || null
-      this.verification_status = data.user?.verification_status || null
+    this.id = data.user?.id || null
+    this.token = data.token || null
+    this.verification_status = data.user?.verification_status || null
+    this.user = data.user || {}
 
-      // Store the full user data
-      this.user = data.user || {}
-
-      if (data.token) {
-        axios.defaults.headers.common['Authorization'] = `Bearer ${data.token}`
-        axios.defaults.headers.common['Accept'] = 'application/json'
-      }
-    },
-
-    init() {
-      if (this.token) {
-        axios.defaults.headers.common['Authorization'] = `Bearer ${this.token}`
-        axios.defaults.headers.common['Accept'] = 'application/json'
-      }
-    },
+    if (data.token) {
+      axios.defaults.headers.common['Authorization'] = `Bearer ${data.token}`
+      axios.defaults.headers.common['Accept'] = 'application/json'
+    }
   },
+
+  init() {
+    if (this.token) {
+      axios.defaults.headers.common['Authorization'] = `Bearer ${this.token}`
+      axios.defaults.headers.common['Accept'] = 'application/json'
+    }
+  },
+
+  clearAuthData() {
+    this.id = null
+    this.token = null
+    this.verification_status = null
+    this.user = null
+
+    delete axios.defaults.headers.common['Authorization']
+    delete axios.defaults.headers.common['Accept']
+  }
+}
+,
 
   persist: true // Ensure data persists across reloads (optional)
 })
