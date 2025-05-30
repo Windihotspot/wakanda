@@ -345,10 +345,10 @@ const tenantId = savedAuth
 
   const loading = ref(false)
 
-  if (!amount.value || amount.value < 100000) {
+  if (!amount.value || amount.value < 500000) {
     ElNotification({
       title: 'Invalid Amount',
-      message: 'Minimum funding amount is ₦100,000.',
+      message: 'Minimum funding amount is ₦500,000.',
       type: 'warning',
       duration: 4000
     })

@@ -137,7 +137,14 @@
           </div>
           <h2 class="text-xl font-bold mb-2">Upload Failed</h2>
           <p class="text-gray-700">{{ errorMessage }}</p>
-          <v-btn color="red" variant="plain" class="mt-6 text-white custom-btn" @click="showErrorModal = false"> Close </v-btn>
+          <v-btn
+            color="red"
+            variant="plain"
+            class="mt-6 text-white custom-btn"
+            @click="showErrorModal = false"
+          >
+            Close
+          </v-btn>
         </div>
       </template>
     </v-dialog>
@@ -166,7 +173,6 @@ const confettiCanvas = ref(null)
 
 const showErrorModal = ref(false)
 const errorMessage = ref('')
-
 
 const selectedFile = ref(null)
 const filePassword = ref('')
@@ -280,7 +286,7 @@ const uploadFile = async () => {
       position: 'top-right',
       showClose: true
     })
-
+    closeForm()
     console.log('🎉 Showing modal')
     setTimeout(() => {
       showConfettiModal.value = true
@@ -292,15 +298,15 @@ const uploadFile = async () => {
     statementType.value = ''
   } catch (error) {
     console.log('❌ Upload error:', error)
-    
+
     ElNotification({
       title: 'Upload Failed',
       message: error.response?.data?.message || 'An error occurred during upload.',
       type: 'error',
       duration: 5000
     })
+
     showErrorModal.value = true
-    closeForm()
   } finally {
     loading.value = false
   }

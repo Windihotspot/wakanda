@@ -619,7 +619,7 @@
 
                         <v-select
                           v-model="selectedStatus"
-                          :items="['CREDIT', 'DEBIT']"
+                          :items="['ALL','CREDIT', 'DEBIT']"
                           color="[#1f5aa3]"
                           label="Status"
                           density="compact"
@@ -1339,9 +1339,9 @@ watch([searchQuery, selectedStatus, dateRange, allTransactions], async () => {
     )
   }
 
-  if (selectedStatus.value) {
-    filtered = filtered.filter((txn) => txn.type === selectedStatus.value)
-  }
+  if (selectedStatus.value && selectedStatus.value !== 'ALL') {
+  filtered = filtered.filter((txn) => txn.type === selectedStatus.value)
+}
 
   if (dateRange.value && dateRange.value.length === 2) {
     const [start, end] = dateRange.value.map((d) => new Date(d).getTime())
